@@ -314,6 +314,11 @@ setMethodS3("getUnitNamesFile", "AffymetrixCelSet", function(this, ...) {
   getUnitNamesFile(aFile, ...);
 })
 
+setMethodS3("getUnitTypesFile", "AffymetrixCelSet", function(this, ...) {
+  aFile <- getFile(this, 1);
+  getUnitTypesFile(aFile, ...);
+})
+
 
 
 ###########################################################################/**
@@ -442,60 +447,26 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 })
 
 
-setMethodS3("findByName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, paths=c("rawData", "probeData"), ...) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Arguments 'name':
-  name <- Arguments$getCharacter(name, length=c(1,1));
-  if (nchar(name) == 0) {
-    throw("A ", class(static)[1], " must have a non-empty name: ''");
-  }
+setMethodS3("findByName", "AffymetrixCelSet", function(static, ..., chipType=NULL, paths=c("rawData/", "probeData/")) {
+  # Arguments 'chipType':`
 
   # Arguments 'paths':
   if (is.null(paths)) {
     paths <- eval(formals(findByName.AffymetrixCelSet)[["paths"]]);
   }
 
-
-  # Look only in existing directories
-  paths <- sapply(paths, FUN=filePath, expandLinks="any");
-  paths0 <- paths;
-  paths <- paths[sapply(paths, FUN=isDirectory)];
-  if (length(paths) == 0) {
-    throw("None of the data directories exist: ", 
-                                           paste(paths0, collapse=", "));
-  }
-
-  # The full name of the data set
-  fullname <- paste(c(name, tags), collapse=",");
-
-  # Look for matching data sets
-  paths <- file.path(paths, fullname);
-  paths <- paths[sapply(paths, FUN=isDirectory)];
-  if (length(paths) == 0)
-    return(NULL);
-
-  # Look for matching chip type sets?
-  if (!is.null(chipType)) {
-    paths <- file.path(paths, chipType);
-    paths <- paths[sapply(paths, FUN=isDirectory)];
-    if (length(paths) == 0)
-      return(NULL);
-  }
-
-  if (length(paths) > 1) {
-    warning("Found duplicated data set: ", paste(paths, collapse=", "));
-    paths <- paths[1];
-  }
-  
-  paths;
+  # NextMethod() does not work here.
+  findByName.GenericDataFileSet(static, ..., subdirs=chipType, paths=paths); 
 }, static=TRUE)
 
 
 setMethodS3("fromName", "AffymetrixCelSet", function(static, ...) {
-  byName(static, ...);
-}, static=TRUE)
+  className <- class(static)[1];
+  msg <- sprintf("%s$fromName() is defunct. Use %s$byName() instead.", 
+                                                className, className);
+  throw(msg);
+}, static=TRUE, deprecated=TRUE)
+
 
 setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, paths=NULL, ...) {
   # Argument 'cdf':
@@ -1502,6 +1473,11 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-08-12
+# o Now findByName() of AffymetrixCelSet calls ditto of 
+#   GenericDataFileSet of the R.filesets packages.
+# 2009-07-08
+# o Added getUnitTypesFile() for AffymetrixCelSet.
 # 2009-05-23
 # o Now the chip type validation of fromFiles() for AffymetrixCelSet
 #   is aware of tags in the chip type of the CEL files. This may happen

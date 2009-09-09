@@ -72,7 +72,7 @@ getOutputDataSet, getOutputDataSetOLD20090509, getOutputFiles
 getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
 
 
  }
@@ -88,9 +88,6 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone
    a similar method for copy number estimation in the
    Affymetrix' Genotype Console v2.
  }
-
- \examples{\dontrun{
- }}
 
  \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 \keyword{classes}

@@ -36,9 +36,6 @@
 #  @allmethods "public"  
 # }
 # 
-# \examples{\dontrun{
-# }}
-#
 # @author
 #*/###########################################################################
 setConstructorS3("ScaleNormalization", function(dataSet=NULL, ..., targetAvg=4400, subsetToUpdate=NULL, typesToUpdate=NULL, subsetToAvg="-XY", typesToAvg=typesToUpdate, shift=0) {
@@ -198,11 +195,11 @@ setMethodS3("getSubsetToAvg", "ScaleNormalization", function(this, ..., verbose=
   
         # Identify units to be excluded
         if (subsetToAvg == "-X") {
-          units <- getUnitsOnChromosome(gi, 23, .checkArgs=FALSE);
+          units <- getUnitsOnChromosomes(gi, 23, .checkArgs=FALSE);
         } else if (subsetToAvg == "-Y") {
-          units <- getUnitsOnChromosome(gi, 24, .checkArgs=FALSE);
+          units <- getUnitsOnChromosomes(gi, 24, .checkArgs=FALSE);
         } else if (subsetToAvg == "-XY") {
-          units <- getUnitsOnChromosome(gi, 23:24, .checkArgs=FALSE);
+          units <- getUnitsOnChromosomes(gi, 23:24, .checkArgs=FALSE);
         }
   
         verbose && cat(verbose, "Units to exclude: ");

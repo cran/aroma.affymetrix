@@ -65,7 +65,7 @@ setMethodS3("getFileFormat", "AffymetrixCnChpFile", function(this, ...) {
   pathname <- getPathname(this);
 
   # Read CEL header
-  raw <- readBin(pathname, what="raw", n=10);
+  raw <- readBin(pathname, what=raw(), n=10);
 
   if (raw[1] == 59)
     return("v1 (binary; CC)");
@@ -118,6 +118,10 @@ setMethodS3("getChipType", "AffymetrixCnChpFile", function(this, ...) {
  
 
 setMethodS3("getUnitNamesFile", "AffymetrixCnChpFile", function(this, ...) {
+  getCdf(this, ...);
+})
+
+setMethodS3("getUnitTypesFile", "AffymetrixCnChpFile", function(this, ...) {
   getCdf(this, ...);
 })
 
@@ -419,6 +423,8 @@ setMethodS3("extractLogRatios", "AffymetrixCnChpFile", function(this, units=NULL
 
 ############################################################################
 # HISTORY:
+# 2009-07-08
+# o Added getUnitTypesFile() for AffymetrixCnChpFile.
 # 2008-08-22
 # o Added extractLogRatios().
 # 2008-05-18

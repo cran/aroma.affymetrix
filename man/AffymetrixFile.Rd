@@ -39,13 +39,13 @@ extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
   e.g. an Affymetrix CEL file or an Affymetrix CDF file.
   Note that this class is abstract and can not be instanciated, but
   instead you have to use one of the subclasses or the generic
-  \code{\link[aroma.affymetrix:fromFile.AffymetrixFile]{*fromFile}()} method.
+  \code{fromFile()} method.
  }
 
  \usage{AffymetrixFile(...)}
 
  \arguments{
-   \item{...}{Arguments passed to \code{\link[aroma.core]{GenericDataFile}}.}
+   \item{...}{Arguments passed to \code{\link[R.filesets]{GenericDataFile}}.}
  }
 
  \section{Fields and Methods}{
@@ -54,7 +54,7 @@ extends \emph{\link[aroma.core]{AromaPlatformInterface}}\cr
 
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
-getAromaPlatform, getPlatform, getUnitNamesFile
+getAromaPlatform, getPlatform, getUnitAnnotationDataFile, getUnitNamesFile, getUnitTypesFile
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
 getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
@@ -63,7 +63,7 @@ getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttribut
 compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getCreatedOn, getFilename, getFileSize, getFileType, getFullName, getFullNameTranslator, getLastAccessedOn, getLastModifiedOn, getName, getPath, getPathname, getTags, gunzip, gzip, hasBeenModified, hasTag, hasTags, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setFullName, setFullNameTranslator, setName, testAttributes, validateChecksum, writeChecksum
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
 
 
  }

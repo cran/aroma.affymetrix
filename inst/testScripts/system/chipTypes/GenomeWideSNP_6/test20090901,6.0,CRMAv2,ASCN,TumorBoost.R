@@ -6,7 +6,7 @@ log <- Arguments$getVerbose(-8, timestamp=TRUE);
 # Setup of annotation files
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CDF
-cdf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6", tags="Full");
+cdf <- AffymetrixCdfFile$byChipType("GenomeWideSNP_6");
 
 # Assert that an UGP annotation data file exists
 gi <- getGenomeInformation(cdf);
@@ -18,17 +18,25 @@ print(si);
 
 # Assert than an ACS (probe-sequence) annotation files
 acs <- AromaCellSequenceFile$byChipType(getChipType(cdf, fullname=FALSE));
+print(acs);
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Tests for setting up CEL sets and locating the CDF file
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-csR <- AffymetrixCelSet$byName("HapMap270,6.0,CEU,testSet", cdf=cdf);
+dataSet <- "TCGA,OV,testSet,pairs,Broad";
+csR <- AffymetrixCelSet$byName(dataSet, cdf=cdf);
 print(csR);
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2");
+# CRMA v2
+alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01, 0.0025, 0.001, 1e-04);
+# CRMA v1
+alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01);
+tags <- c("*", sprintf("alpha=%.2f", alpha[length(alpha)]));
+acc <- AllelicCrosstalkCalibration(csR, alpha=alpha, pairBy="sequence", tags=tags);
 print(acc);
 csC <- process(acc, verbose=log);
 print(csC);
@@ -47,20 +55,16 @@ print(csN);
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Allele-specific chip effect estimates
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
+plm <- AvgSnpPlm(csN, mergeStrands=TRUE);
 print(plm);
 
 if (length(findUnitsTodo(plm)) > 0) {
-   # Fit CN probes quickly (~5-10s/array + some overhead)
+  # Fit CN probes quickly (~5-10s/array + some overhead)
   units <- fitCnProbes(plm, verbose=log);
   str(units);
-  # int [1:945826] 935590 935591 935592 935593 935594 935595 ...
-
-  # Fit remaining units, i.e. SNPs (~5-10min/array)
   units <- fit(plm, verbose=log);
   str(units);
 }
-
 ces <- getChipEffectSet(plm);
 print(ces);
 
@@ -72,14 +76,3 @@ fln <- FragmentLengthNormalization(ces, target="zero");
 print(fln);
 cesN <- process(fln, verbose=log);
 print(cesN);
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Extract (thetaA, thetaB) for copy-neutral chromosomes
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- getCdf(cesN);
-gi <- getGenomeInformation(cdf);
-units <- getUnitsOnChromosomes(gi, 1:22);
-theta <- extractTheta(cesN, units=units, drop=TRUE);
-str(theta);
-print(theta[1:10,,]);
