@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "aroma.core::GenericDataFile".}
+#   \item{...}{Arguments passed to @see "R.filesets::GenericDataFile".}
 # }
 #
 # \section{Fields and Methods}{
@@ -192,8 +192,11 @@ setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
 setMethodS3("byChipType", "SnpInformation", abstract=TRUE);
 
 setMethodS3("fromChipType", "SnpInformation", function(static, ...) {
-  byChipType(static, ...);
-}, static=TRUE) 
+  className <- class(static)[1];
+  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
+                                                        className, className);
+  throw(msg);
+}, static=TRUE, deprecated=TRUE)
 
 
 setMethodS3("fromDataSet", "SnpInformation", function(static, dataSet, ...) {

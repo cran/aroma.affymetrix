@@ -10,7 +10,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Arguments passed to @see "aroma.core::GenericDataFile".}
+#   \item{...}{Arguments passed to @see "R.filesets::GenericDataFile".}
 #   \item{.verify}{For internal use only.}
 # }
 #
@@ -112,8 +112,11 @@ setMethodS3("verify", "GenomeInformation", function(this, ...) {
 setMethodS3("byChipType", "GenomeInformation", static=TRUE, abstract=TRUE);
 
 setMethodS3("fromChipType", "GenomeInformation", function(static, ...) {
-  byChipType(static, ...);
-}, static=TRUE) 
+  className <- class(static)[1];
+  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
+                                                        className, className);
+  throw(msg);
+}, static=TRUE, deprecated=TRUE)
 
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
@@ -123,8 +126,11 @@ setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
 
 
 
+setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, ...) {
+  getUnitsOnChromosomes(this, ...);
+})
 
-setMethodS3("getUnitsOnChromosome", "GenomeInformation", function(this, chromosomes, region=NULL, ..., .checkArgs=TRUE) {
+setMethodS3("getUnitsOnChromosomes", "GenomeInformation", function(this, chromosomes, region=NULL, ..., .checkArgs=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -413,6 +419,10 @@ setMethodS3("getUnitIndices", "GenomeInformation", function(this, ..., na.rm=TRU
 
 ############################################################################
 # HISTORY:
+# 2009-09-07
+# o Renamed getUnitsOnChromosome() to getUnitsOnChromosomes() for the
+#   GenomeInformation class.  The former now calls the latter for backward
+#   compatibility.
 # 2008-12-29
 # o BUG (not fixed): getUnitIndices() is not working correctly.  However,
 #   it is not used anywhere, so we might drop it.

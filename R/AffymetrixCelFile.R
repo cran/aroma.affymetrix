@@ -93,7 +93,7 @@ setMethodS3("getFileFormat", "AffymetrixCelFile", function(this, asString=TRUE, 
   pathname <- getPathname(this);
 
   # Read CEL header
-  raw <- readBin(pathname, what="raw", n=10);
+  raw <- readBin(pathname, what=raw(), n=10);
 
   if (raw[1] == 59) {
     ver <- 1;
@@ -254,6 +254,10 @@ setMethodS3("getCdf", "AffymetrixCelFile", function(this, ...) {
 
 
 setMethodS3("getUnitNamesFile", "AffymetrixCelFile", function(this, ...) {
+  getCdf(this, ...);
+})
+
+setMethodS3("getUnitTypesFile", "AffymetrixCelFile", function(this, ...) {
   getCdf(this, ...);
 })
 
@@ -906,6 +910,8 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2009-07-08
+# o Added getUnitTypesFile() for AffymetrixCelFile.
 # 2009-05-19
 # o Now testing for file permissions before trying to update a CEL file.
 # o Using getPathname() instead of this$.pathname everywhere.

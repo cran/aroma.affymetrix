@@ -23,7 +23,7 @@
 #*/###########################################################################
 setConstructorS3("AffymetrixCdfFile", function(...) {
   this <- extend(AromaChipTypeAnnotationFile(...), c("AffymetrixCdfFile", 
-                             uses("UnitNamesFile", "AromaPlatformInterface")),
+            uses("UnitNamesFile", "UnitTypesFile", "AromaPlatformInterface")),
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
     "cached:.cellIndices" = NULL,
@@ -57,11 +57,16 @@ setMethodS3("getUnitNamesFile", "AffymetrixCdfFile", function(this, ...) {
 }, protected=TRUE)
 
 
+setMethodS3("getUnitTypesFile", "AffymetrixCdfFile", function(this, ...) {
+  this;
+}, protected=TRUE)
+
+
 setMethodS3("getFileFormat", "AffymetrixCdfFile", function(this, ...) {
   pathname <- getPathname(this);
 
   # Read CDF header
-  raw <- readBin(pathname, what="raw", n=10);
+  raw <- readBin(pathname, what=raw(), n=10);
 
   if (raw[1] == 59)
     return("v5 (binary; CC)");
@@ -127,7 +132,6 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
 # @author
 #
 # \seealso{
-#   @seemethod "byChipType".
 #   @seeclass
 # }
 #
@@ -176,7 +180,6 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @author
 #
 # \seealso{
-#   @seemethod "byChipType".
 #   @seeclass
 # }
 #
@@ -433,6 +436,7 @@ setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verb
 #
 # \arguments{
 #   \item{units}{The units of interest. If @NULL, all units are considered.}
+#   \item{map}{A @character string specifying the mapping used.}
 #   \item{...}{Not used.}
 # }
 #
@@ -506,12 +510,14 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
 
 ## ISSUE: readCdfUnits() does not translate the unit types, which means
 ## that the unit type integer different for ASCII and binary CDFs.
+## types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
 ## WORKAROUND: Use readCdf() which return unit type strings.
 ## Requires: affxparser v1.13.5 or newer.
-## types <- readCdfUnits(getPathname(this), readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
 
         types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
         types <- unlist(types, use.names=FALSE);
+
+        # Sanity check
         if (length(types) != nbrOfUnits(this)) {
           throw("Internal error: Number of read unit types does not match the number of units in the CDF: ", length(types), " != ", nbrOfUnits(this));
         }
@@ -1245,7 +1251,7 @@ setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
 # @author
 #
 # \seealso{
-#   To compare two CDFs, see @seemethod "equals".
+#   To compare two CDFs, use \code{equals()}.
 #   Internally @see "affxparser::convertCdf" is used.
 #   @seeclass
 # }
@@ -1551,6 +1557,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2009-07-08
+# o Added getUnitTypesFile() for AffymetrixCdfFile.
+# o Now AffymetrixCdfFile implements also the UnitTypesFile interface.
 # 2009-05-09
 # o Added names to the returned dimension of getDimension().
 # 2009-02-10
