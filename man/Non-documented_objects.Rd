@@ -1765,6 +1765,35 @@
 \alias{getUnitTypesFile.AffymetrixCnChpFile}
 \alias{getUnitTypesFile.AffymetrixPlatform}
 \alias{getUnitTypesFile.TransformReport}
+\alias{byPath.AffymetrixCelSet}
+\alias{byPath.AffymetrixCnChpSet}
+\alias{byPath.ChipEffectSet}
+\alias{byPath.CnagCfhSet}
+\alias{byPath.CnChipEffectSet}
+\alias{byPath.CrlmmParametersSet}
+\alias{byPath.DChipDcpSet}
+\alias{byPath.ExonChipEffectSet}
+\alias{byPath.FirmaSet}
+\alias{byPath.ResidualSet}
+\alias{byPath.SnpChipEffectSet}
+\alias{byPath.WeightsSet}
+\alias{getDefaultFullName.AffymetrixFileSet}
+\alias{getDefaultFullName.CnagCfhSet}
+\alias{extractSnpFeatureSet}
+\alias{extractSnpFeatureSet.AffymetrixCelSet}
+\alias{getExtensionPattern.AffymetrixCdfFile}
+\alias{getExtensionPattern.AffymetrixCelFile}
+\alias{getExtensionPattern.AffymetrixCnChpFile}
+\alias{getExtensionPattern.AffymetrixCsvFile}
+\alias{getExtensionPattern.AffymetrixTsvFile}
+\alias{getExtensionPattern.AromaCellMatchScoreFile}
+\alias{getExtensionPattern.AromaUfcFile}
+\alias{getExtensionPattern.AromaUflFile}
+\alias{getExtensionPattern.AromaUnitGcContentFile}
+\alias{getExtensionPattern.CnagCfhFile}
+\alias{getExtensionPattern.DChipDcpFile}
+\alias{getRlmFitFunctions.RmaPlm}
+\alias{getRlmFitFunctions}
 
 \description{
   This page contains aliases for all "non-documented" objects that

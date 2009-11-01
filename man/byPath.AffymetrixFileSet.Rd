@@ -6,11 +6,11 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{fromFiles.AffymetrixFileSet}
-\alias{fromFiles.AffymetrixFileSet}
-\alias{AffymetrixFileSet.fromFiles}
-\alias{fromFiles.AffymetrixFileSet}
-\alias{fromFiles,AffymetrixFileSet-method}
+\name{byPath.AffymetrixFileSet}
+\alias{byPath.AffymetrixFileSet}
+\alias{AffymetrixFileSet.byPath}
+\alias{byPath.AffymetrixFileSet}
+\alias{byPath,AffymetrixFileSet-method}
 
 
 \title{Defines an AffymetrixFileSet object by searching for Affymetrix files}
@@ -19,8 +19,8 @@
   Defines an AffymetrixFileSet object by searching for Affymetrix files.
 }
 
-\synopsis{fromFiles.AffymetrixFileSet(static, ..., fileClass="AffymetrixFile")}
-\usage{AffymetrixFileSet$fromFiles(..., fileClass="AffymetrixFile")}
+\synopsis{byPath.AffymetrixFileSet(static, ..., fileClass="AffymetrixFile")}
+\usage{AffymetrixFileSet$byPath(..., fileClass="AffymetrixFile")}
 
 \arguments{
  \item{path}{The path where to search for Affymetrix files.}
