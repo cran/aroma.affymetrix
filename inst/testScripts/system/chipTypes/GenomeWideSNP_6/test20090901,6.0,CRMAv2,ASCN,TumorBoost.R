@@ -32,10 +32,13 @@ print(csR);
 # Allelic cross-talk calibration tests
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # CRMA v2
+tags <- c("*");
 alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01, 0.0025, 0.001, 1e-04);
-# CRMA v1
-alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01);
-tags <- c("*", sprintf("alpha=%.2f", alpha[length(alpha)]));
+if (FALSE) {
+  # CRMA v1
+  alpha <- c(0.1, 0.075, 0.05, 0.03, 0.01);
+  tags <- c(tags, sprintf("alpha=%.2f", alpha[length(alpha)]));
+}
 acc <- AllelicCrosstalkCalibration(csR, alpha=alpha, pairBy="sequence", tags=tags);
 print(acc);
 csC <- process(acc, verbose=log);
@@ -76,3 +79,9 @@ fln <- FragmentLengthNormalization(ces, target="zero");
 print(fln);
 cesN <- process(fln, verbose=log);
 print(cesN);
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Export (theta,beta) for all arrays
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+dsList <- exportTotalAndFracB(cesN, verbose=log);
+print(dsList);
