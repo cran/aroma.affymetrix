@@ -174,7 +174,7 @@ setMethodS3("getDesignMatrix", "BaseCountNormalization", function(this, cells=NU
     verbose && cat(verbose, "Cells:");
     verbose && str(verbose, cells);
     nbrOfCells <- nrow(designMatrix);
-    cells <- Arguments$getIndices(cells, range=c(1,nbrOfCells));
+    cells <- Arguments$getIndices(cells, max=nbrOfCells);
     designMatrix <- designMatrix[cells,,drop=FALSE];
     rm(cells);
 
@@ -333,9 +333,7 @@ setMethodS3("fitOne", "BaseCountNormalization", function(this, df, ..., verbose=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'df':
-  if (!inherits(df, "AffymetrixCelFile")) {
-    throw("Argument 'df' is not an AffymetrixCelFile: ", class(df)[1]);
-  }
+  df <- Arguments$getInstanceOf(df, "AffymetrixCelFile");
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);

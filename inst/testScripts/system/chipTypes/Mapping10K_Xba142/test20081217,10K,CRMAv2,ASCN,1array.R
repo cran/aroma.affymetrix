@@ -18,6 +18,10 @@ print(si);
 csR <- AffymetrixCelSet$byName("GSE8605", cdf=cdf);
 print(csR);
 
+# Work with a single array
+csR <- extract(csR, 1);
+print(csR);
+
 acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2", tags="*,v2");
 print(acc);
 csC <- process(acc, verbose=log);
@@ -28,10 +32,7 @@ print(bpn);
 csN <- process(bpn, verbose=log);
 print(csN);
 
-# Work with a single array
-csN <- extract(csN, 1);
-
-plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE, tags="1array,*");
+plm <- AvgCnPlm(csN, mergeStrands=TRUE, combineAlleles=FALSE);
 print(plm);
 fit(plm, verbose=log);
 

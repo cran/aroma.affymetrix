@@ -35,9 +35,7 @@ setConstructorS3("CnagCfhSet", function(files=NULL, ...) {
   if (is.null(files)) {
   } else if (is.list(files)) {
     lapply(files, FUN=function(df) {
-      if (!inherits(df, "CnagCfhFile"))
-        throw("Argument 'files' contains a non-CnagCfhFile object: ", 
-                                                               class(df)[1]);
+      df <- Arguments$getInstanceOf(df, "CnagCfhFile", .name="files");
     })
   } else {
     throw("Argument 'files' is of unknown type: ", mode(files));
@@ -87,16 +85,14 @@ setMethodS3("clone", "CnagCfhSet", function(this, ..., verbose=FALSE) {
 
 
 setMethodS3("append", "CnagCfhSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
+  # Argument 'other':
+  other <- Arguments$getInstanceOf(other, class(this)[1]);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
     pushState(verbose);
     on.exit(popState(verbose));
-  }
-
-  if (!inherits(other, class(this)[1])) {
-    throw("Argument 'other' is not an ", class(this)[1], " object: ", 
-                                                      class(other)[1]);
   }
 
   verbose && enter(verbose, "Appending CFH set");
@@ -607,7 +603,7 @@ setMethodS3("getData", "CnagCfhSet", function(this, indices=NULL, fields=c("x", 
   # Argument 'indices':
   nbrOfCells <- nbrOfCells(getCdf(this));
   if (!is.null(indices)) {
-    indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
+    indices <- Arguments$getIndices(indices, max=nbrOfCells);
     nbrOfCells <- length(indices);
   }
 
@@ -858,7 +854,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     indices <- 1:nbrOfCells; 
   } else if (identical(indices, "remaining")) {
   } else {
-    indices <- Arguments$getIndices(indices, range=c(1, nbrOfCells));
+    indices <- Arguments$getIndices(indices, max=nbrOfCells);
   }
 
   # Argument 'cellsPerChunk':

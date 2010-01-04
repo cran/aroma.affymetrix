@@ -40,10 +40,7 @@ setConstructorS3("ProbeLevelTransform3", function(dataSet=NULL, ..., unitsToFit=
 
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet")) {
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
-                                                          class(dataSet)[1]);
-    }
+    dataSet <- Arguments$getInstanceOf(dataSet, "AffymetrixCelSet");
 
     # Argument 'typesToUpdate':
     if (!is.null(typesToUpdate)) {
@@ -61,7 +58,7 @@ setConstructorS3("ProbeLevelTransform3", function(dataSet=NULL, ..., unitsToFit=
     } else {
       df <- getFile(dataSet, 1);
       nbrOfCells <- nbrOfCells(df);
-      unitsToUpdate <- Arguments$getIndices(unitsToUpdate, range=c(1, nbrOfCells));
+      unitsToUpdate <- Arguments$getIndices(unitsToUpdate, max=nbrOfCells);
       unitsToUpdate <- unique(unitsToUpdate);
       unitsToUpdate <- sort(unitsToUpdate);
     }
@@ -82,7 +79,7 @@ setConstructorS3("ProbeLevelTransform3", function(dataSet=NULL, ..., unitsToFit=
     } else {
       df <- getFile(dataSet, 1);
       nbrOfCells <- nbrOfCells(df);
-      unitsToFit <- Arguments$getIndices(unitsToFit, range=c(1, nbrOfCells));
+      unitsToFit <- Arguments$getIndices(unitsToFit, max=nbrOfCells);
       unitsToFit <- unique(unitsToFit);
       unitsToFit <- sort(unitsToFit);
     }
@@ -184,7 +181,7 @@ setMethodS3("getCellsToInternal", "ProbeLevelTransform3", function(this, units, 
 
   verbose && cat(verbose, "Dataset class:");
   verbose && cat(verbose, class(dataSet)[1]);
-  verbose && cat(verbose, "chipType: ", chipType);
+  verbose && cat(verbose, "Chip type: ", chipType);
   verbose && cat(verbose, "Units:");
   verbose && str(verbose, units);
 
@@ -367,11 +364,8 @@ setMethodS3("writeSignals", "ProbeLevelTransform3", function(this, pathname, cel
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Argument 'df':
-  if (!inherits(templateFile, "AffymetrixCelFile")) {
-    throw("Argument 'templateFile' is not an AffymetrixCelFile: ", 
-                                                   class(templateFile)[1]);
-  }
+  # Argument 'templateFile':
+  templateFile <- Arguments$getInstanceOf(templateFile, "AffymetrixCelFile");
 
   # Argument 'cells':
   if (is.null(cells)) {

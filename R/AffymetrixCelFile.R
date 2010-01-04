@@ -65,8 +65,6 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this;
 })
 
-
-
 setMethodS3("clearCache", "AffymetrixCelFile", function(this, ...) {
   # Clear all cached values.
   # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
@@ -302,10 +300,7 @@ setMethodS3("getUnitTypesFile", "AffymetrixCelFile", function(this, ...) {
 setMethodS3("setCdf", "AffymetrixCelFile", function(this, cdf, ..., .checkArgs=TRUE) {
   if (.checkArgs) {
     # Argument 'cdf':
-    if (!inherits(cdf, "AffymetrixCdfFile")) {
-      throw("Argument 'cdf' is not an AffymetrixCdfFile object: ", 
-                                                                 class(cdf)[1]);
-    }
+    cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
   
     # Assure that the CDF is compatible with the CEL file
     if (nbrOfCells(cdf) != nbrOfCells(this)) {
@@ -793,7 +788,7 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
   nbrOfCells <- nbrOfCells(getCdf(this));
   if (is.null(indices)) {
   } else {
-    indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells), disallow="NaN");
+    indices <- Arguments$getIndices(indices, max=nbrOfCells, disallow="NaN");
     nbrOfCells <- length(indices);
   }
 

@@ -51,9 +51,7 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "SnpChipEffectSet"))
-      throw("Argument 'dataSet' is not an SnpChipEffectSet object: ", 
-                                                        class(dataSet)[1]);
+    dataSets <- Arguments$getInstanceOf(dataSet, "SnpChipEffectSet");
   }
 
   # Argument 'target':
@@ -89,8 +87,7 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
     extraTags <- c(extraTags, subsetToFit=subsetToFit);
   } else {
     unf <- getUnitNamesFile(dataSet);
-    subsetToFit <- Arguments$getIndices(subsetToFit, 
-                                        range=c(1, nbrOfUnits(unf)));
+    subsetToFit <- Arguments$getIndices(subsetToFit, max=nbrOfUnits(unf));
     subsetToFit <- unique(subsetToFit);
     subsetToFit <- sort(subsetToFit);
   }
@@ -359,7 +356,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
   units <- sort(units);
 
   # Assert correctness
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits));
+  units <- Arguments$getIndices(units, max=nbrOfUnits);
 
   # Cache
   this$.units <- units;
