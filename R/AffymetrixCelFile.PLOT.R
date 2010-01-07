@@ -106,16 +106,13 @@ setMethodS3("getAm", "AffymetrixCelFile", function(this, reference, indices=NULL
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Arguments 'reference':
-  if (!inherits(reference, "AffymetrixCelFile")) {
-    throw("Argument 'reference' is not of class AffymetrixCelFile: ", 
-                                                          class(reference)[1]);
-  }
+  reference <- Arguments$getInstanceOf(reference, "AffymetrixCelFile");
 
   # Argument 'indices':
   nbrOfCells <- nbrOfCells(this);
   if (is.null(indices)) {
   } else {
-    indices <- Arguments$getIndices(indices, range=c(1,nbrOfCells));
+    indices <- Arguments$getIndices(indices, max=nbrOfCells);
   }
 
 

@@ -5,10 +5,7 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
   # Argument 'dataSet':
   isMappingChipType <- FALSE;
   if (!is.null(dataSet)) {
-    className <- "SnpChipEffectSet";
-    if (!inherits(dataSet, className))
-      throw("Argument 'dataSet' is not an ", className, ": ",
-                                                       class(dataSet)[1]);
+    dataSet <- Arguments$getInstanceOf(dataSet, "SnpChipEffectSet");
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Sanity check
@@ -311,7 +308,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   doRemaining <- FALSE;
   if (is.null(units)) {
   } else if (is.numeric(units)) {
-    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+    units <- Arguments$getIndices(units, max=nbrOfUnits(cdf));
   } else if (identical(units, "remaining")) {
     doRemaining <- TRUE;
   } else {

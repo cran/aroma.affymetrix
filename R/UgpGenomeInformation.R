@@ -145,9 +145,7 @@ setMethodS3("nbrOfUnits", "UgpGenomeInformation", function(this, ...) {
 
 setMethodS3("isCompatibleWithCdf", "UgpGenomeInformation", function(this, cdf, ...) {
   # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
-  }
+  cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
 
   res <- FALSE;
 
@@ -193,7 +191,7 @@ setMethodS3("readDataFrame", "UgpGenomeInformation", function(this, units=NULL, 
       units <- 1:nrow;
     }
   }
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(ugp)));
+  units <- Arguments$getIndices(units, max=nbrOfUnits(ugp));
 
 
   verbose && enter(verbose, "Reading ", length(units), " units");

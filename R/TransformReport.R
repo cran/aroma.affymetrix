@@ -27,15 +27,8 @@ setConstructorS3("TransformReport", function(inSet=NULL, outSet=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'inSet':
   if (!is.null(inSet)) {
-    if (!inherits(inSet, "AffymetrixCelSet")) {
-      throw("Argument 'inSet' is not an AffymetrixCelSet object: ", 
-                                                            class(inSet)[1]);
-    }
-
-    if (!inherits(outSet, "AffymetrixCelSet")) {
-      throw("Argument 'outSet' is not an AffymetrixCelSet object: ", 
-                                                           class(outSet)[1]);
-    }
+    inSet <- Arguments$getInstanceOf(inSet, "AffymetrixCelSet");
+    outSet <- Arguments$getInstanceOf(outSet, "AffymetrixCelSet");
 
     # Check for compatibility
 #    if (!equals(getCdf(inSet), getCdf(outSet))) {
@@ -365,7 +358,7 @@ setMethodS3("getYY", "TransformReport", function(this, array, transform=NULL, su
     indices <- seq(from=1, to=nbrOfCells(cdf), length=subset*nbrOfCells(cdf));
     indices <- as.integer(indices);
   } else if (length(subset) > 1) {
-    indices <- Arguments$getIndices(subset, range=c(1, nbrOfCells(cdf)));
+    indices <- Arguments$getIndices(subset, max=nbrOfCells(cdf));
   } else {
     indices <- subset;
   }

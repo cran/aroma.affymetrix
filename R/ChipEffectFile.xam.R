@@ -39,8 +39,10 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
   # Argument 'other':
-  if (!inherits(other, "ChipEffectFile")) {
-    throw("Argument 'other' is not an ChipEffectFile: ", class(other)[1]);
+  if (is.null(other)) {
+    # Do not calculate ratios relative to a reference
+  } else {
+    other <- Arguments$getInstanceOf(other, "ChipEffectFile");
   }
   
   # Argument 'units':
@@ -49,7 +51,7 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   } else if (isUnitGroupCellMap(units)) {
     ugcMap <- units;
   } else {
-    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+    units <- Arguments$getIndices(units, max=nbrOfUnits(cdf));
   }
   
   # Argument 'verbose':
@@ -93,27 +95,39 @@ setMethodS3("getAM", "ChipEffectFile", function(this, other, units=NULL, ..., ve
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get thetas from the other
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Retrieving other thetas");
-
-  # Workaround for now (just in case). /HB 2006-09-26 TODO
-  if (inherits(other, "SnpChipEffectFile")) {
-    other$mergeStrands <- this$mergeStrands;
-    if (inherits(other, "CnChipEffectFile")) {
-      other$combineAlleles <- this$combineAlleles;
+  if (!is.null(other)) {
+    verbose && enter(verbose, "Retrieving other thetas");
+  
+    # Workaround for now (just in case). /HB 2006-09-26 TODO
+    if (inherits(other, "SnpChipEffectFile")) {
+      other$mergeStrands <- this$mergeStrands;
+      if (inherits(other, "CnChipEffectFile")) {
+        other$combineAlleles <- this$combineAlleles;
+      }
     }
+  
+    # Get the other theta estimates
+    thetaR <- getDataFlat(other, units=ugcMap, fields="theta", 
+                                            verbose=less(verbose))[,"theta"];
+    stopifnot(identical(length(thetaR), nTheta));
+    verbose && exit(verbose);
+  } # if (!is.null(other))
+
+  # Calculate raw copy numbers relative to reference?
+  # AD HOC /HB 2009-11-22 (get[X]AM() should be dropped in the future)
+  if (is.null(other)) {
+    M <- theta;
+    A <- theta;
+  } else {
+    M <- theta / thetaR;
+    A <- theta * thetaR;
   }
 
-  # Get the other theta estimates
-  thetaRef <- getDataFlat(other, units=ugcMap, fields="theta", 
-                                          verbose=less(verbose))[,"theta"];
-  stopifnot(identical(length(thetaRef), nTheta));
-  verbose && exit(verbose);
-
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Calculate raw copy numbers relative to the other
+  # Log2 scale
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  M <- log(theta/thetaRef, base=2);
-  A <- log(theta*thetaRef, base=2)/2;
+  M <- log(M, base=2);
+  A <- log(A, base=2)/2;
   stopifnot(identical(length(M), nTheta));
 
 
@@ -172,8 +186,10 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'other':
-  if (!inherits(other, "ChipEffectFile")) {
-    throw("Argument 'other' is not an ChipEffectFile: ", class(other)[1]);
+  if (is.null(other)) {
+    # Do not calculate ratios relative to a reference
+  } else {
+    other <- Arguments$getInstanceOf(other, "ChipEffectFile");
   }
 
   # Argument 'chromosome':
@@ -243,6 +259,8 @@ setMethodS3("getXAM", "ChipEffectFile", function(this, other, chromosome, units=
 
 ############################################################################
 # HISTORY:
+# 2009-11-22
+# o Now get[X]AM() accepts other=NULL.
 # 2007-03-15
 # o Replaced "SNPs" with "units" in error messages.
 # 2007-01-16

@@ -193,6 +193,17 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
 # @keyword programming
 #*/###########################################################################
 setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'chipType':
+  if (is.null(chipType)) {
+    # Nothing to do, e.g. may be called via findCdf()
+    return(NULL);
+  }
+  chipType <- Arguments$getCharacter(chipType);
+
+
   args <- list(pattern=pattern);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -224,7 +235,6 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ta
 
     return(pathname);
   }
-
 
   # Create the fullname
   fullname <- paste(c(chipType, tags), collapse=",");
@@ -1396,9 +1406,7 @@ setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'gi':
   if (!is.null(gi)) {
-    if (!inherits(gi, "GenomeInformation")) {
-      throw("Argument 'gi' is not a GenomeInformation object:", class(gi)[1]);
-    }
+    gi <- Arguments$getInstanceOf(gi, "GenomeInformation");
   }
 
 
@@ -1482,9 +1490,7 @@ setMethodS3("setSnpInformation", "AffymetrixCdfFile", function(this, si=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'si':
   if (!is.null(si)) {
-    if (!inherits(si, "SnpInformation")) {
-      throw("Argument 'si' is not a SnpInformation object:", class(si)[1]);
-    }
+    si <- Arguments$getInstanceOf(si, "SnpInformation");
   }
 
 
@@ -1554,7 +1560,7 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
     }
   } else {
     # Validate unit indices
-    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
+    units <- Arguments$getIndices(units, max=nbrOfUnits(this));
   }
 
   units;
@@ -1563,6 +1569,11 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2010-01-03
+# o BUG FIX: After loading aroma.affymetrix, findCdf() would give "Error in
+#   if (regexpr(pattern, chipType) != -1) { : argument is of length zero",
+#   because AffymetrixCdfFile$findByChipType(chipType=NULL) was not valid.
+#   Now the latter returns NULL without complaining.
 # 2009-07-08
 # o Added getUnitTypesFile() for AffymetrixCdfFile.
 # o Now AffymetrixCdfFile implements also the UnitTypesFile interface.

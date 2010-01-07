@@ -65,9 +65,7 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUfcFile", function(this, at
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'atf':
-  if (!inherits(atf, "AffymetrixTabularFile")) {
-    throw("Argument 'atf' is not an AffymetrixTabularFile: ", class(atf)[1]);
-  }
+  atf <- Arguments$getInstanceOf(atf, "AffymetrixTabularFile");
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -210,7 +208,7 @@ setMethodS3("getOrderedFragmentPairMap", "AromaUfcFile", function(static, values
 
 setMethodS3("getOrderedFragmentPairs", "AromaUfcFile", function(this, units=NULL, asHex=FALSE, ...) {
   if (!is.null(units)) {
-    units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(this)));
+    units <- Arguments$getIndices(units, max=nbrOfUnits(this));
   }
 
   # Get equivalent-class map

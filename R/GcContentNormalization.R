@@ -35,10 +35,7 @@ setConstructorS3("GcContentNormalization", function(dataSet=NULL, ..., targetFun
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    className <- "CnChipEffectSet";
-    if (!inherits(dataSet, className))
-      throw("Argument 'dataSet' is not an ", className, " object: ", 
-                                                          class(dataSet)[1]);
+    dataSet <- Arguments$getInstanceOf(dataSet, "CnChipEffectSet");
 
     if (dataSet$combineAlleles != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
@@ -118,7 +115,7 @@ setMethodS3("getGcContent", "GcContentNormalization", function(this, units=NULL,
 
   # Argument 'units':
   cdf <- getCdf(this);
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits));
+  units <- Arguments$getIndices(units, max=nbrOfUnits);
 
 
   verbose && enter(verbose, "Retrieving GC content");
@@ -198,7 +195,7 @@ setMethodS3("getSubsetToFit", "GcContentNormalization", function(this, force=FAL
   units <- sort(units);
 
   # Assert correctness
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  units <- Arguments$getIndices(units, max=nbrOfUnits(cdf));
 
   # Cache
   this$.units <- units;

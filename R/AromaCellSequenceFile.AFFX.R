@@ -4,9 +4,7 @@
 
 setMethodS3("allocateFromCdf", "AromaCellSequenceFile", function(static, cdf, path=getPath(cdf), tags="*", ...) {
   # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
-  }
+  cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
 
   # Argument 'tags':
   tags <- strsplit(tags, split=",", fixed=TRUE)[[1]];
@@ -62,7 +60,7 @@ setMethodS3("importFromAffymetrixProbeTabFile", "AromaCellSequenceFile", functio
   if (is.null(rows)) {
     rows <- 1:nbrOfCells;
   } else {
-    rows <- Arguments$getIndices(rows, range=c(1,nbrOfCells));
+    rows <- Arguments$getIndices(rows, max=nbrOfCells);
     rows <- sort(unique(rows));
   }
 
@@ -246,9 +244,7 @@ setMethodS3("inferMmFromPm", "AromaCellSequenceFile", function(this, cdf, units=
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'cdf':
-  if (!inherits(cdf, "AffymetrixCdfFile")) {
-    throw("Argument 'cdf' is not an AffymetrixCdfFile: ", class(cdf)[1]);
-  }
+  cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
 
   chipType <- getChipType(this, fullname=FALSE);
   if (getChipType(cdf, fullname=FALSE) != chipType) {
@@ -276,7 +272,7 @@ setMethodS3("inferMmFromPm", "AromaCellSequenceFile", function(this, cdf, units=
   if (is.null(units)) {
     units <- seq(length=nbrOfUnits(cdf));
   } else {
-    units <- Arguments$getIndices(units, range=c(1,nbrOfUnits(cdf)));
+    units <- Arguments$getIndices(units, max=nbrOfUnits(cdf));
   }
 
   CHUNK.SIZE <- as.integer(ram*100e3);

@@ -51,8 +51,7 @@ setConstructorS3("FragmentEquivalentClassNormalization", function(dataSet=NULL, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "CnChipEffectSet"))
-      throw("Argument 'dataSet' is not an CnChipEffectSet object: ", class(dataSet));
+    dataSet <- Arguments$getInstanceOf(dataSet, "CnChipEffectSet");
 
     if (dataSet$combineAlleles != TRUE) {
       throw("Currently only total copy-number chip effects can be normalized, i.e. 'combineAlleles' must be TRUE");
@@ -84,8 +83,7 @@ setConstructorS3("FragmentEquivalentClassNormalization", function(dataSet=NULL, 
     extraTags <- c(extraTags, subsetToFit=subsetToFit);
   } else {
     cdf <- getCdf(dataSet);
-    subsetToFit <- Arguments$getIndices(subsetToFit, 
-                                        range=c(1, nbrOfUnits(cdf)));
+    subsetToFit <- Arguments$getIndices(subsetToFit, max=nbrOfUnits(cdf));
     subsetToFit <- unique(subsetToFit);
     subsetToFit <- sort(subsetToFit);
   }
@@ -333,7 +331,7 @@ setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(t
   units <- sort(units);
 
   # Assert correctness
-  units <- Arguments$getIndices(units, range=c(1, nbrOfUnits(cdf)));
+  units <- Arguments$getIndices(units, max=nbrOfUnits(cdf));
 
   # Cache
   this$.units <- units;

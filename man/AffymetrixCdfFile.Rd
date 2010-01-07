@@ -97,7 +97,7 @@ getUnitNames, indexOf, nbrOfUnits
 getUnitTypes, nbrOfUnits
 
  \bold{Methods inherited from UnitAnnotationDataFile}:\cr
-byChipType, getAromaUgpFile, getChipType, getPlatform, nbrOfUnits
+byChipType, getAromaUflFile, getAromaUgpFile, getChipType, getPlatform, nbrOfUnits
 
  \bold{Methods inherited from AromaPlatformInterface}:\cr
 getAromaPlatform, getPlatform, getUnitAnnotationDataFile, getUnitNamesFile, getUnitTypesFile
@@ -106,7 +106,7 @@ getAromaPlatform, getPlatform, getUnitAnnotationDataFile, getUnitNamesFile, getU
 byChipType, byName, findByChipType, fromFile, getChipType, getHeader, getPlatform
 
  \bold{Methods inherited from AromaMicroarrayDataFile}:\cr
-getAttributeXY, getChipType, getPlatform, getPloidy, hasAttributeXY, setAttributesByTags, setAttributeXY
+getAttributeXY, getChipType, getPlatform, getPloidy, getXAM, hasAttributeXY, isAverageFile, setAttributesByTags, setAttributeXY
 
  \bold{Methods inherited from GenericDataFile}:\cr
 compareChecksum, copyTo, equals, fromFile, getAlias, getAttribute, getAttributes, getChecksum, getCreatedOn, getDefaultFullName, getExtension, getExtensionPattern, getFilename, getFilenameExtension, getFileSize, getFileType, getLastAccessedOn, getLastModifiedOn, getOutputExtension, getPath, getPathname, gunzip, gzip, hasBeenModified, isFile, readChecksum, renameTo, renameToUpperCaseExt, setAlias, setAttribute, setAttributes, setAttributesBy, setAttributesByTags, setExtensionPattern, testAttributes, validateChecksum, writeChecksum

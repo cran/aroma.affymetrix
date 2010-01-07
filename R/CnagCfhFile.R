@@ -236,10 +236,7 @@ setMethodS3("getCdf", "CnagCfhFile", function(this, ...) {
 setMethodS3("setCdf", "CnagCfhFile", function(this, cdf, ..., .checkArgs=TRUE) {
   if (.checkArgs) {
     # Argument 'cdf':
-    if (!inherits(cdf, "AffymetrixCdfFile")) {
-      throw("Argument 'cdf' is not an AffymetrixCdfFile object: ", 
-                                                                 class(cdf)[1]);
-    }
+    cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
   
     # Assure that the CDF is compatible with the CEL file
 #    if (nbrOfCells(cdf) != nbrOfCells(this)) {
@@ -410,6 +407,7 @@ setMethodS3("readUnits", "CnagCfhFile", function(this, units=NULL, ..., verbose=
   # Argument 'units':
   cdf <- getCdf(this);
   if (!is.null(units)) {
+    # A zero-offset index? /HB 2010-01-01
     units <- Arguments$getIndices(units, range=c(0, nbrOfUnits(cdf)));
   }
 

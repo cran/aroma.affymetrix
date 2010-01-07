@@ -1,7 +1,7 @@
 setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTypes=NULL, arrays=NULL, chromosomes=NULL, FUN, order=c("cca", "cac"), ..., verbose=FALSE) {
   allChipTypes <- getChipTypes(this);
   allChromosomes <- getChromosomes(this);
-  allArrays <- getArrays(this);
+  allArrays <- getNames(this);
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -10,8 +10,7 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
   if (is.null(chipTypes)) {
     chipTypes <- allChipTypes;
   } else if (is.numeric(chipTypes)) {
-    chipTypes <- Arguments$getIndices(chipTypes, 
-                                         range=c(1, length(allChipTypes)));
+    chipTypes <- Arguments$getIndices(chipTypes, max=length(allChipTypes));
     chipTypes <- allChipTypes[chipTypes];
   } else {
     if (!all(chipTypes %in% allChipTypes)) {
@@ -24,8 +23,7 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
   if (is.null(chromosomes)) {
     chromosomes <- allChromosomes;
   } else if (is.numeric(chromosomes)) {
-    chromosomes <- Arguments$getIndices(chromosomes, 
-                                       range=c(1, length(allChromosomes)));
+    chromosomes <- Arguments$getIndices(chromosomes, max=length(allChromosomes));
     chromosomes <- allChromosomes[chromosomes];
   } else {
     if (!all(chromosomes %in% allChromosomes)) {
@@ -46,8 +44,7 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
     arrayNames <- arrays;
     arrays <- match(arrayNames, allArrays);
   } else {
-    arrays <- Arguments$getIndices(arrays, 
-                                       range=c(1, length(allArrays)));
+    arrays <- Arguments$getIndices(arrays, max=length(allArrays));
     arrayNames <- allArrays[arrays];
   }
 
@@ -82,10 +79,10 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
   verbose && enter(verbose, "Extract chip types");
   # Extract chip types of interest
   if (identical(chipTypes, getChipTypes(cesTuple))) {
-    cesTuple <- newInstance(cesTuple, getListOfSets(cesTuple)[chipTypes]);
+    cesTuple <- newInstance(cesTuple, getSets(cesTuple)[chipTypes]);
   }
   if (identical(chipTypes, getChipTypes(refTuple))) {
-    refTuple <- newInstance(refTuple, getListOfSets(refTuple)[chipTypes]);
+    refTuple <- newInstance(refTuple, getSets(refTuple)[chipTypes]);
   }
   verbose && exit(verbose);
 
@@ -114,7 +111,7 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
   }
   rm(arrayTable);
 
-  cesSets <- getListOfSets(cesTuple);
+  cesSets <- getSets(cesTuple);
   nbrOfChipTypes <- nbrOfChipTypes(cesTuple);
   ceFiles <- vector("list", nbrOfChipTypes);
   names(ceFiles) <- chipTypes;
@@ -161,8 +158,8 @@ setMethodS3("applyAnyOrder", "CopyNumberChromosomalModel", function(this, chipTy
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Calculating raw CNs
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  cesSets <- getListOfSets(cesTuple);
-  refSets <- getListOfSets(refTuple);
+  cesSets <- getSets(cesTuple);
+  refSets <- getSets(refTuple);
 
   if (order == "cca") {
     values <- applyCCF0(this, cesSets=cesSets, refSets=refSets, 

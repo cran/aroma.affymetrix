@@ -42,11 +42,7 @@ setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., target
 
   # Argument 'dataSet':
   if (!is.null(dataSet)) {
-    if (!inherits(dataSet, "AffymetrixCelSet")) {
-      throw("Argument 'dataSet' is not an AffymetrixCelSet object: ", 
-                                                          class(dataSet)[1]);
-    }
-
+    dataSet <- Arguments$getInstanceOf(dataSet, "AffymetrixCelSet");
 
     cdf <- getCdf(dataSet);
 
@@ -64,8 +60,7 @@ setConstructorS3("ReseqCrosstalkCalibration", function(dataSet=NULL, ..., target
       }
       extraTags <- c(extraTags, subsetToAvg=subsetToAvg);
     } else {
-      subsetToAvg <- Arguments$getIndices(subsetToAvg, 
-                                          range=c(1, nbrOfCells(cdf)));
+      subsetToAvg <- Arguments$getIndices(subsetToAvg, max=nbrOfCells(cdf));
       subsetToAvg <- unique(subsetToAvg);
       subsetToAvg <- sort(subsetToAvg);
     }
