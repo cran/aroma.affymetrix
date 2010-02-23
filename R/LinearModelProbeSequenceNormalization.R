@@ -80,7 +80,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
 
   # Expand 'cells'?
   if (is.null(cells)) {
-    cells <- 1:nbrOfCells(acs);
+    cells <- seq(length=nbrOfCells(acs));
   }
 
   verbose && enter(verbose, "Retrieving signal transform");
@@ -126,19 +126,30 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
   verbose && cat(verbose, "Signals to be fitted:");
   verbose && str(verbose, y);
 
+  # Garbage collect
+  gc <- gc();
+  verbose && print(verbose, gc);
+
   verbose && exit(verbose);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Incrementally build up the normal equations
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Calculating number of cells per chunk");
+  verbose && cat(verbose, "Cells:");
+  verbose && str(verbose, cells);
   nbrOfCells <- length(cells);
   verbose && cat(verbose, "Number of cells: ", nbrOfCells); 
-  verbose && str(verbose, cells);
+
+  verbose && cat(verbose, "RAM scale factor: ", ram);
 
   cellsPerChunk <- ram*1e6;
-  nbrOfChunks <- ceiling(length(cells) / cellsPerChunk);
-  verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
+  verbose && cat(verbose, "Cells per chunk: ", cellsPerChunk);
+
+  nbrOfChunks <- ceiling(nbrOfCells / cellsPerChunk);
+  verbose && cat(verbose, "Number of chunks: ", nbrOfChunks);
+  verbose && exit(verbose);
 
   xtx <- 0;
   xty <- 0;
@@ -160,6 +171,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
     # Getting design matrix for subset
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Getting design matrix");
+    # cache=TRUE => Cache to file.
     res <- getDesignMatrix(this, cells=cells[cc], cache=TRUE, 
                                                  verbose=less(verbose, 5));
     X <- res$X;
@@ -199,7 +211,10 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
     rm(keep);
     verbose && exit(verbose);
 
-  
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Calculating cross products X'X and X'y
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -207,18 +222,27 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
     xtxChunk <- crossprod(X);  
     verbose && str(verbose, xtxChunk);
     xtx <- xtx + xtxChunk;
+    rm(xtxChunk);
     verbose && exit(verbose);
+
   
     verbose && enter(verbose, "Calculating cross product X'y");   
     xtyChunk <- crossprod(X, yCC);
     verbose && str(verbose, xtyChunk);
     xty <- xty + xtyChunk;
+    rm(X, yCC, xtyChunk);
     verbose && exit(verbose);
 
+    # Clean up
+   
     # Next chunk
     idxs <- idxs[-head]; 
     count <- count + 1;
- 
+
+    # Garbage collect
+    gc <- gc();
+    verbose && print(verbose, gc);
+
     verbose && exit(verbose);
   } # while (length(idxs) > 0);
 
@@ -226,9 +250,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
   verbose && str(verbose, xtx);
   verbose && str(verbose, xty);
 
-#  rm(X);
-
-  res <- list(xtx=xtx, xty=xty, n0=n0, n1=n1, cells=cells, map=map, B=B, factors=factors, X=X, y=y);
+  res <- list(xtx=xtx, xty=xty, n0=n0, n1=n1, cells=cells, map=map, B=B, factors=factors, y=y);
   rm(xtx, xty, cells);
 
   res;
@@ -308,6 +330,7 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
   coefs <- as.vector(coefs);
   verbose && cat(verbose, "Coeffients:")
   verbose && print(verbose, coefs);
+  rm(xtx, xty);
   verbose && exit(verbose);
 
 
@@ -320,7 +343,7 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
   }
   df <- length(coefs)/length(factors);
   verbose && cat(verbose, "Degrees of freedom: ", df);
-  idxs <- 1:df;
+  idxs <- seq(length=df);
   for (kk in seq(along=factors)) {
     key <- names(factors)[kk];
     if (is.null(key)) {
@@ -328,7 +351,8 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
     }
     params[[key]] <- coefs[idxs];
     coefs <- coefs[-idxs];
-  }
+  } # for (kk ...)
+
   fit <- list(params=params, map=map, B=B, algorithm="solve");
   class(fit) <- "ProbePositionEffects";
   verbose && exit(verbose);
@@ -378,6 +402,8 @@ setMethodS3("predictOne", "LinearModelProbeSequenceNormalization", function(this
   verbose && cat(verbose, "Model: ", model);
   verbose && exit(verbose);
 
+  rm(params);
+
   nbrOfCells <- length(cells);
 
 
@@ -426,6 +452,9 @@ setMethodS3("getSignalTransform", "LinearModelProbeSequenceNormalization", funct
 
 ############################################################################
 # HISTORY:
+# 2010-02-16
+# o MEMORY OPTIMIZATION: Now getNormalEquations() no longer return (stray)
+#   design matrix 'X' of the last processed chunk.
 # 2008-12-03
 # o SPEED UP: Fixed broken memoization of getNormalEquations() and fitOne().
 # o SPEED UP: Now predictOne() accepts optional 'seqs'.

@@ -1,6 +1,71 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.5.0 [2010-02-22]
+o Submitted to CRAN.  No changes since v1.4.9. 
+o Package passes R CMD check on R v2.10.1 patch and R v2.11.0 devel.
+o Package passes all redundancy tests.
+
+
+Version: 1.4.9 [2010-02-22]
+o Added AromaCellCpgFile.
+o Added test script for AromaCellCpgFile and AromaCellPostionFile.
+o BUG FIX: The settings in 'aromaSettings' loaded by aroma.core was
+  overridden by defaults settings of aroma.affymetrix, even if they 
+  already existed.
+
+
+Version: 1.4.8 [2010-02-21]
+o ROBUSTNESS: Now updateUnits() of ChipEffectSet updates the files in
+  lexicographic order.  Before there was a risk that this was not done
+  if fullname translators are changing the lexicographic ordering.
+o MEMORY OPTIMIZATION: Now updateUnits() of ChipEffectSet cleans out the
+  temporary data object extracted for each chip-effect file written.
+  It also calls the garbage collector after each file written.
+o Added verbose output to updateUnits() of ProbeAffinityFile.
+
+
+Version: 1.4.7 [2010-02-16]
+o MEMORY OPTIMIZATION: Now process() of AllelicCrosstalkCalibration 
+  clears the in-memory cache when finished.
+o MEMORY OPTIMIZATION: Now AbstractProbeSequenceNormalization classes
+  cleans out more unneeded objects.
+o MEMORY OPTIMIZATION: Now doCRMAv2() removes as much as possible.
+o BUG FIX: readDataUnitChromosomePosition() of AffymetrixNetAffxCsvFile
+  failed to map chromosome 'MT' to 25.  This bug was introduced
+  in aroma.affymetrix v1.0.7.
+
+
+Version: 1.4.6 [2010-02-13]
+o Added an internal version of doCRMAv2().
+o BUG FIX: exportTotalAndFracB() of SnpChipEffectSet returned all arrays
+  in the output data set directory and not only the ones part of the
+  input data set.
+
+
+Version: 1.4.5 [2010-02-10]
+o Added redundancy test for calculating bias-corrected sex-chromosome
+  copy numbers.
+
+
+Version: 1.4.4 [2010-02-08]
+o Added appendVarArgs(boxplot.stats) so that one can pass argument
+  'show.names' to bxp() via plotRle().
+
+
+Version: 1.4.3 [2010-02-03]
+o Package passes R CMD check and all redundancy tests.
+
+
+Version: 1.4.2 [2010-02-02]
+o Updated to work with R.filesets v0.7.4 and aroma.core v1.4.4.
+
+
+Version: 1.4.1 [2010-01-06]
+o Now all binary files allocated have default NA values.  This is done
+  by an update in aroma.core v1.4.1.
+
+
 Version: 1.4.0 [2010-01-04]
 o BUG FIX: After loading aroma.affymetrix, findCdf() would give "Error in
   if (regexpr(pattern, chipType) != -1) { : argument is of length zero",
