@@ -1,6 +1,95 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.6.0 [2010-05-14]
+o Package submitted to CRAN.
+o Package pass system and redundancy tests.
+o Package pass R CMD check on R v2.11.0 and v2.12.0 devel.
+
+ 
+Version: 1.5.9 [2010-05-13]
+o SPEED UP: Now the constructor AllelicCrosstalkCalibration() is set to
+  recognize the Cytogenetics_Array chip type.  This avoids having to 
+  scan the CDF for unit types and check for SNPs, which is slow and not
+  really wanted for a constructor function.
+o ROBUSTNESS: Added a redundancy test of CRMA "v1.5" for the
+  Cytogenetics_Array chip type.
+o ROBUSTNESS: Now fromDataFile() of ChipEffectFile and FirmaFile, as
+  well as convertToUnique() of AffymetrixCelSet allocates/creates data
+  files atomically.  As elsewhere, this is done by first creating and
+  writing to a temporary file, which when complete is then renamed.  
+  This lowers the risk of generating incomplete files.
+o CLEAN UP/DEPRECATED: AffymetrixCelSet$createBlankSet() was removed, 
+  because it has not been used anywhere since 2007.
+o BUG FIX: convertToUnique() for AffymetrixCelSet would not recognize
+  Windows Shortcut links.
+
+
+Version: 1.5.8 [2010-05-09]
+o Made justSNPRMA(..., normalizeSNPsOnly="auto") for AffymetrixCelSet
+  the default.
+o Now all findUnitsTodo() for data sets checks the data file that 
+  comes last in a lexicographic ordering.  This is now consistent 
+  with how the summarization methods update the files.  Before it
+  used to be the one that is last in the data set.
+o Now all updateUnits() for data sets updates the data files in
+  lexicographic order.
+o Now CrlmmModel(..., recalibrate=TRUE) is the default.
+o Now justSNPRMA(..., returnESet=TRUE) for AffymetrixCelSet 
+  returns an AlleleSet due to updates in oligo v1.12.0.
+o Added extractAlleleSet() to SnpChipEffectSet.  Replaces 
+  extractSnpQSet(), because the SnpQSet class was dropped
+  in oligo v1.12.0 and replaced by the AlleleSet class.
+o BUG FIX: fit() of CrlmmModel would not work with oligo v1.12.0 
+  and newer.
+o BUG FIX: getCallSet() and getCrlmmParametersSet() of CrlmmModel 
+  used non-existing verbose object 'log' instead of 'verbose'.
+
+
+Version: 1.5.7 [2010-04-22]
+o Added groupUnitsByDimension() to AffymetrixCdfFile.
+o ROBUSTNESS: Added redundancy tests for doCRMAv2() and 
+  writeDataFrame().
+o BUG FIX: doCRMAv1() for AffymetrixCelSet used undefined 'csN' 
+  internally instead of 'csC'.
+
+
+Version: 1.5.6 [2010-04-15]
+o BUG FIX: computeAffinities(..., verbose=FALSE) of AffymetrixCdfFile
+  would give throw "Error in reset(pb) : object 'pb' not found". 
+  Thanks Stephen ? at Mnemosyne BioSciences, Finland, for this report.
+
+
+Version: 1.5.5 [2010-04-07]
+o ROBUSTNESS: Added a test script for gcRMA background correction
+  on the MoEx-1_0-st-v1 chip type.
+
+
+Version: 1.5.4 [2010-04-06]
+o Added an internal version of doCRMAv1().
+o Added argument 'plm' to existing doCRMAv2().
+
+
+Version: 1.5.3 [2010-03-31]
+o Updated getProbeSequenceData() for AffymetrixCdfFile to recognize 
+  more NetAffx probe-tab files, e.g. MoEx-1_0-st-v1.probe.tab.
+o KNOWN ISSUES: getProbeSequenceData() for AffymetrixCdfFile requires
+  that the unit names in the probe-tab file match the ones in the
+  CDF.  This may cause issues if custom CDFs with custom unit names
+  are used.  This is another reason why we should move away from 
+  probe-tab files and instead use aroma binary cell sequence files.
+
+
+Version: 1.5.2 [2010-03-26]
+o Added argument 'defValue' to createFrom() for AffymetrixCelFile
+  so that one can specify the default value for cleared elements.
+
+
+Version: 1.5.1 [2010-03-14]
+o BUG FIX: allocateFromCdf() of AromaCellCpgFile, AromaCellPositionFile,
+  and AromaCellMatchScoreFile would drop all but the first tag.
+
+
 Version: 1.5.0 [2010-02-22]
 o Submitted to CRAN.  No changes since v1.4.9. 
 o Package passes R CMD check on R v2.10.1 patch and R v2.11.0 devel.
@@ -11,7 +100,7 @@ Version: 1.4.9 [2010-02-22]
 o Added AromaCellCpgFile.
 o Added test script for AromaCellCpgFile and AromaCellPostionFile.
 o BUG FIX: The settings in 'aromaSettings' loaded by aroma.core was
-  overridden by defaults settings of aroma.affymetrix, even if they 
+  overridden by default settings of aroma.affymetrix, even if they 
   already existed.
 
 
