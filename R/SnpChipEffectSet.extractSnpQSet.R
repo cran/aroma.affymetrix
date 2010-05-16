@@ -1,6 +1,13 @@
 setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, sortUnits=TRUE, transform=log2, ..., verbose=FALSE) {
   require("oligo") || throw("Package not loaded: oligo");
 
+  # Assert oligo version
+  pkg <- Package("oligo");
+  if (!isOlderThan(pkg, "1.12.0")) {
+    throw("extractSnpQSet() requires oligo v1.12.0 or older. Instead use extractAlleleSet(): ", getVersion(pkg));
+  }
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Sanity check
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -122,6 +129,8 @@ setMethodS3("extractSnpQSet", "SnpChipEffectSet", function(this, units=NULL, sor
 
 ############################################################################
 # HISTORY:
+# 2010-05-06
+# o extractSnpQSet() now asserts that oligo v1.12.0 or older is installed.
 # 2008-12-05
 # o Created.
 ############################################################################
