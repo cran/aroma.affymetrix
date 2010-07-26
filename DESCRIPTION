@@ -1,14 +1,14 @@
 Package: aroma.affymetrix
-Version: 1.6.0
-Date: 2010-05-14
+Version: 1.7.0
+Date: 2010-07-26
 Title: Analysis of large Affymetrix microarray data sets
-Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Ken Simpson
-        <ksimpson@wehi.edu.au>, Elizabeth Purdom
+Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Pierre Neuvial
+        <pierre@stat.berkeley.edu>, Elizabeth Purdom
         <epurdom@stat.berkeley.edu>, Mark Robinson
-        <mrobinson@wehi.edu.au>
+        <mrobinson@wehi.edu.au>, Ken Simpson <ksimpson@wehi.edu.au>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
-Depends: R (>= 2.9.0), R.utils (>= 1.4.0), R.filesets (>= 0.8.1),
-        aroma.core (>= 1.6.0), aroma.light (>= 1.16.0), aroma.apd (>=
+Depends: R (>= 2.9.0), R.utils (>= 1.4.3), R.filesets (>= 0.8.3),
+        aroma.core (>= 1.7.0), aroma.light (>= 1.16.0), aroma.apd (>=
         0.1.7), R.rsp (>= 0.3.6), affxparser (>= 1.16.0)
 Imports: MASS, methods, splines, matrixStats (>= 0.2.1)
 Suggests: RColorBrewer (>= 1.0-2), preprocessCore (>= 1.8.0), affyPLM
@@ -36,6 +36,6 @@ biocViews: ProprietaryPlatforms, ReportWriting, aCGH,
         GeneExpression, SNP, Transcription, Microarray, OneChannel,
         DataImport, DataRepresentation, GUI, Visualization,
         Preprocessing, QualityControl
-Packaged: 2010-05-14 07:25:35 UTC; hb
+Packaged: 2010-07-26 09:16:00 UTC; hb
 Repository: CRAN
-Date/Publication: 2010-05-16 16:15:08
+Date/Publication: 2010-07-26 11:49:11

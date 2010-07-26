@@ -20,14 +20,14 @@ colnames(pairs) <- c("normal", "tumor");
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setting up data set
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-cdf <- AffymetrixCdfFile$byName(chipType);
+cdf <- AffymetrixCdfFile$byChipType(chipType);
 csR <- AffymetrixCelSet$byName(dataSetName, cdf=cdf);
 print(csR);
 
 # Reorder arrays according to 'pairs' matrix
 csR <- extract(csR, indexOf(csR, pairs));
 
-acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2", tags="*,v2");
+acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2");
 print(acc);
 
 csC <- process(acc, verbose=log);
