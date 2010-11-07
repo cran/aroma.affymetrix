@@ -1,6 +1,46 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 1.8.0 [2010-11-07]
+o Committed to CRAN. No updates.
+
+
+Version: 1.7.4 [2010-11-04]
+o ROBUSTNESS: Bumping the required versions of the dependent package
+  in order to make sure we are not affected by old bugs.
+
+
+Version: 1.7.3 [2010-10-02]
+o Now doGCRMA() automagically makes sure that the default CDF is used
+  in the QuantileNormalization step, while use a custom CDF everywhere
+  else if set.  Added argument 'type' to doGCRMA() which is passed to 
+  QuantileNormalization().
+o GENERALIZATION: Now GcRmaBackgroundCorrection(..., type="affinities")
+  can process also chip types for which there are no MMs and for
+  which non-specific probes are explicitly specified.
+o GENERALIZATION: Now GcRmaBackgroundCorrection calculates gcRMA probe
+  affinites based on Aroma Cell Sequence (ACS) annotation files. 
+  For backward compatibility, it turns to Affymetrix probe-tab files
+  if an ACS file is not located.
+o ROBUSTNESS: Added more validation of the arguments passed to 
+  the constructor of GcRmaBackgroundCorrection and its internal 
+  functions.  Also added more verbose output during processing.
+o CORRECTION: The DESCRIPTION file suggested a package version that
+  did not exist.
+
+
+Version: 1.7.2 [2010-09-06]
+o ROBUSTNESS: Added extractAffyBatch() for ChipEffectSet that gives 
+  an informative error message explaining why it doesn't make sense 
+  to do so.
+
+
+Version: 1.7.1 [2010-08-14]
+o Added doGCRMA() for AffymetrixCelSet and data-set names.
+  doGCRMA() runs in bounded memory and replicates the results of
+  gcrma() in the gcrma package with great precision.
+
+
 Version: 1.7.0 [2010-07-26]
 o Committed to CRAN. No updates.
 

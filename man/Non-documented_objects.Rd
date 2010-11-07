@@ -1421,6 +1421,15 @@
 \alias{doASCRMAv2}
 \alias{doASCRMAv1.default}
 \alias{doASCRMAv2.default}
+\alias{doGCRMA}
+\alias{doGCRMA.AffymetrixCelSet}
+\alias{doGCRMA.character}
+\alias{extractAffyBatch.ChipEffectSet}
+\alias{computeAffinitiesByACS}
+\alias{computeAffinitiesByACS.AffymetrixCdfFile}
+\alias{getACSFile}
+\alias{getACSFile.AffymetrixCdfFile}
+\alias{getAromaCellSequenceFile.AffymetrixCdfFile}
 
 \description{
   This page contains aliases for all "non-documented" objects that
