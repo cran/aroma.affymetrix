@@ -1,4 +1,5 @@
-library("aroma.affymetrix")
+library("aroma.affymetrix");
+library("ACNE");
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 
@@ -45,7 +46,7 @@ csList <- csCList;
 cesCnList <- list();
 for (chipType in names(csList)) {
   cs <- csList[[chipType]];
-  plm <- RmaCnPlm(cs, mergeStrands=TRUE, combineAlleles=TRUE, shift=300);
+  plm <- NmfSnpPlm(cs, mergeStrands=TRUE);
   print(plm);
   fit(plm, verbose=log);
   ces <- getChipEffectSet(plm);
@@ -67,7 +68,6 @@ for (chipType in names(cesList)) {
   thetaList[[chipType]] <- theta;
 }
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Fragment-length normalization test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,28 +84,20 @@ for (chipType in names(csList)) {
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Raw copy numbers
+# Export total and fracB signals
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Emulate list of ChipEffectSet:s where some arrays on exists in
-# one of the sets
-for (kk in seq(along=cesNList)) {
-  ces <- cesNList[[kk]];
-  ces <- extract(ces, setdiff(seq(ces), length(ces)+1-kk));
-  cesNList[[kk]] <- ces;
-}
+dsTBList <- lapply(cesNList, FUN=function(cesN) {
+  exportTotalAndFracB(cesN, verbose=verbose);
+});
 
-
-cnm <- RawCopyNumberModel(cesNList);
-print(cnm);
-
-rawCNs <- extractRawCopyNumbers(cnm, array=1, chromosome=1, verbose=log);
+# Keep only the total CN data sets
+dsTList <-lapply(dsTBList, FUN=function(dsList) dsList$total);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Glad model test
+# Segmentation model test
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#seg <- GladModel(cesNList);
-seg <- CbsModel(cesNList);
+seg <- CbsModel(dsTList);
 print(seg);
 
 fit(seg, arrays=1, chromosomes=19, verbose=log);
