@@ -35,22 +35,73 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
 
 
   verbose && enter(verbose, "Getting CEL file to store baseline signals");
-  path <- getPath(this);
   key <- list(dataset=getFullName(this), samples=getNames(this));
   id <- digest2(key);
-
-  # Generate output pathname
   filename <- sprintf(".baseline,%s.CEL", id);
-  pathname <- Arguments$getWritablePathname(filename, path=path);
+
+
+  verbose && enter(verbose, "Searching for an existing file");
+
+  # Searching for the output file in multiple directories
+  path <- getPath(this);
+  paths <- c(path);
+
+  # Drop tags from root path?
+  if (getOption(aromaSettings, "devel/dropRootPathTags", FALSE)) {
+    path <- dropRootPathTags(path, depth=2, verbose=less(verbose, 5));
+    paths <- c(paths, path);
+    paths <- unique(paths);
+  }
+
+  verbose && cat(verbose, "Paths:");
+  verbose && print(verbose, paths);
+  verbose && cat(verbose, "Filename: ", filename);
+
+  pathname <- NULL;
+  for (kk in seq(along=paths)) {
+    path <- paths[kk];
+    verbose && enter(verbose, sprintf("Searching path #%d of %d", kk, length(paths)));
+
+    verbose && cat(verbose, "Path: ", path);
+    pathnameT <- Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
+    verbose && cat(verbose, "Pathname: ", pathnameT);
+    if (isFile(pathnameT)) {
+      pathname <- pathnameT;
+      verbose && cat(verbose, "Found an existing file.");
+      verbose && exit(verbose);
+      break;
+    }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+  verbose && cat(verbose, "Located pathname: ", pathname);
+
+  verbose && exit(verbose);
+
 
   # Get a template CEL file
   df <- getFile(this, 1);
 
-  verbose && enter(verbose, "Retrieving CEL file");
-  res <- createFrom(df, filename=pathname, path=NULL, methods="create",
+  if (isFile(pathname)) {
+    verbose && enter(verbose, "Loading existing data file");
+    res <- newInstance(df, pathname);
+    verbose && exit(verbose);
+  } else {
+    verbose && enter(verbose, "Allocating empty data file");    
+
+    path <- paths[length(paths)];
+    verbose && cat(verbose, "Path: ", path);
+    verbose && cat(verbose, "Filename: ", filename);
+    pathname <- Arguments$getWritablePathname(filename, path=path, mustNotExist=TRUE);
+
+    verbose && enter(verbose, "Retrieving CEL file");
+    res <- createFrom(df, filename=pathname, path=NULL, methods="create",
                          clear=TRUE, force=force, verbose=less(verbose));
-  verbose && print(verbose, res);
-  verbose && exit(verbose);
+    verbose && print(verbose, res);
+    verbose && exit(verbose);
+
+    verbose && exit(verbose);
+  } # if (isFile(pathname))
 
   rm(df);
   verbose && exit(verbose);
@@ -77,6 +128,12 @@ setMethodS3("getBaseline", "CnChipEffectSet", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2011-02-28
+# o Now getBaseline() first tries to locate an existing result file
+#   in multiple root paths.  If not found, it creates a new one.
+# 2011-02-24
+# o GENERALIZATION: Now getBaseline() for ChipEffectSet drops all tags
+#   from the output root path (if 'devel/dropRootPathTags' setting is TRUE).
 # 2007-08-09
 # o getBaseLine() of CnChipEffectSet now creates CEL files with upper-case
 #   filename extension "*.CEL", not "*.cel".  The reason for this is that

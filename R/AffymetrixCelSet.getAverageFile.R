@@ -155,12 +155,64 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
   }
 
   if (is.null(res)) {
-    verbose && enter(verbose, "Creating CEL file to store average signals");
-    verbose && cat(verbose, "Pathname: ", file.path(getPath(this), filename));
-    res <- createFrom(df, filename=filename, path=getPath(this), methods="create", clear=TRUE, verbose=less(verbose));
+    verbose && enter(verbose, "Obtaining an (existing or new) result file");
+
+    # Searching for the output file in multiple directories
+    path <- getPath(this);
+    paths <- c(path);
+
+    # Drop tags from root path?
+    if (getOption(aromaSettings, "devel/dropRootPathTags", FALSE)) {
+      path <- dropRootPathTags(path, depth=2, verbose=less(verbose, 5));
+      paths <- c(paths, path);
+      paths <- unique(paths);
+    }
+
+    verbose && cat(verbose, "Paths:");
+    verbose && print(verbose, paths);
+    verbose && cat(verbose, "Filename: ", filename);
+
+    pathname <- NULL;
+    for (kk in seq(along=paths)) {
+      path <- paths[kk];
+      verbose && enter(verbose, sprintf("Searching path #%d of %d", kk, length(paths)));
+
+      verbose && cat(verbose, "Path: ", path);
+      pathnameT <- Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
+      verbose && cat(verbose, "Pathname: ", pathnameT);
+      if (isFile(pathnameT)) {
+        pathname <- pathnameT;
+        verbose && cat(verbose, "Found an existing file.");
+        verbose && exit(verbose);
+        break;
+      }
+
+      verbose && exit(verbose);
+    } # for (kk ...)
+    verbose && cat(verbose, "Located pathname: ", pathname);
+
+
+    if (isFile(pathname)) {
+      verbose && enter(verbose, "Loading existing data file");
+      verbose && cat(verbose, "Pathname: ", pathname);
+      res <- newInstance(df, pathname);
+      verbose && exit(verbose);
+    } else { 
+      verbose && enter(verbose, "Creating CEL file to store average signals");
+      path <- paths[length(paths)];
+
+      verbose && cat(verbose, "Path: ", path);
+      verbose && cat(verbose, "Filename: ", filename);
+      pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
+      verbose && cat(verbose, "Pathname: ", pathname);
+
+      res <- createFrom(df, filename=pathname, path=NULL, methods="create", clear=TRUE, verbose=less(verbose));
+      verbose && exit(verbose);
+    } # if (isFile(pathname))
+ 
     verbose && exit(verbose);
     this$.averageFiles[[filename]] <- res;
-  }
+  } # if (is.null(res))
 
   verbose && print(verbose, res);
 
@@ -289,6 +341,12 @@ setMethodS3("getAverageFile", "AffymetrixCelSet", function(this, name=NULL, pref
 
 ############################################################################
 # HISTORY:
+# 2011-02-28
+# o Now getAverageFile() first tries to locate an existing result file
+#   in multiple root paths.  If not found, it creates a new one.
+# 2011-02-24
+# o GENERALIZATION: Now getAverageFile() for AffymetrixCelSet drops tags
+#   from the output root path (if 'devel/dropRootPathTags' setting is TRUE).
 # 2010-07-21
 # o CLEAN UP: Now getAverageFile() for AffymetrixCelSet no longer writes
 #   debug information to ${Rcache}/aroma.affymetrix/idChecks/.

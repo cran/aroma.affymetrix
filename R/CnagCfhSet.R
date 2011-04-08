@@ -168,10 +168,7 @@ setMethodS3("as.character", "CnagCfhSet", function(x, ...) {
   n <- nbrOfArrays(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
-  if (n >= 5)
-    names <- c(names[1:2], "...", names[n]);
-  names <- paste(names, collapse=", ");
-  s <- c(s, sprintf("Names: %s", names));
+  s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n));
   # Get CFH header timestamps
   ts <- getTimestamps(this);
   # Note: If ts <- range(ts) is used and the different timestamps uses
@@ -318,7 +315,7 @@ setMethodS3("setCdf", "CnagCfhSet", function(this, cdf, verbose=FALSE, ...) {
 })
 
 
-setMethodS3("findByName", "CnagCfhSet", function(static, ..., paths="cnagData/") {
+setMethodS3("findByName", "CnagCfhSet", function(static, ..., paths="cnagData(|,.*)/") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -461,13 +458,12 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
     # Scan for SAF files and apply them
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     verbose && enter(verbose, "Scanning for and applying sample annotation files");
-    sasPath <- "annotationData/samples/";
-    sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
+    sas <- SampleAnnotationSet$loadAll(verbose=less(verbose));
     if (nbrOfFiles(sas) == 0) {
-      verbose && cat(verbose, "No annotation files found.");
+      verbose && cat(verbose, "No sample annotation files found.");
     } else {
       verbose && print(verbose, sas);
-  #    setAttributesBy(this, sas);
+      setAttributesBy(this, sas);
     }
     # Store the SAFs for now.
     this$.sas <- sas;
@@ -880,14 +876,66 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
   if (is.null(this$.averageFiles))
     this$.averageFiles <- list();
   res <- this$.averageFiles[[filename]];
+
   if (is.null(res)) {
-    verbose && enter(verbose, "Creating CFH file to store average signals");
-    verbose && cat(verbose, "Pathname: ", file.path(getPath(this), filename));
-    res <- createFrom(df, filename=filename, path=getPath(this), 
+    verbose && enter(verbose, "Obtaining an (existing or new) result file");
+
+    # Searching for the output file in multiple directories
+    path <- getPath(this);
+    paths <- c(path);
+
+    # Drop tags from root path?
+    if (getOption(aromaSettings, "devel/dropRootPathTags", FALSE)) {
+      path <- dropRootPathTags(path, depth=2, verbose=less(verbose, 5));
+      paths <- c(paths, path);
+      paths <- unique(paths);
+    }
+
+    verbose && cat(verbose, "Paths:");
+    verbose && print(verbose, paths);
+    verbose && cat(verbose, "Filename: ", filename);
+
+    pathname <- NULL;
+    for (kk in seq(along=paths)) {
+      path <- paths[kk];
+      verbose && enter(verbose, sprintf("Searching path #%d of %d", kk, length(paths)));
+
+      verbose && cat(verbose, "Path: ", path);
+      pathnameT <- Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
+      verbose && cat(verbose, "Pathname: ", pathnameT);
+      if (isFile(pathnameT)) {
+        pathname <- pathnameT;
+        verbose && cat(verbose, "Found an existing file.");
+        verbose && exit(verbose);
+        break;
+      }
+
+      verbose && exit(verbose);
+    } # for (kk ...)
+    verbose && cat(verbose, "Located pathname: ", pathname);
+
+    verbose && exit(verbose); 
+
+    if (isFile(pathname)) {
+      verbose && enter(verbose, "Loading existing data file");
+      verbose && cat(verbose, "Pathname: ", pathname);
+      res <- newInstance(df, pathname);
+      verbose && exit(verbose);
+    } else { 
+      verbose && enter(verbose, "Creating CFH file to store average signals");
+      path <- paths[length(paths)];
+
+      verbose && cat(verbose, "Path: ", path);
+      verbose && cat(verbose, "Filename: ", filename);
+
+      res <- createFrom(df, filename=filename, path=path,
                         methods="create", clear=TRUE, verbose=less(verbose));
-    verbose && exit(verbose);
+
+      verbose && exit(verbose);
+    } # if (isFile(pathname))
+
     this$.averageFiles[[filename]] <- res;
-  }
+  } # if (is.null(res))
 
   verbose && print(verbose, res);
 
@@ -1053,6 +1101,16 @@ setMethodS3("getDefaultFullName", "CnagCfhSet", function(this, parent=1, ...) {
 
 ############################################################################
 # HISTORY:
+# 2011-03-03
+# o GENERALIZATION: Now CnagCfhSet locates sample annotation files and 
+#   sets the attributes following the new aroma search convention.
+# 2011-02-28
+# o Now getAverageFile() first tries to locate an existing result file
+#   in multiple root paths.  If not found, it creates a new one.
+# 2011-02-24
+# o GENERALIZATION: Now getAverageFile() for CnagCfhSet drops tags
+#   from the output root path (if 'devel/dropRootPathTags' setting is TRUE).
+# o Expanded the searched root paths to be cnagData(|,.*)/.
 # 2009-08-12
 # o Now findByName() of CnagCfhSet utilizes ditto of AffymetrixCelSet, 
 #   because its code was identical to the latter.

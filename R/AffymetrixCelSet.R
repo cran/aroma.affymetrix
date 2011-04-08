@@ -124,7 +124,7 @@ setMethodS3("clone", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
 
 
 
-setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
+setMethodS3("append", "AffymetrixCelSet", function(this, other, ..., verbose=FALSE) {
   # Argument 'other':
   other <- Arguments$getInstanceOf(other, class(this)[1]);
 
@@ -151,8 +151,13 @@ setMethodS3("append", "AffymetrixCelSet", function(this, other, clone=TRUE, ...,
     }
   }
 
-  # Append other
-  this <- NextMethod("append", this, other=other, clone=clone, ...);
+
+  # Append using append() method in super class
+  # NOTE: Do not pass arguments, they haven't been modified
+  # and do not need to be passed. Indeed, it will give an error
+  # for unknown reasons, cf. aroma.affymetrix thread 'Append function'
+  # on March 10, 2011. /HB 2011-03-10
+  this <- NextMethod("append");
 
   # Set the same CDF for all CEL files
   verbose && enter(verbose, "Updating the CDF for all files");
@@ -210,10 +215,7 @@ setMethodS3("as.character", "AffymetrixCelSet", function(x, ...) {
   n <- nbrOfArrays(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
-  if (n >= 5)
-    names <- c(names[1:2], "...", names[n]);
-  names <- paste(names, collapse=", ");
-  s <- c(s, sprintf("Names: %s", names));
+  s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n));
 
   # Get CEL header timestamps?
   maxCount <- getOption(aromaSettings, "output/timestampsThreshold");
@@ -400,7 +402,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     if (nbrOfFiles(this) > 0) {
       cf <- getFile(this, 1);
       if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-        throw("The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
+        throw("Cannot set CDF. The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
       }
     }
   }
@@ -447,7 +449,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 })
 
 
-setMethodS3("findByName", "AffymetrixCelSet", function(static, ..., chipType=NULL, paths=c("rawData/", "probeData/")) {
+setMethodS3("findByName", "AffymetrixCelSet", function(static, ..., chipType=NULL, paths=c("rawData(|,.*)/", "probeData(|,.*)/")) {
   # Arguments 'chipType':`
   if (!is.null(chipType)) {
     chipType <- Arguments$getCharacter(chipType);
@@ -471,7 +473,10 @@ setMethodS3("fromName", "AffymetrixCelSet", function(static, ...) {
 }, static=TRUE, deprecated=TRUE)
 
 
-setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, paths=NULL, ...) {
+setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chipType=NULL, cdf=NULL, paths=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Argument 'chipType':
   if (!is.null(chipType)) {
     chipType <- Arguments$getCharacter(chipType);
@@ -481,6 +486,20 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   if (!is.null(cdf)) {
     cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
   }
+
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+
+
+  verbose && enter(verbose, "Setting up ", class(static)[1], " by name");
+
+  verbose && cat(verbose, "Name: ", name);
+  verbose && cat(verbose, "Tags: ", paste(tags, collapse=","));
 
   if (is.null(cdf) && is.null(chipType)) {
     throw("Either argument 'chipType' or argument 'cdf' must be specified.");
@@ -498,19 +517,55 @@ setMethodS3("byName", "AffymetrixCelSet", function(static, name, tags=NULL, chip
   # The chiptype without tags
   chipTypeShort <- getChipType(cdf, fullname=FALSE);
 
+  verbose && cat(verbose, "Chip type: ", chipTypeShort);
+
   suppressWarnings({
-    path <- findByName(static, name, tags=tags, 
-                       chipType=chipTypeShort, paths=paths, ...);
+    paths <- findByName(static, name, tags=tags, chipType=chipTypeShort, 
+                       paths=paths, firstOnly=FALSE, ...);
   })
-  if (is.null(path)) {
+  if (is.null(paths)) {
     path <- file.path(paste(c(name, tags), collapse=","), chipTypeShort);
     throw("Cannot create ", class(static)[1], ".  No such directory: ", path);
   }
 
-  suppressWarnings({
-    byPath(static, path=path, cdf=cdf, ...);
-  })
-}, static=TRUE)
+  verbose && cat(verbose, "Paths to possible data sets:");
+  verbose && print(verbose, paths);
+
+  res <- NULL;
+  for (kk in seq(along=paths)) {
+    path <- paths[kk];
+    verbose && enter(verbose, sprintf("Trying path #%d of %d", kk, length(paths)));
+    verbose && cat(verbose, "Path: ", path);
+
+    tryCatch({
+      suppressWarnings({
+        res <- byPath(static, path=path, cdf=cdf, ..., verbose=verbose);
+      });
+    }, error = function(ex) {
+      verbose && cat(verbose, "Data set could not be setup for this path, because:");
+      verbose && cat(verbose, ex$message);
+    });
+
+    if (!is.null(res)) {
+      if (nbrOfFiles(res) > 0) {
+        verbose && cat(verbose, "Successful setup of data set.");
+        verbose && exit(verbose);
+        break;
+      }
+    }
+
+    verbose && exit(verbose);
+  } # for (kk ...)
+
+  if (is.null(res)) {
+    throw(sprintf("Failed to setup a data set for any of %d data directories located.", length(paths)));
+  }
+
+  verbose && exit(verbose);
+
+  res;
+}, static=TRUE) # byName()
+
 
 
 setMethodS3("update2", "AffymetrixCelSet", function(this, ..., verbose=FALSE) {
@@ -545,19 +600,21 @@ setMethodS3("updateSampleAnnotationSet", "AffymetrixCelSet", function(this, ...,
   # Scan for SAF files and apply them
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Scanning for and applying sample annotation files");
-  sasPath <- "annotationData/samples/";
-  sasPath <- filePath(sasPath, expandLinks="any");
-  mkdirs(sasPath);
 
-  sas <- SampleAnnotationSet$fromPath(sasPath, verbose=less(verbose));
-  if (nbrOfFiles(sas) == 0) {
-    verbose && cat(verbose, "No sample annotation files found.");
+  # Nothing to do?
+  if (nbrOfFiles(this) > 0) {
+    sas <- SampleAnnotationSet$loadAll(verbose=less(verbose));
+    if (nbrOfFiles(sas) == 0) {
+      verbose && cat(verbose, "No sample annotation files found.");
+    } else {
+      verbose && print(verbose, sas);
+      setAttributesBy(this, sas);
+    }
+    # Store the SAFs for now.
+    this$.sas <- sas;
   } else {
-    verbose && print(verbose, sas);
-    setAttributesBy(this, sas);
+    verbose && cat(verbose, "Empty data set. Nothing to do.");
   }
-  # Store the SAFs for now.
-  this$.sas <- sas;
 
   verbose && exit(verbose);
 
@@ -595,7 +652,6 @@ setMethodS3("byPath", "AffymetrixCelSet", function(static, path="rawData/", patt
   }
 
   set <- byPath.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
-
   verbose && cat(verbose, "Retrieved files: ", nbrOfFiles(set));
 
   if (nbrOfFiles(set) > 0) {
@@ -690,7 +746,9 @@ setMethodS3("byPath", "AffymetrixCelSet", function(static, path="rawData/", patt
   }
 
   verbose && enter(verbose, "Updating the CDF for all files");
-  setCdf(set, cdf);
+  if (!is.null(cdf)) {
+    setCdf(set, cdf);
+  }
   verbose && exit(verbose);
 
   # Let the new CEL set update itself
@@ -702,7 +760,7 @@ setMethodS3("byPath", "AffymetrixCelSet", function(static, path="rawData/", patt
   verbose && exit(verbose);
 
   set;
-}, protected=TRUE, static=TRUE)
+}, protected=TRUE, static=TRUE) # byPath()
 
 
 
@@ -1173,9 +1231,23 @@ setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
 })
 
 
-
 ############################################################################
 # HISTORY:
+# 2011-03-03
+# o GENERALIZATION: Now AffymetrixCelSet locates sample annotation files 
+#   and sets the attributes following the new aroma search convention.
+# 2011-03-01
+# o Now byName() handles if byPath() throws an exception.
+# o BUG FIX: The recent updates of byName() forgot to pass argument 'cdf'
+#   to the byPath() call.
+# 2011-02-25
+# o Now byName() for AffymetrixCelSet tries to setup all data set
+#   directories matching the query and not just the first one.
+#   It also requires that the data sets found by byPath() are non-empty,
+#   otherwise they are skipped.
+# 2011-02-24
+# o Expanded the searched root paths to be rawData(|,.*)/ and 
+#   probeData(|,.*)/.
 # 2011-02-04
 # o BUG FIX: as.character() for an empty AffymetrixCelSet would throw 
 #   exception "Argument 'x' is of length 1 although the range ([0,0])
