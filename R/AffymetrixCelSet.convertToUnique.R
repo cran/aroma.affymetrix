@@ -60,7 +60,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
   outputDataSet <- NULL
   tryCatch({
     res <- AffymetrixCelSet$byName(fullname, cdf=cdfUnique, 
-                     paths=rootPath, checkChipType=FALSE, verbose=verbose);
+                                   checkChipType=FALSE, verbose=verbose);
   }, error = function(ex) {});
   
   if (inherits(res, "AffymetrixCelSet")) {
@@ -134,8 +134,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
       verbose && enter(verbose, "Creating CEL file for results");
 
       # Write to a temporary file
-      pathnameT <- sprintf("%s.tmp", pathname);
-      verbose && cat(verbose, "Temporary pathname: ", pathnameT);
+      pathnameT <- pushTemporaryFile(pathname, verbose=verbose);
 
       createCel(pathnameT, header=celHeader);
       verbose && cat(verbose, "Writing values according to unique CDF");
@@ -147,16 +146,7 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
       verbose && print(verbose, gc);
 
       # Rename temporary file
-      verbose && enter(verbose, "Renaming temporary file");
-      res <- file.rename(pathnameT, pathname);
-      if (!isFile(pathname)) {
-        throw("Failed to rename temporary file (final file does not exist): ", pathnameT, " -> ", pathname);
-      }
-      if (isFile(pathnameT)) {
-        throw("Failed to rename temporary file (temporary file still exists): ", pathnameT, " -> ", pathname);
-      }
-      rm(pathnameT);
-      verbose && exit(verbose);
+      pathname <- popTemporaryFile(pathnameT, verbose=verbose);
 
       verbose && exit(verbose);
   } # for (kk ...)
@@ -171,6 +161,11 @@ setMethodS3("convertToUnique", "AffymetrixCelSet", function(this, ..., tags="UNQ
 
 ############################################################################
 # HISTORY:
+# 2011-02-24 [HB]
+# o Now convertToUnique() for AffymetrixCelSet searches for already 
+#   available data sets using the aroma-wide search rules.  Before it
+#   assumed it would always be located in probeData/, but with the new
+#   rules it can also be in probeData,<tags>/.
 # 2010-05-13 [HB]
 # o Yday's fixes had some hiccups.
 # 2010-05-12 [HB]

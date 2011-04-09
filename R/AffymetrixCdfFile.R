@@ -719,6 +719,11 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'units':
+  if (!is.null(units)) {
+    units <- Arguments$getIndices(units, range=c(1, nbrOfCells(this)));
+  }
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -761,11 +766,10 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   verbose2 <- -as.integer(verbose)-1;
 
   units0 <- units;
-  if (is.null(units))
+  if (is.null(units)) {
     units <- seq(length=nbrOfUnits(this));
+  }
   nbrOfUnits <- length(units);
-
-#  cdf <- readCdfCellIndices(getPathname(this), units=units, ..., verbose=verbose);
 
 
   if (unlist) {
@@ -1574,13 +1578,11 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
     # Identify units by their names
     unitNames <- units;
     units <- indexOf(this, names=unitNames);
-    if (any(is.na(units))) {
-      missing <- unitNames[is.na(units)];
-      nmissing <- length(missing);
-      if (nmissing > 10)
-        missing <- c(missing[1:10], "...");
-      throw("Argument 'units' contains ", nmissing, " unknown unit names: ", 
-                                             paste(missing, collapse=", "));
+    missing <- unitNames[is.na(units)];
+    n <- length(missing);
+    if (n > 0) {
+      throw(sprintf("Argument 'units' contains unknown unit names: %s [%d]", 
+                                                      hpaste(missing), n));
     }
   } else {
     # Validate unit indices
@@ -1593,6 +1595,9 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 
 ############################################################################
 # HISTORY:
+# 2011-03-04
+# o ROBUSTNESS: Now getCellIndices() for AffymetrixCdfFile asserts that
+#   argument 'units' can be coerced to integer indices.
 # 2010-05-09
 # o Added more explicit garbage collection to getGroupDirections() for
 #   the AffymetrixCdfFile class.

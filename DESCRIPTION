@@ -1,15 +1,15 @@
 Package: aroma.affymetrix
-Version: 2.0.0
-Date: 2011-02-16
+Version: 2.1.0
+Date: 2011-04-08
 Title: Analysis of large Affymetrix microarray data sets
 Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Pierre Neuvial
         <pierre@stat.berkeley.edu>, Elizabeth Purdom
         <epurdom@stat.berkeley.edu>, Mark Robinson
         <mrobinson@wehi.edu.au>, Ken Simpson <ksimpson@wehi.edu.au>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
-Depends: R (>= 2.11.0), R.utils (>= 1.6.2), R.filesets (>= 0.9.2),
-        aroma.core (>= 2.0.0), aroma.light (>= 1.18.3), aroma.apd (>=
-        0.1.8), R.rsp (>= 0.4.2), affxparser (>= 1.20.0)
+Depends: R (>= 2.11.0), R.utils (>= 1.7.4), R.filesets (>= 0.9.9),
+        aroma.core (>= 2.1.0), aroma.light (>= 1.18.4), aroma.apd (>=
+        0.1.8), R.rsp (>= 0.4.9), affxparser (>= 1.20.0)
 Imports: MASS, methods, splines, matrixStats (>= 0.2.2)
 Suggests: RColorBrewer (>= 1.0-2), preprocessCore (>= 1.8.0), affyPLM
         (>= 1.22.0), affy (>= 1.24.0), limma (>= 3.2.0), gcrma (>=
@@ -26,7 +26,9 @@ Description: This package implements classes for files and sets of
         in the package API and for the developer (and the end user),
         the data is queried as if it lives in memory.  With this design
         it is only the diskspace that limits the number of arrays that
-        can be analyzed.
+        can be analyzed.  To install, do:
+        source("http://www.aroma-project.org/hbLite.R");
+        hbInstall("aroma.affymetrix").
 License: LGPL (>= 2.1)
 URL: http://www.aroma-project.org/
 PatchURL: http://www.braju.com/R/
@@ -36,6 +38,6 @@ biocViews: ProprietaryPlatforms, ReportWriting, aCGH,
         GeneExpression, SNP, Transcription, Microarray, OneChannel,
         DataImport, DataRepresentation, GUI, Visualization,
         Preprocessing, QualityControl
-Packaged: 2011-02-17 05:31:14 UTC; hb
+Packaged: 2011-04-08 18:52:08 UTC; hb
 Repository: CRAN
-Date/Publication: 2011-02-17 13:06:58
+Date/Publication: 2011-04-09 09:27:11

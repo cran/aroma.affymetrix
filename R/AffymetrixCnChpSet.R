@@ -91,10 +91,7 @@ setMethodS3("as.character", "AffymetrixCnChpSet", function(x, ...) {
   n <- nbrOfArrays(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
-  if (n >= 5)
-    names <- c(names[1:2], "...", names[n]);
-  names <- paste(names, collapse=", ");
-  s <- c(s, sprintf("Names: %s", names));
+  s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n));
   s <- c(s, sprintf("Total file size: %.2fMB", getFileSize(this)/1024^2));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
@@ -103,7 +100,7 @@ setMethodS3("as.character", "AffymetrixCnChpSet", function(x, ...) {
 
 
 
-setMethodS3("findByName", "AffymetrixCnChpSet", function(static, ..., paths="chpData/") {
+setMethodS3("findByName", "AffymetrixCnChpSet", function(static, ..., paths="chpData(|,.*)/") {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -394,6 +391,8 @@ setMethodS3("setCdf", "AffymetrixCnChpSet", function(this, cdf, verbose=FALSE, .
 
 ############################################################################
 # HISTORY:
+# 2011-02-24
+# o Expanded the searched root paths to be chpData(|,.*)/
 # 2009-08-12
 # o Now findByName() of AffymetrixCnChpSet utilizes ditto of 
 #   AffymetrixCelSet, because its code was identical to the latter.
