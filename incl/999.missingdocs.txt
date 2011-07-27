@@ -730,3 +730,5 @@ writeCdf writeCdf.default
 findTargetDistributionFile
 findTargetDistributionFile.QuantileNormalization
   readGeneAssignments readGeneAssignments.AffymetrixNetAffxCsvFile
+extractExpressionSet
+cat getOption append lapply sapply
