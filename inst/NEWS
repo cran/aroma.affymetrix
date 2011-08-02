@@ -1,6 +1,46 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.1.6 [2011-07-27]
+o WORKAROUND: In order for the package to work with the most recent
+  version of R devel, which automatically add namespaces to packages
+  who do not have one, we explicitly have specify that this package
+  should get function such as cat() and getOption() from R.utils
+  (instead of 'base').
+
+
+Version: 2.1.5 [2011-07-24]
+o Bumped up the package dependencies, especially since R will
+  soon (in practice) require namespaces for all packages.
+
+
+Version: 2.1.4 [2011-07-14]
+o Added extractExpressionSet() for ChipEffectSet.
+o ROBUSTNESS: Added redundancy tests for doRMA() and
+  extractExpressionSet() for the HG-U133_Plus_2 chip type.
+
+
+Version: 2.1.3 [2011-06-07]
+o ROBUSTNESS: Now the search path is adjusted such that 'ggplot2' comes 
+  after 'aroma.affymetrix', because the former overrides the generic
+  rescale() function of the latter with a non-generic function.
+
+
+Version: 2.1.2 [2011-05-26]
+o Added an archive of scripts used to build ACS, UGP and UFL annotation
+  files.  The archive is located under buildScripts/ of the package
+  installation directory and sorted by chip types.
+
+
+Version: 2.1.1 [2011-04-18]
+o DOCUMENTATION: Added more help to createUniqueCdf() for AffymetrixCdfFile.
+o DEPRECATED: getUnique() and createUnique() are deprecated. 
+  Use getUniqueCdf() and createUniqueCdf() instead.
+o More updates to readGeneAssignments() for AffymetrixNetAffxCsvFile.
+o CLEANUP: Dropped argument 'sep' of createMonocellCdf() and 
+  createUniqueCdf() for AffymetrixCdfFile.
+
+
 Version: 2.1.0 [2011-04-08]
 o No updates.  Submitted to CRAN.
 
