@@ -1,6 +1,6 @@
 Package: aroma.affymetrix
-Version: 2.1.8
-Date: 2011-08-16
+Version: 2.2.0
+Date: 2011-09-01
 Title: Analysis of large Affymetrix microarray data sets
 Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Pierre Neuvial
         <pierre@stat.berkeley.edu>, Elizabeth Purdom
@@ -8,7 +8,7 @@ Author: Henrik Bengtsson <hb@stat.berkeley.edu>, Pierre Neuvial
         <mrobinson@wehi.edu.au>, Ken Simpson <ksimpson@wehi.edu.au>
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Depends: R (>= 2.11.0), R.utils (>= 1.7.8), R.filesets (>= 1.1.0),
-        aroma.core (>= 2.1.4), aroma.light (>= 1.20.0), aroma.apd (>=
+        aroma.core (>= 2.2.0), aroma.light (>= 1.20.0), aroma.apd (>=
         0.2.0), R.rsp (>= 0.6.2), affxparser (>= 1.20.0)
 Imports: MASS, methods, splines, matrixStats (>= 0.2.2)
 Suggests: RColorBrewer (>= 1.0-2), preprocessCore (>= 1.8.0), affyPLM
@@ -38,8 +38,6 @@ biocViews: ProprietaryPlatforms, ReportWriting, aCGH,
         GeneExpression, SNP, Transcription, Microarray, OneChannel,
         DataImport, DataRepresentation, GUI, Visualization,
         Preprocessing, QualityControl
+Packaged: 2011-09-01 18:14:59 UTC; hb
 Repository: CRAN
-Repository/R-Forge/Project: aroma-dots
-Repository/R-Forge/Revision: 2257
-Date/Publication: 2011-08-29 17:37:04
-Packaged: 2011-08-16 20:44:28 UTC; rforge
+Date/Publication: 2011-09-03 04:47:27
