@@ -18,6 +18,8 @@
 #
 # \arguments{
 #   \item{...}{Arguments passed to @see "UnitModel".}
+#   \item{listOfPriors}{A @list of priors to be used when fitting 
+#    the model.}
 # }
 #
 # \section{Fields and Methods}{
@@ -26,8 +28,12 @@
 #
 # @author
 #*/###########################################################################
-setConstructorS3("MultiArrayUnitModel", function(...) {
-  extend(UnitModel(...), "MultiArrayUnitModel");
+setConstructorS3("MultiArrayUnitModel", function(..., listOfPriors=NULL) {
+  this <- extend(UnitModel(...), "MultiArrayUnitModel");
+  if (!is.null(listOfPriors)) {
+    this <- setListOfPriors(this, listOfPriors);
+  }
+  this;
 }, abstract=TRUE)
 
 
@@ -37,8 +43,12 @@ setMethodS3("validate", "MultiArrayUnitModel", function(this, ...) {
     return(invisible(TRUE));
 
   if (nbrOfArrays(ds) < 2) {
-    throw("This ", class(this)[1], " requires at least 2 arrays: ",
+    priors <- getListOfPriors(this);
+    hasPriors <- (!is.null(priors));
+    if (!hasPriors) {
+      throw("This ", class(this)[1], " requires at least 2 arrays: ",
                                                             nbrOfArrays(ds));
+    }
   }
 
   invisible(TRUE);
@@ -77,8 +87,7 @@ setMethodS3("getFitUnitGroupFunction", "MultiArrayUnitModel", abstract=TRUE, sta
 
 
 setMethodS3("getFitFunction", "MultiArrayUnitModel", function(...) {
-  warning("getFitFunction() is deprecated. Please use getFitUnitGroupFunction() instead.");
-  getFitUnitGroupFunction(...);
+  throw("getFitFunction() is deprecated. Please use getFitUnitGroupFunction() instead.");
 }, private=TRUE, deprecated=TRUE)
 
 
@@ -95,7 +104,7 @@ setMethodS3("getFitUnitFunction", "MultiArrayUnitModel", function(this, ...) {
       base::lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] - y[2,,];  # PM-MM
-        fitfcn(y);
+        fitfcn(y, ...);
       })
     }
   } else if (this$probeModel == "min1(pm-mm)") {
@@ -104,7 +113,7 @@ setMethodS3("getFitUnitFunction", "MultiArrayUnitModel", function(this, ...) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] - y[2,,];  # PM-MM
         y[y < 1] <- 1;       # min1(PM-MM)=min(PM-MM,1)
-        fitfcn(y);
+        fitfcn(y, ...);
       })
     }
   } else if (this$probeModel == "pm+mm") {
@@ -112,7 +121,7 @@ setMethodS3("getFitUnitFunction", "MultiArrayUnitModel", function(this, ...) {
       base::lapply(unit, FUN=function(group) {
         y <- .subset2(group, 1); # Get intensities
         y <- y[1,,] + y[2,,];  # PM+MM
-        fitfcn(y);
+        fitfcn(y, ...);
       })
     }
   } else {
@@ -123,13 +132,13 @@ setMethodS3("getFitUnitFunction", "MultiArrayUnitModel", function(this, ...) {
         } else {
           y <- NULL;
         }
-        fitfcn(y);
+        fitfcn(y, ...);
       })
     }
   }
 
   fitUnit;
-}, private=TRUE)
+}, private=TRUE) # getFitUnitFunction()
 
 
 
@@ -288,6 +297,12 @@ setMethodS3("readPriorsByUnits", "MultiArrayUnitModel", function(this, units=NUL
 
 ############################################################################
 # HISTORY:
+# 2012-01-14
+# o Now the fit function returned by getFitUnitFunction() for
+#   MultiArrayUnitModel passes '...'.
+# o Now validate() for MultiArrayUnitModel accepts single-array data sets,
+#   iff priors are set.
+# o Added argument 'listOfPriors' to MultiArrayUnitModel().
 # 2008-12-08
 # o Added readPriorsByUnits().
 # 2008-09-03
