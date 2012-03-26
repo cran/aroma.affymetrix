@@ -1,6 +1,36 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.5.0 [2012-03-25]
+o Submitted to CRAN.
+o The package passes all redundancy tests.
+
+
+Version: 2.4.3 [2012-03-23]
+o CRAN POLICY: Package no longer utilizes .Internal() calls.
+o CLEANUP: Deprecated PdInfo2Cdf() in favor (identical) pdInfo2Cdf(), 
+  because the former does not follow the Aroma naming conventions.
+
+
+Version: 2.4.2 [2012-03-06]
+o GENERALIZATION: The new ArrayExplorer v3.4 will work with most
+  commonly used web browsers including Mozilla Firefox, Google Chrome,
+  Microsoft Internet Explorer, Apple Safari, and Opera.
+o CRAN POLICY: Started to remove .Internal() calls.
+
+
+Version: 2.4.1 [2012-01-14]
+o ROBUSTNESS: Now the fit function of MbeiPlm gives an error
+  whenever one tries to use prior parameters, which are yet
+  not supported.
+o Updated getFitUnitGroupFunction() for RmaPlm to support prior
+  probe-affinity parameters.
+o Added argument 'listOfPriors' to MultiArrayUnitModel(). Such
+  priors are passed to the internal fitUnit() method.
+o Now validate() of MultiArrayUnitModel accepts single-array data 
+  sets, iff priors are set.
+
+
 Version: 2.4.0 [2012-01-11]
 o ROBUSTNESS: Updated package dependencies.
 o Adopted a few redundancy tests for the most recent updates.
