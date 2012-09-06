@@ -17,6 +17,8 @@
 #  \item{path}{The output path where the CDF file is written.
 #    If @NULL (default), then it is written to the corresponding
 #    \code{annotationData/chipTypes/<chipType>/} directory.}
+#  \item{useTranscriptCluster}{If @TRUE, units are defined by the transcript
+#     cluster IDs rather than the probeset IDs.}
 #  \item{overwrite}{If @TRUE, an existing CDF is overwritten, otherwise
 #    an exception is thrown.}
 #  \item{verbose}{A @logical or @see "R.utils::Verbose".}
@@ -52,7 +54,8 @@
 #
 # @keyword internal
 #*/########################################################################### 
-setMethodS3("writeCdf", "AffyGenePDInfo", function(this, tags=NULL, path=NULL, overwrite=FALSE, verbose=TRUE, ...) {
+setMethodS3("writeCdf", "AffyGenePDInfo", function(this, tags=NULL, path=NULL, useTranscriptCluster=FALSE, overwrite=FALSE, verbose=TRUE, ...) {
+
   require("affxparser") || throw("Package not loaded: affxparser");
   require("pdInfoBuilder") || throw("Package not loaded: pdInfoBuilder");
 
@@ -150,6 +153,14 @@ setMethodS3("writeCdf", "AffyGenePDInfo", function(this, tags=NULL, path=NULL, o
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Querying Platform Design database");
   ff <- dbGetQuery(db(pd), "select * from pmfeature");
+
+  if (useTranscriptCluster) {
+    lookup <- dbGetQuery(db(pd), "select fsetid,transcript_cluster_id from featureSet");
+    idxs <- match(ff$fsetid, lookup$fsetid);
+    ff$fsetid <- lookup$transcript_cluster_id[idxs];
+    rm(idxs);  # Not needed anymore
+  }
+
   rm(pd);  # Not needed anymore
   verbose && str(verbose, ff);
   nbrOfPdCells <- nrow(ff);
@@ -201,7 +212,7 @@ setMethodS3("writeCdf", "AffyGenePDInfo", function(this, tags=NULL, path=NULL, o
   # Write to a temporary file
   pathnameT <- pushTemporaryFile(pathname, verbose=verbose);
 
-  res <- affxparser::writeCdf(pathnameT, cdfheader=newCdfHeader, cdf=newCdfList,
+  affxparser::writeCdf(pathnameT, cdfheader=newCdfHeader, cdf=newCdfList,
                   cdfqc=NULL, verbose=verbose, overwrite=overwrite);
 
   # Rename temporary file
@@ -211,13 +222,17 @@ setMethodS3("writeCdf", "AffyGenePDInfo", function(this, tags=NULL, path=NULL, o
 
   verbose && exit(verbose);
 
-  invisible(res);
+  invisible(pathname);
 }) # writeCdf()
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-08-16 [MR]
+# o Added argument 'useTranscriptCluster' to writeCdf() for AffyGenePDInfo.
+# 2012-06-15 [HB]
+# o Now writeCdf() for AffyGenePDInfo returns the pathname of the CDF.
 # 2011-01-09 [HB]
 # o Added writeCdf() for AffyGenePDInfo, which replaces pdInfo2Cdf().
 #   An auxillary CEL file is no longer needed to create a CDF from
