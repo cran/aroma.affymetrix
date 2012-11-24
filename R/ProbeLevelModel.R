@@ -63,22 +63,9 @@ setConstructorS3("ProbeLevelModel", function(..., standardize=TRUE) {
 }, abstract=TRUE)
 
 
-setMethodS3("clearCache", "ProbeLevelModel", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".paf", ".ces", ".rs", ".ws", ".lastPlotData")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
-
 setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, collapse=NULL, ...) {
   # Returns 'PLM' (but allow for future extensions)
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "PLM";
   tags;
 }, protected=TRUE)
@@ -87,7 +74,7 @@ setMethodS3("getAsteriskTags", "ProbeLevelModel", function(this, collapse=NULL, 
 
 setMethodS3("getRootPath", "ProbeLevelModel", function(this, ...) {
   "plmData";
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -141,11 +128,6 @@ setMethodS3("getProbeAffinityFile", "ProbeLevelModel", function(this, ..., .clas
   paf;
 })
 
-
-
-setMethodS3("getProbeAffinities", "ProbeLevelModel", function(this, ...) {
-  getProbeAffinityFile(this, ...);
-}, protected=TRUE, deprecated=TRUE)
 
 
 ###########################################################################/**
@@ -225,12 +207,6 @@ setMethodS3("getChipEffectSet", "ProbeLevelModel", function(this, ..., verbose=F
 setMethodS3("getChipEffectSetClass", "ProbeLevelModel", function(static, ...) {
   ChipEffectSet;
 }, static=TRUE, private=TRUE)
-
-
-setMethodS3("getChipEffects", "ProbeLevelModel", function(this, ...) {
-  getChipEffectSet(this, ...);
-}, protected=TRUE, deprecated=TRUE)
-
 
 
 

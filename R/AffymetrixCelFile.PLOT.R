@@ -150,7 +150,7 @@ setMethodS3("getAm", "AffymetrixCelFile", function(this, reference, indices=NULL
     keep <- which(y1 != 0);
     y1 <- y1[keep];
   } else {
-    keep <- seq(along=y1);
+    keep <- seq_along(y1);
   }
   y1 <- y1 + offset;
   y1 <- log(y1, base=2);
@@ -379,7 +379,7 @@ setMethodS3("highlight", "AffymetrixCelFile", function(this, indices=NULL, ...) 
     data <- data[indices,,drop=FALSE];
   points(data[,1:2], ...);
   invisible(data);
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -716,7 +716,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
     # image set
     set <- "spatial";
 
-    path <- filePath(rootPath, dataSet, dataSetTags, chipType, set, expandLinks="any");
+    path <- filePath(rootPath, dataSet, dataSetTags, chipType, set);
   }
   path <- Arguments$getWritablePath(path);
 
@@ -740,10 +740,7 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
   # Generate the pathname
   if (is.null(fullname)) {
-    # Ad hoc. /HB 2007-03-20
-    fullname <- getAlias(this);
-    if (is.null(fullname))
-      fullname <- getFullName(this);
+    fullname <- getFullName(this);
   }
   fullname <- paste(c(fullname, tags), collapse=",");
   if (is.null(filename)) {
@@ -775,6 +772,9 @@ setMethodS3("writeImage", "AffymetrixCelFile", function(this, filename=NULL, ful
 
 ############################################################################
 # HISTORY:
+# 2012-11-14
+# o CLEANUP: writeImage() for AffymetrixCelFile no longer supports
+#   sample name aliases.
 # 2011-01-30
 # o CLEAN UP: getImage(), plotImage() and writeImage() for AffymetrixCelFile
 #   no longer depend explicitly on EBImage but instead calls aroma.core's 

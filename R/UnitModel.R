@@ -53,17 +53,17 @@ setConstructorS3("UnitModel", function(dataSet=NULL, probeModel=c("pm", "mm", "p
 
 
 
-setMethodS3("getParameterSet", "UnitModel", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
+setMethodS3("getParameters", "UnitModel", function(this, ...) {
+  params <- NextMethod("getParameters");
   params$probeModel <- this$probeModel;
   params$shift <- this$shift;
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getAsteriskTags", "UnitModel", function(this, collapse=NULL, ...) {
   # Returns 'U' (but allow for future extensions)
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "U";
 
   # Add class-specific tags
@@ -179,7 +179,7 @@ setMethodS3("getFitUnitFunction", "UnitModel", abstract=TRUE, private=TRUE);
 
 setMethodS3("getFitSingleCellUnitFunction", "UnitModel", function(this, ...) {
   NULL;
-})
+}, protected=TRUE)
 
 
 ############################################################################

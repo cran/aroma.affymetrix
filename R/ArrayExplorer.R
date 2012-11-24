@@ -11,7 +11,6 @@
 #
 # \arguments{
 #   \item{csTuple}{An @see "AffymetrixCelSet" object.}
-#   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
 #   \item{...}{Not used.}
 # }
 #
@@ -22,7 +21,7 @@
 # @author
 # 
 #*/###########################################################################
-setConstructorS3("ArrayExplorer", function(csTuple=NULL, version=c("3.4", "3.0"), ...) {
+setConstructorS3("ArrayExplorer", function(csTuple=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,9 +31,6 @@ setConstructorS3("ArrayExplorer", function(csTuple=NULL, version=c("3.4", "3.0")
       csTuple <- AffymetrixCelSetTuple(csTuple);
     }
   }
-
-  # Argument 'version':
-  version <- match.arg(version);
 
   extend(Explorer(...), "ArrayExplorer",
     .csTuple = csTuple,
@@ -48,7 +44,6 @@ setMethodS3("as.character", "ArrayExplorer", function(x, ...) {
   this <- x;
 
   s <- sprintf("%s:", class(this)[1]);
-  s <- c(s, sprintf("Version: %s", getVersion(this)));
   s <- c(s, sprintf("Name: %s", getName(this)));
   s <- c(s, sprintf("Tags: %s", paste(getTags(this), collapse=",")));
   s <- c(s, sprintf("Number of chip types: %d", nbrOfChipTypes(this)));
@@ -64,7 +59,7 @@ setMethodS3("as.character", "ArrayExplorer", function(x, ...) {
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -90,21 +85,22 @@ setMethodS3("getListOfReporters", "ArrayExplorer", function(this, ...) {
 
 
 setMethodS3("setAlias", "ArrayExplorer", function(this, ...) {
-  NextMethod("setAlias", this, ...);
+  NextMethod("setAlias");
   reporters <- getListOfReporters(this);
   lapply(reporters, FUN=setAlias, ...);
   invisible(this);
-})
+}, protected=TRUE)
+
 
 setMethodS3("getAlias", "ArrayExplorer", function(this, ...) {
   reporters <- getListOfReporters(this);
   getAlias(reporters[[1]], ...);
-})
+}, protected=TRUE)
 
 
 setMethodS3("getAsteriskTags", "ArrayExplorer", function(this, ...) {
   "";
-})
+}, protected=TRUE)
 
 
 
@@ -244,7 +240,7 @@ setMethodS3("updateSetupExplorerFile", "ArrayExplorer", function(this, ...) {
   env$chipTypes <- getChipTypes(setTuple, fullname=TRUE);
   env$arrays <- getFullNames(setTuple);
 
-  NextMethod("updateSetupExplorerFile", this, data=env, ...);
+  NextMethod("updateSetupExplorerFile", data=env);
 }, private=TRUE)
 
 
@@ -324,6 +320,8 @@ setMethodS3("process", "ArrayExplorer", function(this, arrays=NULL, ..., verbose
 
 ##############################################################################
 # HISTORY:
+# 2012-10-18
+# o CLEANUP: Drop all usage of 'version' in ArrayExplorer.
 # 2012-03-06
 # o Dropped setup() for ArrayExplorer, because now Explorer has one.
 # o Replaced updateOnChipTypeJS() and updateOnLoadJS() with

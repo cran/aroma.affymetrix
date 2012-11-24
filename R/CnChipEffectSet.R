@@ -42,12 +42,12 @@ setMethodS3("hasStrandiness", "CnChipEffectSet", function(this, ...) {
 
 
 setMethodS3("byPath", "CnChipEffectSet", function(static, ..., combineAlleles="auto") {
-  byPath.SnpChipEffectSet(static, ..., combineAlleles=combineAlleles);
+  NextMethod("byPath", combineAlleles=combineAlleles);
 }, protected=TRUE, static=TRUE)
 
 
 setMethodS3("getAverageFile", "CnChipEffectSet", function(this, ...) {
-  res <- NextMethod(generic="getAverageFile", object=this, ...);
+  res <- NextMethod("getAverageFile");
   res$combineAlleles <- getCombineAlleles(this);
   res;
 })
@@ -58,7 +58,7 @@ setMethodS3("getChipEffectFileClass", "CnChipEffectSet", function(static, ...) {
 
 
 setMethodS3("getCombineAlleles", "CnChipEffectSet", function(this, ...) {
-  if (nbrOfFiles(this) == 0)
+  if (length(this) == 0)
     return(FALSE);
   ce <- getFile(this, 1);
   ce$combineAlleles;
@@ -68,7 +68,7 @@ setMethodS3("getCombineAlleles", "CnChipEffectSet", function(this, ...) {
 
 
 setMethodS3("setCombineAlleles", "CnChipEffectSet", function(this, status, ...) {
-  if (nbrOfFiles(this) == 0)
+  if (length(this) == 0)
     return(FALSE);
 
   ce <- getFile(this, 1);

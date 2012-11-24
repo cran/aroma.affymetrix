@@ -52,14 +52,6 @@ setConstructorS3("QuantileNormalization", function(..., subsetToUpdate=NULL, typ
 })
 
 
-setMethodS3("clearCache", "QuantileNormalization", function(this, ...) {
-  # Clear all cached values
-  for (ff in c(".targetDistribution")) {
-    this[[ff]] <- NULL;
-  }
-  NextMethod("clearCache", this, ...);
-})
-
 setMethodS3("getSubsetToUpdate", "QuantileNormalization", function(this, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -175,7 +167,7 @@ setMethodS3("getSubsetToAvg", "QuantileNormalization", function(this, ..., verbo
 
 setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -190,7 +182,7 @@ setMethodS3("getParameters", "QuantileNormalization", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -308,7 +300,7 @@ setMethodS3("getTargetDistributionPathname", "QuantileNormalization", function(t
   filename <- sprintf(".averageQuantile-%s.apq", id);
   verbose && cat(verbose, "Filename: ", filename);
 
-  pathname <- filePath(path, filename, expandLinks="any");
+  pathname <- Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
   verbose && cat(verbose, "Pathname:");
   verbose && print(verbose, pathname);
 
@@ -354,7 +346,7 @@ setMethodS3("findTargetDistributionFile", "QuantileNormalization", function(this
   verbose && print(verbose, rootPaths);
 
   # Identify subdirectories
-  subdirs <- sapply(seq(length=depth), FUN=function(d) {
+  subdirs <- sapply(seq_len(depth), FUN=function(d) {
     basename(getParent(path, depth=d-1L));
   });
   subdirs <- rev(subdirs);
@@ -375,8 +367,9 @@ setMethodS3("findTargetDistributionFile", "QuantileNormalization", function(this
   verbose && cat(verbose, "Existing paths:");
   verbose && print(verbose, paths);
   
-  pathnames <- file.path(paths, filename);
-  pathnames <- sapply(pathnames, FUN=filePath, expandLinks="any");
+  pathnames <- sapply(paths, FUN=function(path) {
+    Arguments$getReadablePathname(filename, path=path, mustExist=FALSE);
+  });
 
   # Keep only existing pathnames
   pathnames <- pathnames[sapply(pathnames, FUN=isFile)];

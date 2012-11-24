@@ -56,28 +56,12 @@ setMethodS3("as.character", "SmoothMultiarrayModel", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   s <- c(s, sprintf("Kernel: %s", this$.kernel));
   s <- c(s, sprintf("Bandwidth: %.2fkb", getBandwidth(this)/1e3));
   class(s) <- "GenericSummary";
   s;
 }, protected=TRUE)
-
-
-setMethodS3("clearCache", "SmoothMultiarrayModel", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c()) {
-    this[[ff]] <- NULL;
-  }
-
-  if (!is.null(this$.outTuple)) {
-   this$.outTuple <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-})
 
 
 setMethodS3("getAsteriskTags", "SmoothMultiarrayModel", function(this, collapse=NULL, ...) {
@@ -98,7 +82,8 @@ setMethodS3("getAsteriskTags", "SmoothMultiarrayModel", function(this, collapse=
 setMethodS3("getRootPath", "SmoothMultiarrayModel", function(this, ...) {
   tag <- getAsteriskTags(this)[1];
   sprintf("%sData", tolower(tag));
-})
+}, protected=TRUE)
+
 
 setMethodS3("getBandwidth", "SmoothMultiarrayModel", function(this, ...) {
   this$.bandwidth;

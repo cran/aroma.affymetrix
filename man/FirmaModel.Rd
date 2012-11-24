@@ -19,11 +19,13 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
+\code{~~+--}\code{\link[aroma.core]{ParametersInterface}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{Model}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{FirmaModel}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{UnitModel}}\cr
+\code{~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{FirmaModel}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -50,15 +52,10 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{\link[aroma.affymetrix:calculateResidualSet.FirmaModel]{calculateResidualSet}} \tab Gets the set of residuals corresponding to the PLM.\cr
- \tab \code{calculateWeights} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:fit.FirmaModel]{fit}} \tab Estimates the model parameters.\cr
- \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{getDataSet} \tab  -\cr
- \tab \code{getFirmaScores} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFirmaSet.FirmaModel]{getFirmaSet}} \tab Gets the set of FIRMA results for this model.\cr
- \tab \code{\link[aroma.affymetrix:getFitUnitGroupFunction.FirmaModel]{getFitUnitGroupFunction}} \tab Static method to get the low-level function that fits the PLM.\cr
  \tab \code{getName} \tab  -\cr
  \tab \code{getPlm} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
@@ -66,13 +63,16 @@ extends \emph{\link[aroma.affymetrix]{UnitModel}}\cr
 
 
  \bold{Methods inherited from UnitModel}:\cr
-findUnitsTodo, getAsteriskTags, getFitSingleCellUnitFunction
+findUnitsTodo, getAsteriskTags, getFitSingleCellUnitFunction, getParameters
 
  \bold{Methods inherited from Model}:\cr
-fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getPath, getRootPath, getTags, setAlias, setTags
+as.character, fit, getAlias, getAsteriskTags, getDataSet, getFullName, getName, getParameterSet, getPath, getRootPath, getTags, setAlias, setTags
+
+ \bold{Methods inherited from ParametersInterface}:\cr
+getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, getChecksum, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, print
 
 
  }

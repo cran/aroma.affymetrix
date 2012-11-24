@@ -86,45 +86,22 @@ setConstructorS3("ChipEffectFile", function(..., probeModel=c("pm")) {
 })
 
 
-setMethodS3("clearCache", "ChipEffectFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("as.character", "ChipEffectFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", object=this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "ChipEffectFile", function(this, ...) {
-  params <- list(
-    probeModel = this$probeModel
-  );
+  params <- NextMethod("getParameters");
+  params$probeModel <- this$probeModel;
   params;
-})
-
-setMethodS3("getParametersAsString", "ChipEffectFile", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ..., verbose=FALSE) {
@@ -148,17 +125,8 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
   # Warn about deprecated filname <chipType>-monocell.
   if (!is.null(pathname) && (sep == "-")) {
     msg <- paste("Deprecated filename of monocell CDF detected (uses dash instead of comma): ", pathname);
-    warning(msg);
     verbose && cat(verbose, msg);
-    verbose && enter(verbose, "Renaming (old-style) monocell CDF");
-    verbose && cat(verbose, "Source: ", pathname);
-    dest <- gsub("-monocell[.]", ",monocell.", pathname);
-    verbose && cat(verbose, "Destination: ", dest);
-    res <- file.rename(pathname, dest);
-    if (!res)
-      throw("Failed to rename monocell CDF file: ", pathname, " -> ", dest);
-    pathname <- dest;
-    verbose && exit(verbose, msg);
+    throw(msg);
   }
 
   if (is.null(pathname)) {
@@ -204,7 +172,7 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  res <- NextMethod("readUnits", this, cdf=cdf, ..., force=force, verbose=less(verbose));
+  res <- NextMethod("readUnits", cdf=cdf, force=force, verbose=less(verbose));
 
   # Store read units in cache?
   if (cache) {
@@ -228,7 +196,7 @@ setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL
 
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
-  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
+  NextMethod("updateUnits", cdf=cdf, data=data);
 }, private=TRUE);
 
 
@@ -271,7 +239,7 @@ setMethodS3("findUnitsTodo", "ChipEffectFile", function(this, units=NULL, ..., f
     units0 <- units;
     if (is.null(units)) {
       cdf <- getCdf(this);
-      units <- seq(length=nbrOfUnits(cdf));
+      units <- seq_len(nbrOfUnits(cdf));
     }
     nbrOfUnits <- length(units);
 
@@ -465,7 +433,7 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   } else {
     verbose && enter(verbose, "Retrieving cell indices for specified units");
     if (is.null(units))
-      units <- seq(length=nbrOfUnits(cdf));
+      units <- seq_len(nbrOfUnits(cdf));
     chunks <- splitInChunks(units, chunkSize=100e3);
     nbrOfChunks <- length(chunks);
     nbrOfUnits <- length(units);
@@ -478,12 +446,12 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
     cells <- vector("list", nbrOfChunks);
     
     offset <- 0;
-    for (kk in seq(length=nbrOfChunks)) {
+    for (kk in seq_len(nbrOfChunks)) {
       verbose && printf(verbose, "Chunk #%d of %d\n", kk, length(chunks));
       chunk <- chunks[[kk]];
       chunks[[kk]] <- NA;
       cells0 <- getCellIndices(this, units=chunk, force=force, .cache=FALSE, verbose=less(verbose));
-      idxs <- offset + seq(length=length(chunk));
+      idxs <- offset + seq_len(length(chunk));
       offset <- offset + length(chunk);
       rm(chunk);
       unitNames[idxs] <- names(cells0);
@@ -512,10 +480,10 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
   verbose && cat(verbose, "Number of units: ", length(unitNames));
 
   if (is.null(units))
-    units <- seq(length=nbrOfUnits(cdf));
+    units <- seq_len(nbrOfUnits(cdf));
 
   # The following is too slow:
-  #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
+  #  groups <- sapply(unitSizes, FUN=function(n) seq_len(n));
 
   # Instead, updated size by size
   verbose && printf(verbose, "Allocating matrix of size %dx%d.\n", 
@@ -554,11 +522,6 @@ setMethodS3("getUnitGroupCellMap", "ChipEffectFile", function(this, units=NULL, 
 
   map;
 }, private=TRUE)
-
-
-setMethodS3("getCellMap", "ChipEffectFile", function(this, ...) {
-  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
-}, deprecated=TRUE)
 
 
 
@@ -680,7 +643,7 @@ setMethodS3("getUnitGroupCellChromosomePositionMap", "ChipEffectFile", function(
   verbose && exit(verbose);
 
   map;  
-})
+}, private=TRUE)
 
 
 
@@ -708,7 +671,7 @@ setMethodS3("getDataFlat", "ChipEffectFile", function(this, units=NULL, fields=c
   suppressWarnings({
     data <- getData(this, indices=map[,"cell"], fields=celFields[fields]);
   })
-  rownames(data) <- seq(length=nrow(data));  # Work around?!? /HB 2006-11-28
+  rownames(data) <- seq_len(nrow(data));  # Work around?!? /HB 2006-11-28
 
   # Decode
   names <- colnames(data);
@@ -887,13 +850,17 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
   # Argument 'field':
   field <- match.arg(field);
 
-  NextMethod("extractMatrix", this, ..., field=field);
+  NextMethod("extractMatrix", field=field);
 })
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-10-14
+# o CLEANUP: createParamCdf() for ChipEffectFile no longer support 
+#   '<chipType>-monocell' filenames.  If detected, an informative
+#   error is thrown.
 # 2009-05-19
 # o Now testing for file permissions for creat-/writ-/updating files/dirs.
 # 2008-07-20

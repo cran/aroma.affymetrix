@@ -43,7 +43,7 @@ setConstructorS3("Model", function(dataSet=NULL, tags="*", ...) {
   }
 
 
-  this <- extend(Object(), "Model",
+  this <- extend(Object(), c("Model", uses("ParametersInterface")),
     .dataSet = dataSet,
     .tags = NULL
   );
@@ -66,12 +66,12 @@ setMethodS3("as.character", "Model", function(x, ...) {
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
   s <- c(s, sprintf("Input tags: %s", getTags(ds, collapse=",")));
   s <- c(s, sprintf("Output tags: %s", getTags(this, collapse=",")));
-  s <- c(s, sprintf("Parameters: (%s).", getParametersAsString(this)));
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -104,7 +104,7 @@ setMethodS3("as.character", "Model", function(x, ...) {
 setMethodS3("getRootPath", "Model", function(this, ...) {
   # Default root path
   paste("model", class(this)[1], sep="");
-})
+}, protected=TRUE)
 
 
 
@@ -176,7 +176,7 @@ setMethodS3("getName", "Model", function(this, ...) {
 #*/###########################################################################
 setMethodS3("getAlias", "Model", function(this, ...) {
   this$.alias;
-})
+}, protected=TRUE)
 
 
 
@@ -222,7 +222,7 @@ setMethodS3("setAlias", "Model", function(this, alias=NULL, ...) {
   this$.alias <- alias;
 
   invisible(this);
-})
+}, protected=TRUE)
 
 
 setMethodS3("getAsteriskTags", "Model", function(this, collapse=NULL, ...) {
@@ -438,14 +438,8 @@ setMethodS3("getPath", "Model", function(this, ...) {
   chipType <- getChipType(cdf, fullname=FALSE);
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
-
-  # Create directory?
-  if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
-  }
+  path <- filePath(rootPath, fullname, chipType);
+  path <- Arguments$getWritablePath(path);
 
   path;
 })
@@ -512,24 +506,6 @@ setMethodS3("getCdf", "Model", function(this, ...) {
   getCdf(getDataSet(this));
 }, private=TRUE)
 
-
-setMethodS3("getParameterSet", "Model", function(this, ...) {
-  list();
-}, private=TRUE)
-
-setMethodS3("getParameters", "Model", function(this, ...) {
-  getParameterSet(this, ...);
-}, private=TRUE)
-
-setMethodS3("getParametersAsString", "Model", function(this, ...) {
-  params <- getParameterSet(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params <- paste(params, collapse="; ");
-  params;
-}, private=TRUE)
 
 
 ###########################################################################/**

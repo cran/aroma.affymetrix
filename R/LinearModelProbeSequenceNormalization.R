@@ -80,7 +80,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
 
   # Expand 'cells'?
   if (is.null(cells)) {
-    cells <- seq(length=nbrOfCells(acs));
+    cells <- seq_len(nbrOfCells(acs));
   }
 
   verbose && enter(verbose, "Retrieving signal transform");
@@ -205,7 +205,7 @@ setMethodS3("getNormalEquations", "LinearModelProbeSequenceNormalization", funct
     # Keep only data points with finite signals
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Excluding non-finite data points");
-    keep <- whichVector(is.finite(yCC));
+    keep <- which(is.finite(yCC));
     yCC <- yCC[keep];
     X <- X[keep,,drop=FALSE];
     rm(keep);
@@ -343,8 +343,8 @@ setMethodS3("fitOne", "LinearModelProbeSequenceNormalization", function(this, df
   }
   df <- length(coefs)/length(factors);
   verbose && cat(verbose, "Degrees of freedom: ", df);
-  idxs <- seq(length=df);
-  for (kk in seq(along=factors)) {
+  idxs <- seq_len(df);
+  for (kk in seq_along(factors)) {
     key <- names(factors)[kk];
     if (is.null(key)) {
       key <- sprintf("factor%02d", kk);

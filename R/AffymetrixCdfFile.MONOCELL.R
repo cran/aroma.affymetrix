@@ -56,7 +56,7 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
 
     verbose && printf(verbose, "Units: ");
     if (hasGroups) {
-      for (kk in seq(along=units)) {
+      for (kk in seq_along(units)) {
         if (verbose) {
           if (kk %% 1000 == 0) {
             printf(verbose, "%d, ", kk);
@@ -66,7 +66,7 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
         }
         # groups <- units[[kk]]$groups;
         groups <- .subset2(.subset2(units, kk), "groups");
-        for (ll in seq(along=groups)) {
+        for (ll in seq_along(groups)) {
           group <- .subset2(groups, ll);
           # Number of cells in this group
           # nindices <- length(group$indices);
@@ -81,7 +81,7 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
         units[[kk]]$groups <- groups;
       }
     } else {
-      for (kk in seq(along=units)) {
+      for (kk in seq_along(units)) {
         if (verbose) {
           if (kk %% 1000 == 0) {
             printf(verbose, "%d, ", kk);
@@ -136,6 +136,14 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
 
   verbose && cat(verbose, "Chip type: ", getChipType(this));
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate source CDF
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  verbose && enter(verbose, "Validate (main) CDF");
+  validate(this);
+  verbose && exit(verbose);
+
+
   # Get the pathname of the source
   src <- getPathname(this);
   src <- Arguments$getReadablePathname(src);
@@ -143,7 +151,7 @@ setMethodS3("createMonocellCdf", "AffymetrixCdfFile", function(this, chipType=ge
   # Create the pathname of the destination CDF
   if (is.null(path)) {
     mainChipType <- gsub("[,].*", "", chipType);
-    path <- filePath("annotationData", "chipTypes", mainChipType, expandLinks="any");
+    path <- filePath("annotationData", "chipTypes", mainChipType);
   }
 
   name <- paste(c(chipType, tags), collapse=",");
@@ -568,14 +576,6 @@ setMethodS3("isMonocellCdf", "AffymetrixCdfFile", function(this, ...) {
 })
 
 
-setMethodS3("getMonoCell", "AffymetrixCdfFile", function(this, ...) {
-  getMonocellCdf(this, ...);
-})
-
-setMethodS3("createMonoCell", "AffymetrixCdfFile", function(this, ...) {
-  createMonocellCdf(this, ...);
-})
-
 
 # equals(getMainCdf(getMonocellCdf(cdf), cdf)) == TRUE
 setMethodS3("getMainCdf", "AffymetrixCdfFile", function(this, ...) {
@@ -651,6 +651,10 @@ setMethodS3("getUnitGroupCellMapWithMonocell", "AffymetrixCdfFile", function(thi
 
 ############################################################################
 # HISTORY:
+# 2012-10-18
+# o ROBUSTNESS: Now createMonocellCdf() for AffymetrixCdfFile validates
+#   the CDF before trying to create the monocell CDF.  This should catch
+#   for instance invalid Brainarray custom CDFs, cf. ...
 # 2011-04-15
 # o CLEANUP: Dropped argument 'sep' of createMonocellCdf() and 
 #   createUniqueCdf() for AffymetrixCdfFile.

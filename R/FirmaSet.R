@@ -29,18 +29,6 @@ setConstructorS3("FirmaSet", function(...) {
 })
 
 
-setMethodS3("clearCache", "FirmaSet", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("getFileClass", "FirmaSet", function(static, ...) {
   FirmaFile;
 }, static=TRUE, private=TRUE)
@@ -50,7 +38,7 @@ setMethodS3("byPath", "FirmaSet", function(static, ..., pattern=",FIRMAscores[.]
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  byPath.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+  NextMethod("byPath", pattern=pattern, fileClass=fileClass);
 }, protected=TRUE, static=TRUE)
 
 
@@ -64,7 +52,7 @@ setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getN
   verbose && enter(verbose, "Retrieving FIRMA results");
   fs <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", name);
-  for (kk in seq(dataSet)) {
+  for (kk in seq_along(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose,
                      sprintf("Retrieving FIRMA results file #%d of %d (%s)",
@@ -83,7 +71,7 @@ setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getN
 
   # Create a FirmaSet
   newInstance(static, fs);
-})
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "FirmaSet", function(this, ...) {
@@ -106,7 +94,7 @@ setMethodS3("readUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, ..., v
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading FIRMA results unit by unit for ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Reading FIRMA results unit by unit for ", length(this), " arrays");
 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Getting cell indices from CDF");
@@ -117,7 +105,7 @@ setMethodS3("readUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, ..., v
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   verbose && enter(verbose, "Calling readUnits() in superclass");
-  res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
+  res <- NextMethod("readUnits", units=cdf, verbose=less(verbose));
   verbose && exit(verbose);
 
   # Get first file and use that to decode the read structure
@@ -147,7 +135,7 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
   }
 
   # Update each file one by one
-  arrays <- seq(this);
+  arrays <- seq_along(this);
   nbrOfArrays <- length(this);
   verbose && enter(verbose, "Updating ", nbrOfArrays, " FIRMA result files");
 
@@ -203,7 +191,7 @@ setMethodS3("extractMatrix", "FirmaSet", function (this, ..., field=c("intensiti
   # Argument 'field':
   field <- match.arg(field);
 
-  NextMethod("extractMatrix", this, ..., field=field);
+  NextMethod("extractMatrix", field=field);
 }) 
 
 

@@ -2,8 +2,7 @@ library("aroma.affymetrix")
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 
-
-dataSetName <- "HapMap270,100K,CEU,testSet";
+dataSet <- "HapMap,CEU,testset";
 chipTypes <- c("Mapping50K_Hind240", "Mapping50K_Xba240");
 #chipTypes <- chipTypes[2];
 
@@ -17,7 +16,7 @@ tags <- "ACC,-XY,RMA,+300,A+B,FLN,-XY";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cesList <- list();
 for (chipType in chipTypes) {
-  ces <- CnChipEffectSet$byName(dataSetName, tags=tags, chipType=chipType, verbose=log);
+  ces <- CnChipEffectSet$byName(dataSet, tags=tags, chipType=chipType);
   print(ces);
   stopifnot(identical(getNames(ces), sampleNames));
   cesList[[chipType]] <- ces;

@@ -19,15 +19,17 @@
 
 \code{\link[R.oo]{Object}}\cr
 \code{~~|}\cr
-\code{~~+--}\code{\link[aroma.core]{AromaTransform}}\cr
+\code{~~+--}\code{\link[aroma.core]{ParametersInterface}}\cr
 \code{~~~~~~~|}\cr
-\code{~~~~~~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
+\code{~~~~~~~+--}\code{\link[aroma.core]{AromaTransform}}\cr
 \code{~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
+\code{~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{Transform}}\cr
 \code{~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectGroupMerge}}\cr
+\code{~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
 \code{~~~~~~~~~~~~~~~~~~~~~~|}\cr
-\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{SnpChipEffectGroupMerge}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~+--}\code{\link[aroma.affymetrix]{ChipEffectGroupMerge}}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~|}\cr
+\code{~~~~~~~~~~~~~~~~~~~~~~~~~~~+--}\code{SnpChipEffectGroupMerge}\cr
 
 \bold{Directly known subclasses:}\cr
 \cr
@@ -54,22 +56,27 @@ extends \link[aroma.affymetrix]{ChipEffectGroupMerge}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getMergeFunction} \tab  -\cr
 }
 
 
  \bold{Methods inherited from ChipEffectGroupMerge}:\cr
-getCdf, getMergeFunction, process, setMergeFunction
+getCdf, getMergeFunction, getParameters, process, setMergeFunction
+
+ \bold{Methods inherited from ChipEffectTransform}:\cr
+getRootPath
 
  \bold{Methods inherited from Transform}:\cr
-getOutputDataSet, getOutputDataSetOLD20090509, getOutputFiles
+getOutputDataSet, getOutputFiles
 
  \bold{Methods inherited from AromaTransform}:\cr
-getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getTags, isDone, process, setTags
+as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
+
+ \bold{Methods inherited from ParametersInterface}:\cr
+getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, getChecksum, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, print
 
 
  }

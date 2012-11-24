@@ -215,7 +215,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, safe=TRUE, 
       }
     }
   
-    for (ii in seq(along=apm)) {
+    for (ii in seq_along(apm)) {
       if (!is.null(pb) && (ii %% 1000 == 0)) {
         increase(pb);
       }
@@ -231,7 +231,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, safe=TRUE, 
 
       # Calculate the MM affinity from the PM affinity by
       # correcting the mismatch nucleotide.
-      base <- whichVector(charMtrx[,13,drop=TRUE] == 1);
+      base <- which(charMtrx[,13,drop=TRUE] == 1);
       # Sanity check
       if (length(beta) != 1) throw("Unknown nucleotide index: ", base);
       amm[ii] <- apm[ii] + deltas[base];
@@ -262,7 +262,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, safe=TRUE, 
 
     # Process only sequences of length 25
     n <- nchar(sequences);
-    idxs <- whichVector(n == 25);
+    idxs <- which(n == 25);
     nbrOfNon25mers <- nbrOfSequences - length(idxs);
     if (nbrOfNon25mers > 0) {
       apm[-idxs] <- naValue;  # It is already NA?!? /HB 2010-09-29
@@ -278,7 +278,7 @@ setMethodS3("computeAffinities", "AffymetrixCdfFile", function(this, safe=TRUE, 
       }
     }
   
-    for (ii in seq(along=idxs)) {
+    for (ii in seq_along(idxs)) {
       if (!is.null(pb) && (ii %% 1000 == 0)) {
         increase(pb);
       }
@@ -440,7 +440,7 @@ setMethodS3("computeAffinitiesByACS", "AffymetrixCdfFile", function(this, ..., m
   nbrOfCells <- nbrOfCells(this);
   bp <- readSequenceMatrix(acs, positions=1, what="character");
   hasSequence <- !is.na(bp);
-  cells <- whichVector(hasSequence);
+  cells <- which(hasSequence);
   verbose && printf(verbose, "Number of known sequences: %d of %d (%.1f%%)\n",
                      length(cells), nbrOfCells, 100*length(cells)/nbrOfCells);
   verbose && exit(verbose);
@@ -471,7 +471,7 @@ setMethodS3("computeAffinitiesByACS", "AffymetrixCdfFile", function(this, ..., m
     verbose && exit(verbose);
 
     bases <- c("A", "C", "G", "T");
-    for (ii in seq(along=cells)) {
+    for (ii in seq_along(cells)) {
       if (!is.null(pb) && (ii %% 1000 == 0)) {
         increase(pb);
       }
@@ -518,7 +518,7 @@ setMethodS3("computeAffinitiesByACS", "AffymetrixCdfFile", function(this, ..., m
       coefsKK <- affinity.spline.coefs[idxs];
   
       # For each sequence...
-      for (ii in seq(along=cells)) {
+      for (ii in seq_along(cells)) {
         seqMatrixII <- seqMatrix[ii,,drop=TRUE];
         isBase <- (seqMatrixII == base);
         basesII <- which(isBase);
@@ -543,7 +543,7 @@ setMethodS3("computeAffinitiesByACS", "AffymetrixCdfFile", function(this, ..., m
     bases <- c("A", "C", "G", "T");
     affinitiesT <- double(length(cells));
     # For each position...
-    for (pp in seq(length=nbrOfPositions)) {
+    for (pp in seq_len(nbrOfPositions)) {
       verbose && enter(verbose, sprintf("Nucleotide position #%d of %d", pp, nbrOfPositions));
 
       affinityBasisPP <- affinity.basis.matrix[pp,,drop=TRUE];
@@ -568,7 +568,7 @@ setMethodS3("computeAffinitiesByACS", "AffymetrixCdfFile", function(this, ..., m
         verbose && enter(verbose, "Nucleotide ", base);
   
         # Identify cells with this nucleotide at this position
-        idxsTT <- whichVector(nucleotides == base);
+        idxsTT <- which(nucleotides == base);
 
         verbose && cat(verbose, "Indices of cells with this base:");
         verbose && str(verbose, idxsTT);

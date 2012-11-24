@@ -61,7 +61,7 @@ setConstructorS3("MatSmoothing", function(..., design=NULL, probeWindow=300, nPr
   ds <- getInputDataSet(this);
   if (!is.null(ds)) {
     # Validate the dimension of the design matrix
-    nbrOfFiles <- nbrOfFiles(ds);
+    nbrOfFiles <- length(ds);
     design <- this$.design;
     dim <- dim(design);
     if (dim[1] != nbrOfFiles) {
@@ -73,7 +73,7 @@ setConstructorS3("MatSmoothing", function(..., design=NULL, probeWindow=300, nPr
 #    }
 
     # Validate the contents of the design matrix
-    for (cc in seq(length=ncol(design))) {
+    for (cc in seq_len(ncol(design))) {
       if (!any(design[,cc] != 0)) {
         throw("Column #", cc, " in argument 'design' is all zero.");
       }
@@ -118,7 +118,7 @@ setMethodS3("getAromaCellPositionFile", "MatSmoothing", function(this, ..., forc
 
 setMethodS3("getParameters", "MatSmoothing", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -132,7 +132,7 @@ setMethodS3("getParameters", "MatSmoothing", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -162,16 +162,6 @@ setMethodS3("getExpectedOutputFullnames", "MatSmoothing", function(this, ..., ve
 
   fullnames;
 }, protected=TRUE)
-
-
-setMethodS3("getExpectedOutputFiles", "MatSmoothing", function(this, ...) {
-  fullnames <- getExpectedOutputFullnames(this, ...);
-
-  # "Dummy" filenames
-  filenames <- sprintf("%s.CEL", fullnames);
-
-  filenames;
-}, protected=TRUE, deprecated=TRUE)
 
 
 
@@ -315,7 +305,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
 
     # For each chromosome
     YList <- list();
-    for (ii in seq(along=idxList)) {
+    for (ii in seq_along(idxList)) {
       idxs <- idxList[[ii]];
 
       # Extract ordered along chromosome (don't assume)
@@ -639,7 +629,7 @@ setMethodS3("process", "MatSmoothing", function(this, ..., units=NULL, force=FAL
   outputDataSet <- getOutputDataSet(this, force=TRUE);
 
   # Sanity check
-  stopifnot(nbrOfFiles(outputDataSet) == ncol(design));
+  stopifnot(length(outputDataSet) == ncol(design));
 
   verbose && exit(verbose);
   

@@ -42,12 +42,12 @@ setMethodS3("validate", "MultiArrayUnitModel", function(this, ...) {
   if (is.null(ds))
     return(invisible(TRUE));
 
-  if (nbrOfArrays(ds) < 2) {
+  if (length(ds) < 2) {
     priors <- getListOfPriors(this);
     hasPriors <- (!is.null(priors));
     if (!hasPriors) {
       throw("This ", class(this)[1], " requires at least 2 arrays: ",
-                                                            nbrOfArrays(ds));
+                                                            length(ds));
     }
   }
 
@@ -84,11 +84,6 @@ setMethodS3("validate", "MultiArrayUnitModel", function(this, ...) {
 # }
 #*/###########################################################################
 setMethodS3("getFitUnitGroupFunction", "MultiArrayUnitModel", abstract=TRUE, static=TRUE, private=TRUE);
-
-
-setMethodS3("getFitFunction", "MultiArrayUnitModel", function(...) {
-  throw("getFitFunction() is deprecated. Please use getFitUnitGroupFunction() instead.");
-}, private=TRUE, deprecated=TRUE)
 
 
 
@@ -276,7 +271,7 @@ setMethodS3("readPriorsByUnits", "MultiArrayUnitModel", function(this, units=NUL
     unitNames <- names(res[[1]]);
     res2 <- vector("list", length(unitNames));
     names(res2) <- unitNames;
-    for (uu in seq(along=res2)) {
+    for (uu in seq_along(res2)) {
       unit <- unit0;
       for (kk in seq_len(nbrOfPriors)) {
         unit[[kk]] <- res[[kk]][[uu]];

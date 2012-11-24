@@ -47,14 +47,14 @@ setMethodS3("as.character", "QualityAssessmentModel", function(x, ...) {
 
   s <- sprintf("%s:", class(this)[1]);
   s <- c(s, paste("Name:", getName(this)));
-  s <- c(s, paste("Tags:", paste(getTags(this), collapse=",")));
-  s <- c(s, sprintf("Path: %s", getPath(this)));
+  s <- c(s, paste("Tags:", getTags(this, collapse=",")));
+  s <- c(s, paste("Path:", getPath(this)));
   s <- c(s, "Chip-effect set:");
   s <- c(s, paste("   ", as.character(getChipEffectSet(this))));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getDataSet", "QualityAssessmentModel", function(this, ...) {
@@ -65,10 +65,6 @@ setMethodS3("getPlm", "QualityAssessmentModel", function(this, ...) {
   this$.plm;
 })
 
-setMethodS3("getChipEffects", "QualityAssessmentModel", function(this, ...) {
-  getChipEffectSet(this, ...);
-}, private=TRUE, deprecated=TRUE)
-
 setMethodS3("getChipEffectSet", "QualityAssessmentModel", function(this, ...) {
   plm <- getPlm(this);
   getChipEffectSet(plm);
@@ -76,7 +72,7 @@ setMethodS3("getChipEffectSet", "QualityAssessmentModel", function(this, ...) {
 
 setMethodS3("nbrOfArrays", "QualityAssessmentModel", function(this, ...) {
   ces <- getChipEffectSet(this);
-  nbrOfArrays(ces);
+  length(ces);
 })
 
 setMethodS3("getCdf", "QualityAssessmentModel", function(this, ...) {
@@ -85,7 +81,8 @@ setMethodS3("getCdf", "QualityAssessmentModel", function(this, ...) {
 }, protected=TRUE)
 
 setMethodS3("getName", "QualityAssessmentModel", function(this, ...) {
-  getName(this$.plm);
+  plm <- getPlm(this)
+  getName(plm);
 })
 
 
@@ -99,7 +96,7 @@ setMethodS3("getAsteriskTags", "QualityAssessmentModel", function(this, collapse
   tags <- paste(tags, collapse=collapse);
 
   tags;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getTags", "QualityAssessmentModel", function(this, collapse=NULL, ...) {
@@ -144,14 +141,14 @@ setMethodS3("getFullName", "QualityAssessmentModel", function(this, ...) {
 
 setMethodS3("getRootPath", "QualityAssessmentModel", function(this, ...) {
   "qcData";
-})
+}, protected=TRUE)
+
 
 setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
   # Create the (sub-)directory tree for the dataset
 
   # Root path
   rootPath <- getRootPath(this);
-  mkdirs(rootPath);
 
   # Full name
   fullname <- getFullName(this);
@@ -161,14 +158,8 @@ setMethodS3("getPath", "QualityAssessmentModel", function(this, ...) {
   chipType <- getChipType(cdf, fullname=FALSE);
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
-
-  # Create path?
-  if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
-  }
+  path <- filePath(rootPath, fullname, chipType);
+  path <- Arguments$getWritablePath(path);
 
   path;
 })
@@ -255,7 +246,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     on.exit(popState(verbose));
   }
   
-  unitsPerChunk <- ram * 100000/nbrOfArrays(this);
+  unitsPerChunk <- ram * 100000/length(this);
   unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
 
   # If residuals already calculated, and if force==FALSE, just return
@@ -276,7 +267,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathnames
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  mkdirs(path);
+  path <- Arguments$getWritablePath(path);
   filenames <- getNames(ces);
   pathnames <- sapply(filenames, function(filename) {
     filename <- sprintf("%s,residuals.CEL", filename);
@@ -289,7 +280,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   nbrOfFiles <- length(pathnames);
   
 
-  nbrOfArrays <- nbrOfArrays(ds);
+  nbrOfArrays <- length(ds);
   cdf <- getCdf(ds);
   cdfHeader <- getHeader(cdf);  # Might be used later
 
@@ -303,7 +294,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     if (is.null(units)) {
       unitsToDo <- units;
     } else {
-      unitsToDo <- seq(length=nbrOfUnits);
+      unitsToDo <- seq_len(nbrOfUnits);
     }
   }
 
@@ -316,11 +307,11 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n",
                     nbrOfChunks, unitsPerChunk);
-  head <- seq(length=unitsPerChunk);
+  head <- seq_len(unitsPerChunk);
   count <- 1;
   while (length(unitsToDo) > 0) {
     if (length(unitsToDo) < unitsPerChunk) {
-      head <- 1:length(unitsToDo);
+      head <- seq_along(unitsToDo);
     }
     units <- unitsToDo[head];
     verbose && printf(verbose, "Chunk #%d of %d (%d units)\n",
@@ -352,7 +343,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     verbose && exit(verbose);
     
     # Store residuals
-    for (kk in seq(along=pathnames)) {
+    for (kk in seq_along(pathnames)) {
       # Back-transform data to intensity scale and encode as CEL structure
       verbose && enter(verbose, "Encode as CEL structure");
       data <- lapply(residualsList, FUN=function(groups) {
@@ -476,7 +467,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
 
 
   # Argument 'unitsPerChunk':
-  unitsPerChunk <- ram * 100000/nbrOfArrays(this);
+  unitsPerChunk <- ram * 100000/length(this);
   unitsPerChunk <- Arguments$getInteger(unitsPerChunk, range=c(1,Inf));
 
   # If residuals already calculated, and if force==FALSE, just return
@@ -485,7 +476,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Generating output pathname
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  mkdirs(path);
+  path <- Arguments$getWritablePath(path);
   ces <- getChipEffectSet(this);
   names <- getNames(ces);
   pathname <- sapply(names, function(name) {
@@ -512,63 +503,68 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
     qaf <- QualityAssessmentFile$fromFile(pathname[nbrOfFiles]);
     unitsToDo <- findUnitsTodo(qaf);
   } else {
-    unitsToDo <- 1:nbrOfUnits;
+    unitsToDo <- seq_len(nbrOfUnits);
   }
 
   nbrOfChunks <- ceiling(nbrOfUnits / unitsPerChunk);
   verbose && printf(verbose, "Number of chunks: %d (%d units/chunk)\n",
                     nbrOfChunks, unitsPerChunk);
-  head <- 1:unitsPerChunk;
+  head <- seq_len(unitsPerChunk);
   verbose && enter(verbose, "Extracting unit data");
   count <- 1;
   while (length(unitsToDo) > 0) {
     if (length(unitsToDo) < unitsPerChunk) {
-      head <- 1:length(unitsToDo);
+      head <- seq_along(unitsToDo);
     }
     units <- unitsToDo[head];
     verbose && printf(verbose, "Chunk #%d of %d (%d units)\n",
                                         count, nbrOfChunks, length(units));
 
-    logTransform <- rep(list(log2), nbrOfArrays(this));
+    logTransform <- rep(list(log2), length(this));
 
     rawDataList <- readUnits(ds, units=units, transforms=logTransform, verbose=less(verbose), stratifyBy="pm");
     chipEffectList <- readUnits(ces, units=units, transforms=logTransform, verbose=less(verbose));
     probeAffinityList <- readUnits(paf, units=units, transforms=list(log2), verbose=verbose);
 
     
-   weightsList <- lapply(head, FUN=resFcn);
-   weightsList <- lapply(weightsList, .subset2, 1);
+    weightsList <- lapply(head, FUN=resFcn);
+    weightsList <- lapply(weightsList, .subset2, 1);
 
-# update output files
-    
-    cdf <- getCellIndices(getCdf(ds), units=units, stratifyBy="pm", ...);
+    # update output files
+    cdf <- getCdf(ds);
+    cdfList <- getCellIndices(cdf, units=units, stratifyBy="pm", ...);
   
-    for (kk in seq(pathname)) {
+    for (kk in seq_along(pathname)) {
+      # Create CEL file?
       if (!isFile(pathname[kk])) {
-        cdfHeader <- getHeader(getCdf(ds));
-        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=getName(getFile(ds,kk)));
+        cdfHeader <- getHeader(cdf);
+        dfKK <- getFile(ds, kk);
+        sampleName <- getName(dfKK);
+        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=sampleName);
         createCel(pathname[kk], header=celHeader, verbose=less(verbose));
       }
+
       data <- lapply(weightsList, function(x){
         nrow <- nrow(x); 
         list(list(
           intensities=2^x[,kk], 
-          stdvs=rep(1, nrow), 
-          pixels=rep(1, nrow)
+          stdvs=rep(1, times=nrow), 
+          pixels=rep(1, times=nrow)
         ))
       });
-      updateCelUnits(pathname[kk], cdf=cdf, data=data);
-    }
+
+      updateCelUnits(pathname[kk], cdf=cdfList, data=data);
+    } # for (kk ...)
     
     unitsToDo <- unitsToDo[-head];
     count <- count + 1;
-  }
+  } # while(...)
 
+  # Load output QA data set
   res <- QualityAssessmentSet$byPath(path=path, pattern=",weights.[cC][eE][lL]$");
-  setAlias(res, getName(this));
 
   res;
-})
+}) # getWeights()
 
 
 
@@ -587,6 +583,9 @@ setMethodS3("plotRle", "QualityAssessmentModel", function(this, ...) {
 
 ##########################################################################
 # HISTORY:
+# 2012-11-14
+# o CLEANUP: getWeights() for QualityAssessmentModel no longer sets the
+#   alias of the returned data set, because the use aliases is deprecated.
 # 2008-02-25
 # o Added Rdoc comments.
 # o Now plot{Nuse|Rle}() calls plotBoxplot() of ChipEffectSet.

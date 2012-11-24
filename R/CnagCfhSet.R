@@ -48,18 +48,6 @@ setConstructorS3("CnagCfhSet", function(files=NULL, ...) {
 })
 
 
-setMethodS3("clearCache", "CnagCfhSet", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".fileSize")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("clone", "CnagCfhSet", function(this, ..., verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -67,7 +55,7 @@ setMethodS3("clone", "CnagCfhSet", function(this, ..., verbose=FALSE) {
   verbose && enter(verbose, "Cloning CNAG CFH set");
 
   # Clone itself and the files.  The call below will clear the cache!
-  object <- NextMethod("clone", clear=TRUE, ..., verbose=less(verbose));
+  object <- NextMethod("clone", clear=TRUE, verbose=less(verbose));
   clearCache(object);
 
   # Clone the CDF (this will update the CDF of all file object)
@@ -81,7 +69,7 @@ setMethodS3("clone", "CnagCfhSet", function(this, ..., verbose=FALSE) {
   verbose && exit(verbose);
 
   object;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("append", "CnagCfhSet", function(this, other, clone=TRUE, ..., verbose=FALSE) {
@@ -111,7 +99,7 @@ setMethodS3("append", "CnagCfhSet", function(this, other, clone=TRUE, ..., verbo
   }
 
   # Append other
-  this <- NextMethod("append", this, other=other, clone=clone, ...);
+  this <- NextMethod("append", other=other, clone=clone);
 
   # Set the same CDF for all CFH files
   verbose && enter(verbose, "Updating the CDF for all files");
@@ -121,7 +109,7 @@ setMethodS3("append", "CnagCfhSet", function(this, other, clone=TRUE, ..., verbo
   verbose && exit(verbose);
 
   this;
-})
+}, protected=TRUE)
 
 
 
@@ -165,7 +153,7 @@ setMethodS3("as.character", "CnagCfhSet", function(x, ...) {
   s <- c(s, sprintf("Tags: %s", tags));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
-  n <- nbrOfArrays(this);
+  n <- length(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
   s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n));
@@ -188,7 +176,7 @@ setMethodS3("as.character", "CnagCfhSet", function(x, ...) {
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getTimestamps", "CnagCfhSet", function(this, ..., force=FALSE) {
@@ -324,20 +312,8 @@ setMethodS3("findByName", "CnagCfhSet", function(static, ..., paths="cnagData(|,
     paths <- eval(formals(findByName.CnagCfhSet)[["paths"]]);
   }
 
-
-  # Unfortunately method dispatching does not work here.
-  path <- findByName.AffymetrixCelSet(static, ..., paths=paths);
-  
-  path;
-}, static=TRUE)
-
-
-setMethodS3("fromName", "CnagCfhSet", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromName() is defunct. Use %s$byName() instead.", 
-                                                className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
+  NextMethod("findByName", paths=paths);
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("byName", "CnagCfhSet", function(static, name, tags=NULL, chipType, paths=NULL, ...) {
@@ -371,7 +347,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
   
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  this <- byPath.GenericDataFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  this <- NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, verbose=less(verbose));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates
@@ -394,7 +370,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
     }
   }
  
-  if (nbrOfFiles(this) > 0) {
+  if (length(this) > 0) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Scan all CFH files for possible chip types
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -459,7 +435,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     verbose && enter(verbose, "Scanning for and applying sample annotation files");
     sas <- SampleAnnotationSet$loadAll(verbose=less(verbose));
-    if (nbrOfFiles(sas) == 0) {
+    if (length(sas) == 0) {
       verbose && cat(verbose, "No sample annotation files found.");
     } else {
       verbose && print(verbose, sas);
@@ -473,7 +449,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
   verbose && exit(verbose);
 
   this;
-})
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -485,7 +461,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
 #
 # \description{
 #   @get "title".
-#   This is just a wrapper for \code{nbrOfFiles()}.
+#   This is just a wrapper for \code{length()}.
 # }
 #
 # @synopsis
@@ -505,8 +481,8 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
 # }
 #*/###########################################################################
 setMethodS3("nbrOfArrays", "CnagCfhSet", function(this, ...) {
-  nbrOfFiles(this, ...);
-})
+  length(this, ...);
+}, protected=TRUE)
 
 
 
@@ -588,7 +564,7 @@ setMethodS3("isDuplicated", "CnagCfhSet", function(this, ...) {
   names(dups) <- getNames(this);
 
   dups;
-})
+}, protected=TRUE)
 
 
 
@@ -606,7 +582,7 @@ setMethodS3("getData", "CnagCfhSet", function(this, indices=NULL, fields=c("x", 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
-  nbrOfArrays <- nbrOfArrays(this);
+  nbrOfArrays <- length(this);
   verbose && enter(verbose, "Getting cell data for ", nbrOfArrays, " arrays.");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -630,7 +606,7 @@ setMethodS3("getData", "CnagCfhSet", function(this, indices=NULL, fields=c("x", 
   # Reading cell signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Retrieving data from ", nbrOfArrays, " arrays");
-  for (kk in seq(length=nbrOfArrays)) {
+  for (kk in seq_len(nbrOfArrays)) {
     verbose && enter(verbose, "Array #", kk, " of ", nbrOfArrays);
     dataFile <- this$files[[kk]];
     value <- getData(dataFile, indices=indices, fields=fields, verbose=less(verbose));
@@ -896,7 +872,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     verbose && cat(verbose, "Filename: ", filename);
 
     pathname <- NULL;
-    for (kk in seq(along=paths)) {
+    for (kk in seq_along(paths)) {
       path <- paths[kk];
       verbose && enter(verbose, sprintf("Searching path #%d of %d", kk, length(paths)));
 
@@ -1000,7 +976,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     # matrix. /HB 2007-01-07
     naValue <- as.double(NA);
     X <- matrix(naValue, nrow=length(ii), ncol=nbrOfArrays);
-    for (kk in seq(length=nbrOfArrays)) {
+    for (kk in seq_len(nbrOfArrays)) {
       X[,kk] <- readCel(filename = pathnames[kk],
                         indices = indices[ii],
                         readIntensities = readIntensities,
@@ -1078,29 +1054,20 @@ setMethodS3("getAverageAsinh", "CnagCfhSet", function(this, ...) {
 
 setMethodS3("range", "CnagCfhSet", function(this, ...) {
   range(unlist(lapply(this, FUN=range, ...), use.names=FALSE));
-})
+}, protected=TRUE)
 
 
-setMethodS3("[", "CnagCfhSet", function(this, units=NULL, ..., drop=FALSE) {
-  res <- readUnits(this, units=units, ...);
-  if (drop && length(res) == 1)
-    res <- res[[1]];
-  res;
-})
-
-setMethodS3("[[", "CnagCfhSet", function(this, units=NULL, ...) {
-  this[units=units, ..., drop=TRUE];
-})
-
-
-setMethodS3("getDefaultFullName", "CnagCfhSet", function(this, parent=1, ...) {
-  NextMethod("getDefaultFullName", this, parent=parent, ...);
-})
+setMethodS3("getDefaultFullName", "CnagCfhSet", function(this, parent=1L, ...) {
+  NextMethod("getDefaultFullName", parent=parent);
+}, protected=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-11-20
+# o CLEANUP: Deprecated "[" and "[[", because they should be used to
+#   subset files and not units.
 # 2011-03-03
 # o GENERALIZATION: Now CnagCfhSet locates sample annotation files and 
 #   sets the attributes following the new aroma search convention.

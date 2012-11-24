@@ -42,43 +42,16 @@ setConstructorS3("ChipEffectSet", function(..., probeModel=c("pm")) {
 })
 
 
-setMethodS3("clearCache", "ChipEffectSet", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("as.character", "ChipEffectSet", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", object=this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
-
-setMethodS3("getParameters", "ChipEffectSet", function(this, ...) {
-  ce <- getFile(this, 1);
-  getParameters(ce, ...);
-})
-
-setMethodS3("getParametersAsString", "ChipEffectSet", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
 
 
 setMethodS3("getChipEffectFileClass", "ChipEffectSet", function(static, ...) {
@@ -95,12 +68,9 @@ setMethodS3("findByName", "ChipEffectSet", function(static, ..., paths="plmData(
     paths <- eval(formals(findByName.ChipEffectSet)[["paths"]]);
   }
 
+  NextMethod("findByName", paths=paths);
+}, static=TRUE, protected=TRUE)
 
-  # Unfortunately method dispatching does not work here.
-  path <- findByName.AffymetrixCelSet(static, ..., paths=paths);
-  
-  path;
-}, static=TRUE)
 
 setMethodS3("byPath", "ChipEffectSet", function(static, path="plmData/", pattern=",chipEffects[.](c|C)(e|E)(l|L)$", cdf=NULL, checkChipType=FALSE, ..., fileClass=NULL) {
   # Argument 'cdf':
@@ -112,12 +82,13 @@ setMethodS3("byPath", "ChipEffectSet", function(static, path="plmData/", pattern
   }
 
   # Argument 'fileClass':
-  if (is.null(fileClass))
+  if (is.null(fileClass)) {
     fileClass <- gsub("Set$", "File", class(static)[1]);
+  }
 
-  # Unfortunately, method dispatching does not work here.
-  byPath.AffymetrixCelSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, cdf=cdf, checkChipType=checkChipType);
-}, protected=TRUE, static=TRUE)
+
+  NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, cdf=cdf, checkChipType=checkChipType);
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -139,10 +110,9 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name
   verbose && enter(verbose, "Retrieving chip-effects from data set");
   ces <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", name);
-  for (kk in seq(dataSet)) {
+  for (kk in seq_along(dataSet)) {
     df <- getFile(dataSet, kk);
-    verbose && enter(verbose, 
-                           sprintf("Retrieving chip-effect #%d of %d (%s)",
+    verbose && enter(verbose, sprintf("Retrieving chip-effect #%d of %d (%s)",
                                                kk, length(ces), getName(df)));
     ce <- clazz$fromDataFile(df, path=path, name=name, cdf=cdf, ..., 
                                                        verbose=less(verbose));
@@ -158,7 +128,7 @@ setMethodS3("fromDataSet", "ChipEffectSet", function(static, dataSet, path, name
 
   # Create an ChipEffectSet
   newInstance(static, ces);
-})
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
@@ -181,7 +151,7 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading chip effects unit by unit for ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Reading chip effects unit by unit for ", length(this), " arrays");
 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Getting cell indices from CDF");
@@ -192,7 +162,7 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   verbose && enter(verbose, "Calling readUnits() in superclass");
-  res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
+  res <- NextMethod("readUnits", units=cdf, verbose=less(verbose));
   verbose && exit(verbose);
 
   # Get first chip-effect file and use that to decode the read structure
@@ -226,7 +196,7 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   }
 
   # Update each file one by one
-  arrays <- seq(this);
+  arrays <- seq_along(this);
   nbrOfArrays <- length(arrays);
   verbose && cat(verbose, "Number of files: ", nbrOfArrays);
 
@@ -300,7 +270,7 @@ setMethodS3("getAverageFile", "ChipEffectSet", function(this, indices="remaining
 #    indices <- unlist(indices, use.names=FALSE);
   }
 
-  NextMethod(generic="getAverageFile", object=this, indices=indices, ...);
+  NextMethod("getAverageFile", indices=indices);
 })
 
 
@@ -369,7 +339,7 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta
 
     verbose && exit(verbose);
   } else {
-    data <- NextMethod("extractMatrix", this, ..., field=field);
+    data <- NextMethod("extractMatrix", field=field);
   }
 
   # Drop singleton dimensions?

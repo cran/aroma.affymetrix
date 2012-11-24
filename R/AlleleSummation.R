@@ -44,7 +44,7 @@ setConstructorS3("AlleleSummation", function(dataSet=NULL, ignoreNAs=TRUE, ...) 
 
 setMethodS3("getAsteriskTags", "AlleleSummation", function(this, collapse=NULL, ...) {
   # Returns 'U' (but allow for future extensions)
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "SA";
 
   if (!is.null(collapse)) {
@@ -52,12 +52,12 @@ setMethodS3("getAsteriskTags", "AlleleSummation", function(this, collapse=NULL, 
   }
 
   tags;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getRootPath", "AlleleSummation", function(this, ...) {
   "plmData";
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("findUnitsTodo", "AlleleSummation", function(this, ...) {
@@ -176,7 +176,7 @@ setMethodS3("process", "AlleleSummation", function(this, ..., verbose=FALSE) {
 ## OLD:
 ## snps <- indexOf(cdf, "SNP");
   types <- getUnitTypes(cdf, units=units);
-  snps <- whichVector(types == 2);
+  snps <- which(types == 2);
   rm(types);
 
   # WORKAROUND: Some of the units reported as SNPs, may actually be 
@@ -194,8 +194,8 @@ setMethodS3("process", "AlleleSummation", function(this, ..., verbose=FALSE) {
 
   ignoreNAs <- this$ignoreNAs;
 
-  nbrOfArrays <- nbrOfArrays(inputSet);
-  for (aa in seq(length=nbrOfArrays)) {
+  nbrOfArrays <- length(inputSet);
+  for (aa in seq_len(nbrOfArrays)) {
     inputFile <- getFile(inputSet, aa);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", aa, getName(inputFile), nbrOfArrays));
     outputFile <- getFile(outputSet, aa);

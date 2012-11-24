@@ -46,7 +46,7 @@ setConstructorS3("ExonRmaPlm", function(..., mergeGroups=TRUE) {
 
 setMethodS3("getAsteriskTags", "ExonRmaPlm", function(this, collapse=NULL, ...) {
   # Returns 'RMA[,<flavor>]'
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Add class specific parameter tags
   if (this$mergeGroups)
@@ -66,7 +66,7 @@ cdfMergeGroups <- function(groups, ...) {
   
   nbrOfFields <- length(.subset2(groups,1));
   newGroup <- vector("list", nbrOfFields);
-  for (ff in seq(length=nbrOfFields)) {
+  for (ff in seq_len(nbrOfFields)) {
     newGroup[[ff]] <- unlist(base::lapply(groups, .subset2, ff), use.names=FALSE);
   }
   names(newGroup) <- names(.subset2(groups,1));
@@ -75,7 +75,7 @@ cdfMergeGroups <- function(groups, ...) {
 
 setMethodS3("getCellIndices", "ExonRmaPlm", function(this, ...) {
 
-  cells <- NextMethod("getCellIndices", this, ...);
+  cells <- NextMethod("getCellIndices");
 
   # Merge groups?
   if (this$mergeGroups) {
@@ -92,26 +92,16 @@ setMethodS3("getChipEffectSetClass", "ExonRmaPlm", function(this, ...) {
 
 
 setMethodS3("getChipEffectSet", "ExonRmaPlm", function(this, ...) {
-  ces <- NextMethod("getChipEffectSet", this, ...);
+  ces <- NextMethod("getChipEffectSet");
   setMergeGroups(ces, this$mergeGroups);
   ces;
 })
 
-setMethodS3("getChipEffects", "ExonRmaPlm", function(this, ...) {
-  getChipEffectSet(this, ...);
-})
-
-
 
 setMethodS3("getProbeAffinityFile", "ExonRmaPlm", function(this, ..., .class=ExonProbeAffinityFile) {
-  paf <- NextMethod("getProbeAffinityFile", this, ..., .class=.class);
+  paf <- NextMethod("getProbeAffinityFile", .class=.class);
   setMergeGroups(paf, this$mergeGroups);
   paf;
-})
-
-
-setMethodS3("getProbeAffinities", "ExonRmaPlm", function(this, ...) {
-  getProbeAffinityFile(this, ...);
 })
 
 
@@ -124,11 +114,11 @@ setMethodS3("setMergeGroups", "ExonRmaPlm", function(this, ...) {
 
 
 
-setMethodS3("getParameterSet", "ExonRmaPlm", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
+setMethodS3("getParameters", "ExonRmaPlm", function(this, ...) {
+  params <- NextMethod("getParameters");
   params$mergeGroups <- this$mergeGroups;
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -196,7 +186,7 @@ setMethodS3("getFitUnitGroupFunction", "ExonRmaPlm", function(this, ..., verbose
     # If input data are dimensionless, return NAs. /KS 2006-01-30
     dim <- dim(y);
     if (is.null(dim)) {
-      nbrOfArrays <- nbrOfArrays(getDataSet(this));
+      nbrOfArrays <- length(getDataSet(this));
       return(list(theta=rep(NA, nbrOfArrays),
                   sdTheta=rep(NA, nbrOfArrays),
                   thetaOutliers=rep(NA, nbrOfArrays), 

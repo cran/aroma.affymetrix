@@ -32,11 +32,10 @@ extends \emph{\link[aroma.core]{Explorer}}\cr
 
  }
 
- \usage{ArrayExplorer(csTuple=NULL, version=c("3.4", "3.0"), ...)}
+ \usage{ArrayExplorer(csTuple=NULL, ...)}
 
  \arguments{
    \item{csTuple}{An \code{\link{AffymetrixCelSet}} object.}
-   \item{version}{The version of the Explorer HTML/Javascript generated/used.}
    \item{...}{Not used.}
  }
 
@@ -44,24 +43,21 @@ extends \emph{\link[aroma.core]{Explorer}}\cr
   \bold{Methods:}\cr
 \tabular{rll}{
  \tab \code{addColorMap} \tab  -\cr
- \tab \code{getAlias} \tab  -\cr
- \tab \code{getAsteriskTags} \tab  -\cr
  \tab \code{getColorMaps} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getDataSet.ArrayExplorer]{getDataSet}} \tab Gets the data set.\cr
  \tab \code{getSetTuple} \tab  -\cr
  \tab \code{nbrOfChipTypes} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:process.ArrayExplorer]{process}} \tab Generates image files, scripts and dynamic pages for the explorer.\cr
- \tab \code{setAlias} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:setArrays.ArrayExplorer]{setArrays}} \tab Sets the arrays.\cr
  \tab \code{setColorMaps} \tab  -\cr
 }
 
 
  \bold{Methods inherited from Explorer}:\cr
-addIncludes, addIndexFile, display, getAlias, getArraysOfInput, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getNames, getParallelSafe, getPath, getReportPathPattern, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, getVersion, nbrOfArrays, process, setAlias, setArrays, setParallelSafe, setReportPathPattern, setSubname, setup, splitByReportPathPattern, updateSetupExplorerFile
+addIncludes, addIndexFile, as.character, display, getAlias, getArraysOfInput, getAsteriskTags, getFullName, getIncludePath, getMainPath, getName, getNameOfInput, getNames, getParallelSafe, getPath, getReportPathPattern, getRootPath, getSampleLayerPrefix, getSubname, getTags, getTagsOfInput, getTemplatePath, getVersion, nbrOfArrays, process, setAlias, setArrays, setParallelSafe, setReportPathPattern, setSubname, setup, splitByReportPathPattern, updateSetupExplorerFile
 
  \bold{Methods inherited from Object}:\cr
-asThis, getChecksum, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, print
 
 
  }

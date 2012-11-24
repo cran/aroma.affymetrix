@@ -169,7 +169,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
 ##     verbose && enter(verbose, "Identifying single-cell units");
 ##     counts <- nbrOfCellsPerUnit(cdf, units=units, verbose=less(verbose, 5));
 ##     verbose && print(verbose, table(verbose));
-##     singleCellUnits <- whichVector(counts == 1);
+##     singleCellUnits <- which(counts == 1);
 ##     rm(counts);
 ##     verbose && str(verbose, singleCellUnits);
 ##     verbose && exit(verbose);
@@ -254,7 +254,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
   verbose && cat(verbose, "Unit types:");
   verbose && print(verbose, uUnitTypes);
 
-  for (tt in seq(along=uUnitTypes)) {
+  for (tt in seq_along(uUnitTypes)) {
     unitType <- uUnitTypes[tt];
     unitTypeLabel <- names(uUnitTypes)[tt];
     verbose && enter(verbose, sprintf("Unit type #%d ('%s') of %d", tt, unitTypeLabel, length(uUnitTypes)));
@@ -320,7 +320,7 @@ setMethodS3("fit", "ProbeLevelModel", function(this, units="remaining", ..., for
       dimChunks <- c(dimChunks, small);
     }
 
-    for (kk in seq(along=dimChunks)) {
+    for (kk in seq_along(dimChunks)) {
       dimChunk <- dimChunks[[kk]];
       dim <- dimChunk$dim;
       if (is.null(dim)) {

@@ -21,7 +21,7 @@
 #*/###########################################################################
 setConstructorS3("SnpInformation", function(...) {
   this <- extend(GenericDataFile(...), "SnpInformation",
-    "cached:.data"=NULL
+    "cached:.data" = NULL
   );
   if (!is.null(getPathname(this)))
     verify(this);
@@ -32,24 +32,12 @@ setMethodS3("as.character", "SnpInformation", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Number of enzymes: %s", nbrOfEnzymes(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
-
-
-setMethodS3("clearCache", "SnpInformation", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".data")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -81,7 +69,7 @@ setMethodS3("clearCache", "SnpInformation", function(this, ...) {
 #*/###########################################################################
 setMethodS3("verify", "SnpInformation", function(this, ...) {
   TRUE;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -158,7 +146,7 @@ setMethodS3("getChipType", "SnpInformation", function(this, ...) {
 #*/###########################################################################
 setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
   byChipType(static, chipType=getChipType(cdf), nbrOfUnits=nbrOfUnits(cdf), ...);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -191,19 +179,11 @@ setMethodS3("fromCdf", "SnpInformation", function(static, cdf, ...) {
 #*/###########################################################################
 setMethodS3("byChipType", "SnpInformation", abstract=TRUE);
 
-setMethodS3("fromChipType", "SnpInformation", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
-
 
 setMethodS3("fromDataSet", "SnpInformation", function(static, dataSet, ...) {
   chipType <- getChipType(dataSet);
   byChipType(static, chipType=chipType, ...);
-}, static=TRUE)
-
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -357,12 +337,9 @@ setMethodS3("nbrOfUnits", "SnpInformation", function(this, ...) {
 setMethodS3("getFields", "SnpInformation", function(this, ...) {
   data <- getData(this);
   colnames(data);
-})
+}, protected=TRUE)
 
 
-setMethodS3("readData", "SnpInformation", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE)
 
 setMethodS3("readDataFrame", "SnpInformation", abstract=TRUE);
 
@@ -396,7 +373,7 @@ setMethodS3("nbrOfEnzymes", "SnpInformation", function(this, ...) {
   as.integer(1);
 })
 
-setMethodS3("getFragmentLengths", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
+setMethodS3("getFragmentLengths", "SnpInformation", function(this, enzymes=seq_len(nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="fragmentLength");
   fl <- data[,enzymes,drop=FALSE];
   fl <- as.matrix(fl);
@@ -407,7 +384,7 @@ setMethodS3("getFragmentLengths", "SnpInformation", function(this, enzymes=seq(l
 })
 
 
-setMethodS3("getFragmentStarts", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
+setMethodS3("getFragmentStarts", "SnpInformation", function(this, enzymes=seq_len(nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="start");
   fl <- data[,enzymes,drop=FALSE];
   fl <- as.matrix(fl);
@@ -418,7 +395,7 @@ setMethodS3("getFragmentStarts", "SnpInformation", function(this, enzymes=seq(le
 })
 
 
-setMethodS3("getFragmentStops", "SnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
+setMethodS3("getFragmentStops", "SnpInformation", function(this, enzymes=seq_len(nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields="stop");
   fl <- data[,enzymes,drop=FALSE];
   fl <- as.matrix(fl);

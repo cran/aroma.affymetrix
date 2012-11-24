@@ -35,50 +35,28 @@ setConstructorS3("WeightsSet", function(..., probeModel=c("pm")) {
   # Argument 'probeModel':
   probeModel <- match.arg(probeModel);
 
-  extend(AffymetrixCelSet(...), "WeightsSet",
+  extend(AffymetrixCelSet(...), c("WeightsSet", uses("ParametersInterface")),
     "cached:.firstCells" = NULL,
     probeModel = probeModel
   )
 })
-
-setMethodS3("clearCache", "WeightsSet", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
 
 
 setMethodS3("as.character", "WeightsSet", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "WeightsSet", function(this, ...) {
-  rf <- getFile(this, 1);
+  rf <- getFile(this, 1L);
   getParameters(rf, ...);
-})
-
-setMethodS3("getParametersAsString", "WeightsSet", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
-
+}, protected=TRUE)
 
 setMethodS3("getWeightsFileClass", "WeightsSet", function(static, ...) {
   WeightsFile;
@@ -90,7 +68,7 @@ setMethodS3("byPath", "WeightsSet", function(static, ..., pattern=",weights[.](c
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  byPath.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+  NextMethod("byPath", pattern=pattern, fileClass=fileClass);
 }, protected=TRUE, static=TRUE)
 
 
@@ -104,7 +82,7 @@ setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullnam
   verbose && enter(verbose, "Retrieving probe-level weights from data set");
   ws <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", fullname);
-  for (kk in seq(dataSet)) {
+  for (kk in seq_along(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose, 
                            sprintf("Retrieving weights file #%d of %d (%s)",
@@ -123,7 +101,7 @@ setMethodS3("fromDataSet", "WeightsSet", function(static, dataSet, path, fullnam
 
   # Create an WeightsSet
   newInstance(static, ws);
-})
+}, static=TRUE, protected=TRUE)
 
 setMethodS3("getCellIndices", "WeightsSet", function(this, ...) {
   # Use the first weights file to get the CDF structure.
@@ -145,7 +123,7 @@ setMethodS3("readUnits", "WeightsSet", function(this, units=NULL, cdf=NULL, ...,
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading weights unit by unit for ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Reading weights unit by unit for ", length(this), " arrays");
 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Getting cell indices from CDF");
@@ -156,7 +134,7 @@ setMethodS3("readUnits", "WeightsSet", function(this, units=NULL, cdf=NULL, ...,
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   verbose && enter(verbose, "Calling readUnits() in superclass");
-  res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
+  res <- NextMethod("readUnits", units=cdf, verbose=less(verbose));
   verbose && exit(verbose);
 
   # Get first weights file and use that to decode the read structure
@@ -182,7 +160,7 @@ setMethodS3("updateUnits", "WeightsSet", function(this, units=NULL, cdf=NULL, da
   }
 
   # Update each file one by one
-  arrays <- seq(this);
+  arrays <- seq_along(this);
   nbrOfArrays <- length(arrays);
   verbose && cat(verbose, "Number of files: ", nbrOfArrays);
 
@@ -241,7 +219,7 @@ setMethodS3("getAverageFile", "WeightsSet", function(this, ..., verbose=FALSE, i
     indices <- unlist(indices, use.names=FALSE);
   }
 
-  NextMethod(generic="getAverageFile", object=this, ..., indices=indices, verbose=verbose);
+  NextMethod("getAverageFile", indices=indices, verbose=verbose);
 })
 
 

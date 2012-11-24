@@ -216,6 +216,8 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., mode
   
 
   extend(ProbeLevelTransform(dataSet=dataSet, ...), "AllelicCrosstalkCalibration",
+    "cached:.setsOfProbes" = NULL,
+    "cached:.subsetToAvgExpanded" = NULL,
     .rescaleBy = rescaleBy,
     .targetAvg = targetAvg,
     .subsetToAvg = subsetToAvg,
@@ -229,19 +231,8 @@ setConstructorS3("AllelicCrosstalkCalibration", function(dataSet=NULL, ..., mode
 })
 
 
-setMethodS3("clearCache", "AllelicCrosstalkCalibration", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".setsOfProbes", ".subsetToAvgExpanded")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object 
-  NextMethod("clearCache", object=this, ...);
-})
-
-
 setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # shift tag?
   if (!this$.mergeShifts) {
@@ -266,7 +257,7 @@ setMethodS3("getAsteriskTags", "AllelicCrosstalkCalibration", function(this, col
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -341,7 +332,7 @@ setMethodS3("getSubsetToAvg", "AllelicCrosstalkCalibration", function(this, ...,
 
 setMethodS3("getParameters", "AllelicCrosstalkCalibration", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
+  params <- NextMethod("getParameters", expand=expand);
 
   params <- c(params, list(
     rescaleBy = this$.rescaleBy,
@@ -753,7 +744,7 @@ setMethodS3("process", "AllelicCrosstalkCalibration", function(this, ..., force=
   # Calibrate each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(ds);
-  nbrOfArrays <- nbrOfArrays(ds);
+  nbrOfArrays <- length(ds);
   verbose && enter(verbose, "Calibrating ", nbrOfArrays, " arrays");
   verbose && cat(verbose, "Path: ", outputPath);
 
@@ -1055,7 +1046,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
   }
 
   # Argument 'array':
-  array <- Arguments$getIndex(array, max=nbrOfArrays(cs));
+  array <- Arguments$getIndex(array, max=length(cs));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1128,7 +1119,7 @@ setMethodS3("plotBasepair", "AllelicCrosstalkCalibration", function(this, array,
 
   nbrOfPairs <- length(basepairs);
   verbose && enter(verbose, "Plotting (PMA,PMB) for ", nbrOfPairs, " basepair(s) ", what, " calibration");
-  for (kk in seq(along=basepairs)) {
+  for (kk in seq_along(basepairs)) {
     name <- basepairs[kk];
     verbose && enter(verbose, "Plotting (PMA,PMB) for basepair ", name, " in array ", array, " ('", getName(cf), "')");
 

@@ -76,7 +76,7 @@ setMethodS3("setMergeFunction", "ChipEffectGroupMerge", function(this, fcn=NULL,
 
 setMethodS3("getParameters", "ChipEffectGroupMerge", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -87,7 +87,7 @@ setMethodS3("getParameters", "ChipEffectGroupMerge", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCdf", "ChipEffectGroupMerge", function(this, ...) {
@@ -166,7 +166,7 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
 
   # Get (and create) the output path
   path <- getPath(this);
-  mkdirs(path);
+  path <- Arguments$getWritablePath(path);
 
   # Fields to be merged
   fields <- c("theta", "sdTheta");
@@ -179,7 +179,7 @@ setMethodS3("process", "ChipEffectGroupMerge", function(this, ..., force=FALSE, 
   fl <- NULL;
   targetFcn <- NULL;
   map <- NULL;
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   res <- vector("list", nbrOfArrays);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);

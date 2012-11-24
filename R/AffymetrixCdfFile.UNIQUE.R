@@ -67,7 +67,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
 
     verbose && printf(verbose, "Units: ");
     if (hasGroups) {
-      for (kk in seq(along=units)) {
+      for (kk in seq_along(units)) {
         if (verbose) {
           if (kk %% 1000 == 0) {
             printf(verbose, "%d, ", kk);
@@ -77,7 +77,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
         }
         # groups <- units[[kk]]$groups;
         groups <- .subset2(.subset2(units, kk), "groups");
-        for (ll in seq(along=groups)) {
+        for (ll in seq_along(groups)) {
           group <- .subset2(groups, ll);
           # Number of cells in this group
           nindices <- length(.subset2(group, "indices"));
@@ -89,7 +89,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
         units[[kk]]$groups <- groups;
       }
     } else {
-      for (kk in seq(along=units)) {
+      for (kk in seq_along(units)) {
         if (verbose) {
           if (kk %% 1000 == 0) {
             printf(verbose, "%d, ", kk);
@@ -153,7 +153,7 @@ setMethodS3("createUniqueCdf", "AffymetrixCdfFile", function(this, chipType=getC
   # Create the pathname of the destination CDF
   if (is.null(path)) {
     mainChipType <- gsub("[,].*", "", chipType);
-    path <- filePath("annotationData", "chipTypes", mainChipType, expandLinks="any");
+    path <- filePath("annotationData", "chipTypes", mainChipType);
   }
 
   # Write to a temporary file first, and rename it when we know its complete
@@ -682,30 +682,10 @@ setMethodS3("getUnitGroupCellMapWithUnique", "AffymetrixCdfFile", function(this,
 
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# BEGIN: DEPRECATED
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-setMethodS3("getUnique", "AffymetrixCdfFile", function(this, ...) {
-  getUniqueCdf(this, ...);
-}, private=TRUE, deprecated=TRUE)
-
-setMethodS3("createUnique", "AffymetrixCdfFile", function(this, ...) {
-  createUniqueCdf(this, ...);
-}, private=TRUE, deprecated=TRUE)
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# END: DEPRECATED
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
 ############################################################################
 # HISTORY:
 # 2011-04-15 [HB]
 # o Added more help to createUniqueCdf() for AffymetrixCdfFile.
-# o DEPRECATED: getUnique() and createUnique() are deprecated. 
-#   Use getUniqueCdf() and createUniqueCdf() instead.
 # 2008-11-28 [HB]
 # o BUG FIX: createUniqueCdf() used 'cdf' instead of 'this'.
 # 2008-11-14 [MR]

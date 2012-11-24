@@ -25,7 +25,7 @@ setMethodS3("nbrOfArrays", "AffymetrixAptSummaryFile", function(this, ...) {
 })
 
 setMethodS3("getReadArguments", "AffymetrixAptSummaryFile", function(this, fileHeader=NULL, colClassPatterns=c("*"="double", "probeset_id"="character"), ..., verbose=FALSE) {
-  args <- NextMethod("getReadArguments", this, colClassPatterns=colClassPatterns, ..., verbose=verbose);
+  args <- NextMethod("getReadArguments", colClassPatterns=colClassPatterns, verbose=verbose);
   args$quote <- "";
   args$na.strings <- "";
   
@@ -77,11 +77,11 @@ setMethodS3("readHeader", "AffymetrixAptSummaryFile", function(this, ..., verbos
     on.exit(popState(verbose));
   }
 
-  header <- NextMethod("readHeader", this, ..., verbose=verbose);
+  header <- NextMethod("readHeader", verbose=verbose);
 
   # Extract APT parameters from header comments
   comments <- header$comments;
-  names(comments) <- sprintf("commentRow%03d", seq(along=comments));
+  names(comments) <- sprintf("commentRow%03d", seq_along(comments));
   isParam <- (regexpr("^#%", comments) != -1);
   header$comments <- comments[!isParam];
   params <- comments[isParam];

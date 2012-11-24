@@ -79,7 +79,7 @@ setConstructorS3("RmaPlm", function(..., flavor=c("affyPLM", "oligo")) {
 
 setMethodS3("getAsteriskTags", "RmaPlm", function(this, collapse=NULL, ...) {
   # Returns 'PLM[,<shift>]'
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "RMA";
 
   # Add class specific parameter tags
@@ -90,15 +90,15 @@ setMethodS3("getAsteriskTags", "RmaPlm", function(this, collapse=NULL, ...) {
   tags <- paste(tags, collapse=collapse); 
 
   tags;
-})
+}, protected=TRUE)
 
 
-setMethodS3("getParameterSet", "RmaPlm", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
+setMethodS3("getParameters", "RmaPlm", function(this, ...) {
+  params <- NextMethod("getParameters");
   params$flavor <- this$.flavor;
   params$treatNAsAs <- this$treatNAsAs;
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -106,7 +106,7 @@ setMethodS3("getProbeAffinityFile", "RmaPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  paf <- NextMethod("getProbeAffinityFile", this, ...);
+  paf <- NextMethod("getProbeAffinityFile");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the encode and decode functions
@@ -305,7 +305,7 @@ setMethodS3("getFitUnitGroupFunction", "RmaPlm", function(this, ..., verbose=FAL
     # If input data are dimensionless, return NAs. /KS 2006-01-30
     dim <- dim(y);
     if (is.null(dim)) {
-      nbrOfArrays <- nbrOfArrays(getDataSet(this));
+      nbrOfArrays <- length(getDataSet(this));
       return(list(theta=rep(NA, nbrOfArrays),
                   sdTheta=rep(NA, nbrOfArrays),
                   thetaOutliers=rep(NA, nbrOfArrays), 

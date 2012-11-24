@@ -72,9 +72,9 @@ setMethodS3("validate", "AvgPlm", function(this, ...) {
   if (is.null(ds))
     return(invisible(TRUE));
 
-  if (nbrOfArrays(ds) < 1) {
+  if (length(ds) < 1) {
     throw("This ", class(this)[1], " requires at least 1 array: ",
-                                                         nbrOfArrays(ds));
+                                                         length(ds));
   }
 
   invisible(TRUE);
@@ -83,7 +83,7 @@ setMethodS3("validate", "AvgPlm", function(this, ...) {
 
 setMethodS3("getAsteriskTags", "AvgPlm", function(this, collapse=NULL, ...) {
   # Returns 'PLM[,<shift>]'
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "AVG";
 
   # Add class specific parameter tags
@@ -94,15 +94,15 @@ setMethodS3("getAsteriskTags", "AvgPlm", function(this, collapse=NULL, ...) {
   tags <- paste(tags, collapse=collapse); 
 
   tags;
-})
+}, protected=TRUE)
 
 
 
-setMethodS3("getParameterSet", "AvgPlm", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
+setMethodS3("getParameters", "AvgPlm", function(this, ...) {
+  params <- NextMethod("getParameters");
   params$flavor <- this$.flavor;
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -110,7 +110,7 @@ setMethodS3("getProbeAffinityFile", "AvgPlm", function(this, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Get the probe affinities (and create files etc)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  paf <- NextMethod("getProbeAffinityFile", this, ...);
+  paf <- NextMethod("getProbeAffinityFile");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Update the encode and decode functions
@@ -199,7 +199,7 @@ setMethodS3("getFitUnitGroupFunction", "AvgPlm", function(this, ...) {
 
     # If input data are dimensionless, return NAs.
     if (is.null(dim(y))) {
-      nbrOfArrays <- nbrOfArrays(getDataSet(this));
+      nbrOfArrays <- length(getDataSet(this));
       return(list(theta=rep(NA, nbrOfArrays),
                   sdTheta=rep(NA, nbrOfArrays),
                   thetaOutliers=rep(NA, nbrOfArrays), 

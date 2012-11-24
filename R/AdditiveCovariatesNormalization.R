@@ -66,7 +66,7 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
       }
     } else if (is.list(target)) {
       # Validate each element
-      for (kk in seq(along=target)) {
+      for (kk in seq_along(target)) {
         if (!is.function(target[[kk]])) {
           throw("One element in 'target' is not a function: ", 
                                              class(target[[kk]])[1]);
@@ -101,7 +101,7 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
 
   extend(ChipEffectTransform(dataSet, ...), "AdditiveCovariatesNormalization", 
     .subsetToFit = subsetToFit,
-    .target = target,
+    "cached:.target" = target,
     .onMissing = onMissing,
     .extraTags = extraTags,
     shift = shift
@@ -111,7 +111,7 @@ setConstructorS3("AdditiveCovariatesNormalization", function(dataSet=NULL, ..., 
 
 
 setMethodS3("getAsteriskTags", "AdditiveCovariatesNormalization", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=collapse);
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
@@ -126,23 +126,12 @@ setMethodS3("getAsteriskTags", "AdditiveCovariatesNormalization", function(this,
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
-
-
-setMethodS3("clearCache", "AdditiveCovariatesNormalization", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".target")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object 
-  NextMethod("clearCache", object=this, ...);
-})
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "AdditiveCovariatesNormalization", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
+  params <- NextMethod("getParameters", expand=expand);
 
   # Get parameters of this class
   params <- c(params, list(
@@ -159,7 +148,7 @@ setMethodS3("getParameters", "AdditiveCovariatesNormalization", function(this, e
   }
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCdf", "AdditiveCovariatesNormalization", function(this, ...) {
@@ -220,9 +209,9 @@ setMethodS3("getOutputDataSet00", "AdditiveCovariatesNormalization", function(th
   verbose && exit(verbose);
 
   res;
-})
+}, protected=TRUE)
 
-setMethodS3("getCovariates", "AdditiveCovariatesNormalization", abstract=TRUE);
+setMethodS3("getCovariates", "AdditiveCovariatesNormalization", abstract=TRUE, protected=TRUE);
 
 
 setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, force=FALSE, ..., verbose=FALSE) {
@@ -269,7 +258,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
     verbose && enter(verbose, "Reading annotation data covariates");
     X <- getCovariates(this, units=units, verbose=less(verbose,5));
     keep <- rep(FALSE, nrow(X));
-    for (ee in seq(length=ncol(X))) {
+    for (ee in seq_len(ncol(X))) {
       keep <- keep | is.finite(X[,ee]);
     }
     units <- units[keep];
@@ -308,7 +297,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
         verbose && str(verbose, subset);
   
         # The units to keep
-        subset <- setdiff(seq(length=nbrOfUnits), subset);
+        subset <- setdiff(seq_len(nbrOfUnits), subset);
   
         verbose && cat(verbose, "Units to include: ");
         verbose && str(verbose, subset);
@@ -339,7 +328,7 @@ setMethodS3("getSubsetToFit", "AdditiveCovariatesNormalization", function(this, 
 
     # Make sure to keep data points at the tails too
     extremeUnits <- c();
-    for (ee in seq(length=ncol(X))) {
+    for (ee in seq_len(ncol(X))) {
       extremeUnits <- c(extremeUnits, which.min(X[,ee]), which.max(X[,ee]));
     }
     rm(X);
@@ -499,7 +488,7 @@ setMethodS3("getTargetFunctions", "AdditiveCovariatesNormalization", function(th
     verbose && summary(verbose, hasX);
 
     nbrOfCovariates <- ncol(X);
-    allCovariates <- seq(length=nbrOfCovariates);
+    allCovariates <- seq_len(nbrOfCovariates);
 
     fits <- list();
     for (ee in allCovariates) {
@@ -543,7 +532,7 @@ setMethodS3("getTargetFunctions", "AdditiveCovariatesNormalization", function(th
 
     # Create a target prediction function for each covariate
     fcns <- vector("list", length(fits));
-    for (ee in seq(along=fits)) {
+    for (ee in seq_along(fits)) {
       fcns[[ee]] <- function(x, ...) {
         predict(fits[[ee]], x, ...);  # Dispatched predict.lowess().
       }
@@ -665,7 +654,7 @@ setMethodS3("process", "AdditiveCovariatesNormalization", function(this, ..., fo
   targetFcns <- NULL;
 #  map <- NULL;
   cellMatrixMap <- NULL;
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",

@@ -27,7 +27,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     }
   }
   paf <- getProbeAffinityFile(this);
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
 
   # If residuals already calculated, and if force==FALSE, just return
   # a CelSet with the previous calculations
@@ -77,14 +77,14 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     units0 <- units;
     if (is.null(units)) {
-      units <- seq(length=nbrOfUnits(cdf));
+      units <- seq_len(nbrOfUnits(cdf));
     }
     nbrOfUnits <- length(units);
 
     # Memory optimization: Do things in chunks
     unitChunks <- splitInChunks(units, chunkSize=100e3);
     cdfData <- list(unitGroupSizes=NULL, cells=NULL, ceCells=NULL);
-    for (kk in seq(along=unitChunks)) {
+    for (kk in seq_along(unitChunks)) {
       verbose && enter(verbose, sprintf("Chunk #%d of %d", kk, length(unitChunks)));
       units <- unitChunks[[kk]];
       verbose && enter(verbose, "Retrieving CDF cell indices");
@@ -186,7 +186,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   path <- getPath(this);
   phi <- NULL;
-  for (kk in seq(ds)) {
+  for (kk in seq_along(ds)) {
     # Get probe-level signals
     df <- getFile(ds, kk);
 
@@ -311,7 +311,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   verbose && exit(verbose);
 
   invisible(rs);
-})
+}, protected=TRUE)
 
 
 setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static, ...) {
@@ -319,11 +319,6 @@ setMethodS3("getCalculateResidualsFunction", "ProbeLevelModel", function(static,
     y-yhat;
   }
 }, static=TRUE, protected=TRUE)
-
-
-setMethodS3("calculateResiduals", "ProbeLevelModel", function(this, ...) {
-  calculateResidualSet(this, ...);
-}, private=TRUE)
 
 
 

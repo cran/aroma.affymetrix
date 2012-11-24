@@ -54,7 +54,8 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
 
 setMethodS3("getRootPath", "CrlmmModel", function(this, ...) {
   "crlmmData";
-}) 
+}, protected=TRUE)
+
 
 setMethodS3("getAsteriskTags", "CrlmmModel", function(this, collapse=NULL, ...) { 
   tags <- "CRLMM";
@@ -63,17 +64,17 @@ setMethodS3("getAsteriskTags", "CrlmmModel", function(this, collapse=NULL, ...) 
   }
 
   tags;
-})
+}, protected=TRUE)
 
 
-setMethodS3("getParameterSet", "CrlmmModel", function(this, ...) {
-  params <- NextMethod("getParameterSet", this, ...);
+setMethodS3("getParameters", "CrlmmModel", function(this, ...) {
+  params <- NextMethod("getParameters");
   params$balance <- this$balance;
   params$minLLRforCalls <- this$minLLRforCalls;
   params$recalibrate <- this$recalibrate;
   params$flavor <- this$flavor;
   params;
-}, private=TRUE) 
+}, protected=TRUE) 
 
 
 
@@ -115,13 +116,13 @@ setMethodS3("getCallSet", "CrlmmModel", function(this, ..., verbose=FALSE) {
   fullnames <- gsub(",chipEffects$", "", fullnames);
   filenames <- sprintf("%s,genotypes.acf", fullnames);
 
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
   verbose && enter(verbose, "Retrieving genotype call set");
   agcList <- list();
-  for (kk in seq(along=filenames)) {
+  for (kk in seq_along(filenames)) {
     filename <- filenames[kk];
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
     pathname <- filePath(outPath, filename);
@@ -172,13 +173,13 @@ setMethodS3("getConfidenceScoreSet", "CrlmmModel", function(this, ..., verbose=F
   fullnames <- gsub(",chipEffects$", "", fullnames);
   filenames <- sprintf("%s,confidenceScores.acf", fullnames);
 
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
   verbose && enter(verbose, "Retrieving genotype call confidence set");
   agcList <- list();
-  for (kk in seq(along=filenames)) {
+  for (kk in seq_along(filenames)) {
     filename <- filenames[kk];
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
     pathname <- filePath(outPath, filename);
@@ -230,13 +231,13 @@ setMethodS3("getCrlmmParametersSet", "CrlmmModel", function(this, ..., verbose=F
   fullnames <- gsub(",chipEffects$", "", fullnames);
   filenames <- sprintf("%s,CRLMM.atb", fullnames);
 
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   nbrOfUnits <- nbrOfUnits(cdf);
   platform <- getPlatform(cdf);
 
   verbose && enter(verbose, "Retrieving CRLMM parameters set");
   atbList <- list();
-  for (kk in seq(along=filenames)) {
+  for (kk in seq_along(filenames)) {
     filename <- filenames[kk];
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, filename, nbrOfArrays));
     pathname <- filePath(outPath, filename);
@@ -436,8 +437,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   crlmm <- getCrlmmPriors(this, verbose=less(verbose,1));
 
   ces <- getDataSet(this);
-  nbrOfArrays <- nbrOfArrays(ces);
-  data <- data.frame(gender=rep("female", nbrOfArrays));
+  nbrOfArrays <- length(ces);
+  data <- data.frame(gender=rep("female", times=nbrOfArrays));
   phenoData <- new("AnnotatedDataFrame", data=data);
 
 
@@ -525,7 +526,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     verbose && enter(verbose, "Genotype calling");
     naValue <- as.integer(NA);
     calls <- matrix(naValue, nrow=nrow(eSet), ncol=ncol(eSet));
-    index <- whichVector(!hapmapCallIndex);
+    index <- which(!hapmapCallIndex);
     if (length(index) > 0) {
       verbose && enter(verbose, "Initial SNP calling");
       verbose && str(verbose, index);
@@ -580,7 +581,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     }
     rm(params, index);
 
-    indexX <- whichVector(is.element(unitNames, names(snpsOnChrX)));
+    indexX <- which(is.element(unitNames, names(snpsOnChrX)));
     # NOTE: Do not specify sqsClass=class(eSet). Instead it should
     # default to sqsClass="SnpQSet" regardless of the class of 'eSet'.
     # See oligo:::justCRLMMv3() of oligo v1.12.0. /HB 2010-05-06
@@ -636,7 +637,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     # Storing results
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing CRLMM parameter estimates, confidence scores and genotypes");
-    for (kk in seq(callSet)) {
+    for (kk in seq_along(callSet)) {
       agc <- getFile(callSet, kk);
       atb <- getFile(paramSet, kk);
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(agc), nbrOfArrays));
@@ -703,7 +704,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   verbose && cat(verbose, "Average SNR per array (over all chunks):");
   verbose && str(verbose, snrPerArray);
 
-  for (kk in seq(paramSet)) {
+  for (kk in seq_along(paramSet)) {
     pf <- getFile(paramSet, kk);
     updateParameter(pf, "snr", snrPerArray[kk], verbose=less(verbose, -20));
   }
@@ -745,7 +746,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
   confSet <- getConfidenceScoreSet(this, verbose=less(verbose,1));
   paramSet <- getCrlmmParametersSet(this, verbose=less(verbose,1));
 
-  nbrOfArrays <- nbrOfFiles(callSet);
+  nbrOfArrays <- length(callSet);
   verbose && cat(verbose, "Number of arrays: ", nbrOfArrays);
   cf <- getFile(callSet,1);
   nbrOfUnits <- nbrOfUnits(cf);
@@ -810,7 +811,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
   # possible confidence score is 1/3. /HB 2009-01-12
   minConf <- 1/3;
 
-  for (kk in seq(length=nbrOfArrays)) {
+  for (kk in seq_len(nbrOfArrays)) {
     cf <- getFile(callSet, kk);
     pf <- getFile(paramSet, kk);
     sf <- getFile(confSet, kk);
@@ -826,7 +827,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
 
     # Identified units called by CRLMM.  This will for instance also
     # skip CN units.
-    unitsKK <- whichVector(!is.na(isHet));
+    unitsKK <- which(!is.na(isHet));
     isHet <- isHet[unitsKK];
     nbrOfCalled <- length(unitsKK);
     verbose && printf(verbose, "Number of called units: %d (%.2f%%)\n", 
@@ -848,7 +849,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
     if (force) {
     } else {
       verbose && enter(verbose, "Identifying subset of units not yet calculated units");
-      idxs <- whichVector(is.na(conf));
+      idxs <- which(is.na(conf));
       unitsKK <- unitsKK[idxs];
       conf <- conf[idxs];
       rm(idxs);
@@ -887,9 +888,9 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
         verbose && str(verbose, paramsT);
   
         if (what == "homozygotes") {
-          idxs <- whichVector(!isHet);
+          idxs <- which(!isHet);
         } else {
-          idxs <- whichVector(isHet);
+          idxs <- which(isHet);
         }
   
         verbose && cat(verbose, "Number of ", what, ": ", length(idxs));
@@ -902,7 +903,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
           confT <- coefs[1] + coefs[2]*llrT;
   
           delta <- llrT - k2;
-          idxsT <- whichVector(delta > 0);
+          idxsT <- which(delta > 0);
           if (length(idxsT) > 0) {
             confT[idxsT] <- confT[idxsT] + coefs[3]*delta[idxsT];
           }
@@ -956,7 +957,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
     for (name in names(srcFiles)) {
       srcFile <- srcFiles[[name]];
       attr <- list(
-        nbrOfArrays = nbrOfFiles(callSet),
+        nbrOfArrays = length(callSet),
         filename = getFilename(srcFile),
         filesize = getFileSize(srcFile),
         checksum = getChecksum(srcFile) 

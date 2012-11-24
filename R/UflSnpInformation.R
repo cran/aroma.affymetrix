@@ -36,14 +36,6 @@ setMethodS3("findByChipType", "UflSnpInformation", function(static, ...) {
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("fromChipType", "UflSnpInformation", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
-
-
 setMethodS3("byChipType", "UflSnpInformation", function(static, chipType, tags=NULL, nbrOfUnits=NULL, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -132,7 +124,7 @@ setMethodS3("getDataColumns", "UflSnpInformation", function(this, ...) {
 	
 setMethodS3("getFields", "UflSnpInformation", function(this, ...) {
   getDataColumns(this, ...);
-})
+}, protected=TRUE)
 
 setMethodS3("nbrOfUnits", "UflSnpInformation", function(this, ...) {
   ufl <- getAromaUflFile(this);
@@ -234,7 +226,7 @@ setMethodS3("nbrOfEnzymes", "UflSnpInformation", function(this, ...) {
   length(cols);
 })
 
-setMethodS3("getFragmentLengths", "UflSnpInformation", function(this, enzymes=seq(length=nbrOfEnzymes(this)), ...) {
+setMethodS3("getFragmentLengths", "UflSnpInformation", function(this, enzymes=seq_len(nbrOfEnzymes(this)), ...) {
   data <- getData(this, ..., fields=getDataColumns(this)[enzymes]);
   fl <- data[,enzymes,drop=FALSE];
   fl <- as.matrix(fl);

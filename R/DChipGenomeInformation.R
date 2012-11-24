@@ -61,7 +61,9 @@ setMethodS3("findByChipType", "DChipGenomeInformation", function(static, chipTyp
   # As a backup search the "old" style
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(pathname)) {
-    path <- filePath("annotations", chipType, expandLinks="any");
+    path <- filePath("annotations", chipType);
+    path <- Arguments$getReadablePath(path, mustExist=FALSE);
+
     if (isDirectory(path)) {
       pathnames <- list.files(path=path, pattern=pattern, full.names=TRUE);
       nfiles <- length(pathnames);
@@ -143,14 +145,6 @@ setMethodS3("byChipType", "DChipGenomeInformation", function(static, chipType, v
   res;
 })
 
-setMethodS3("fromChipType", "DChipGenomeInformation", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
-
-
 setMethodS3("verify", "DChipGenomeInformation", function(this, ...) {
   tryCatch({
     df <- readDataFrame(this, nrow=10);
@@ -188,7 +182,7 @@ setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, units=NULL
 
   # Try to read with the designated read function.
   res <- NULL;
-  for (kk in seq(along=readFcns)) {
+  for (kk in seq_along(readFcns)) {
     pattern <- names(readFcns)[kk];
     if (regexpr(pattern, chipType) != -1) {
       readFcn <- readFcns[[kk]];
@@ -202,7 +196,7 @@ setMethodS3("readDataFrame", "DChipGenomeInformation", function(this, units=NULL
 
   # If failed, re-try using all read functions.
   if (is.null(res)) {
-    for (kk in seq(along=readFcns)) {
+    for (kk in seq_along(readFcns)) {
       readFcn <- readFcns[[kk]];
       tryCatch({
         res <- readFcn(this, ...);

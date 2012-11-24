@@ -32,7 +32,7 @@ setMethodS3("getExtensionPattern", "AromaCellMatchScoreFile", function(static, .
 }, static=TRUE, protected=TRUE)
 
 
-setMethodS3("getColumnNames", "AromaCellMatchScoreFile", function(this, ...) {
+setMethodS3("getDefaultColumnNames", "AromaCellMatchScoreFile", function(this, ...) {
   c(sprintf("b%02d", seq(from=1, to=nbrOfColumns(this)-1)), "targetStrand");
 })
 
@@ -139,7 +139,7 @@ setMethodS3("updateMatchScores", "AromaCellMatchScoreFile", function(this, cells
   # Optimize
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Remove duplicated 'cells'
-  keep <- whichVector(!duplicated(cells));
+  keep <- which(!duplicated(cells));
   cells <- cells[keep];
   scores <- scores[keep];
   rm(keep);
@@ -189,13 +189,8 @@ setMethodS3("allocate", "AromaCellMatchScoreFile", function(static, ..., nbrOfCe
     footer
   );
 
-  nbrOfColumns <- 1;
-  res <- allocate.AromaMicroarrayTabularBinaryFile(static, 
-                 nbrOfRows=nbrOfCells, ..., 
-                 types=rep("integer",1), sizes=rep(1,nbrOfColumns), 
-                                                            footer=footer);
-
-  res;
+  nbrOfColumns <- 1L;
+  NextMethod("allocate", nbrOfRows=nbrOfCells, types=rep("integer", times=1L), sizes=rep(1L, times=nbrOfColumns), footer=footer);
 }, static=TRUE)
 
 

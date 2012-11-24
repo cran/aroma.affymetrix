@@ -88,7 +88,7 @@ setMethodS3("as.character", "AffymetrixCnChpSet", function(x, ...) {
   tags <- paste(tags, collapse=",");
   s <- c(s, sprintf("Tags: %s", tags));
   s <- c(s, sprintf("Path: %s", getPath(this)));
-  n <- nbrOfArrays(this);
+  n <- length(this);
   s <- c(s, sprintf("Number of arrays: %d", n));
   names <- getNames(this);
   s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n));
@@ -96,7 +96,7 @@ setMethodS3("as.character", "AffymetrixCnChpSet", function(x, ...) {
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -109,11 +109,7 @@ setMethodS3("findByName", "AffymetrixCnChpSet", function(static, ..., paths="chp
     paths <- eval(formals(findByName.AffymetrixCnChpSet)[["paths"]]);
   }
 
-
-  # Unfortunately method dispatching does not work here.
-  path <- findByName.AffymetrixCelSet(static, ..., paths=paths);
-  
-  path;
+  NextMethod("findByName", paths=paths);
 }, static=TRUE)
 
 
@@ -143,13 +139,16 @@ setMethodS3("byName", "AffymetrixCnChpSet", function(static, name, tags=NULL, ch
   suppressWarnings({
     byPath(static, path=path, cdf=cdf, ...);
   })
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
-setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path="rawData/", pattern="[.](cnchp|CNCHP)$", cdf=NULL, checkChipType=is.null(cdf), ..., fileClass="AffymetrixCnChpFile", verbose=FALSE) {
+setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path, pattern="[.](cnchp|CNCHP)$", cdf=NULL, checkChipType=is.null(cdf), ..., fileClass="AffymetrixCnChpFile", verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Argument 'path':
+  path <- Arguments$getReadablePath(path, mustExist=TRUE);
+
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
   if (verbose) {
@@ -160,11 +159,20 @@ setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path="rawData/", pa
   
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  set <- byPath.AffymetrixFileSet(static, path=path, pattern=pattern, ..., fileClass=fileClass, verbose=less(verbose));
+  # Call the "next" method
+  # WORKAROUND: For unknown reasons it is not possible to specify
+  # 'path=path' below, because it is already passed implicitly by
+  # NextMethod() and if done, then argument 'recursive' to byPath() for
+  # GenericDataFileSet will also be assign the value of 'path', e.g. 
+  # try byPath(AffymetrixCelSet(), "path/to/").  This seems to be related
+  # to R-devel thread 'Do *not* pass '...' to NextMethod() - it'll do it 
+  # for you; missing documentation, a bug or just me?' on Oct 16, 2012. 
+  ##  set <- NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, verbose=less(verbose));
+  set <- NextMethod("byPath", pattern=pattern, fileClass=fileClass, verbose=less(verbose));
 
-  verbose && cat(verbose, "Retrieved files: ", nbrOfFiles(set));
+  verbose && cat(verbose, "Retrieved files: ", length(set));
 
-  if (nbrOfFiles(set) > 0) {
+  if (length(set) > 0) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     # Scan all CHP files for possible chip types
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -207,7 +215,7 @@ setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path="rawData/", pa
   verbose && exit(verbose);
 
   set;
-})
+}, protected=TRUE)
 
 
 
@@ -219,7 +227,7 @@ setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path="rawData/", pa
 #
 # \description{
 #   @get "title".
-#   This is just a wrapper for \code{nbrOfFiles()}.
+#   This is just a wrapper for \code{length()}.
 # }
 #
 # @synopsis
@@ -239,8 +247,8 @@ setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path="rawData/", pa
 # }
 #*/###########################################################################
 setMethodS3("nbrOfArrays", "AffymetrixCnChpSet", function(this, ...) {
-  nbrOfFiles(this, ...);
-})
+  length(this, ...);
+}, protected=TRUE)
 
 
 
@@ -304,19 +312,21 @@ setMethodS3("extractLogRatios", "AffymetrixCnChpSet", function(this, units=NULL,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   readMap <- NULL;
   data <- NULL;
-  nbrOfArrays <- nbrOfArrays(this);
+  nbrOfArrays <- length(this);
   gcCount <- 0;
-  for (kk in seq(length=nbrOfArrays)) {
+  for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(df), nbrOfArrays));
 
-    if (!is.null(readMap))
+    if (!is.null(readMap)) {
       setUnitReadMap(df, readMap=readMap);
+    }
 
     dataKK <- extractLogRatios(df, units=units, ..., verbose=less(verbose, 5));
 
-    if (is.null(readMap))
+    if (is.null(readMap)) {
       readMap <- getUnitReadMap(df);
+    }
 
     verbose && str(verbose, dataKK);
     if (is.null(data)) {
@@ -351,8 +361,10 @@ setMethodS3("extractLogRatios", "AffymetrixCnChpSet", function(this, units=NULL,
 
 
 setMethodS3("getCdf", "AffymetrixCnChpSet", function(this, ...) {
-  getCdf(this$files[[1]], ...);
+  aFile <- getFile(this, 1L);
+  getCdf(aFile, ...);
 })
+
  
 setMethodS3("setCdf", "AffymetrixCnChpSet", function(this, cdf, verbose=FALSE, ..., .checkArgs=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -71,46 +71,22 @@ setConstructorS3("WeightsFile", function(..., probeModel=c("pm")) {
 })
 
 
-setMethodS3("clearCache", "WeightsFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("as.character", "WeightsFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "WeightsFile", function(this, ...) {
-  params <- list(
-    probeModel = this$probeModel
-  );
+  params <- NextMethod("getParameters");
+  params$probeModel <- this$probeModel;
   params;
-})
-
-setMethodS3("getParametersAsString", "WeightsFile", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
-
+}, protected=TRUE)
 
 
 setMethodS3("fromDataFile", "WeightsFile", function(static, df=NULL, filename=sprintf("%s,weights.CEL", getFullName(df)), path, cdf=NULL, ..., verbose=FALSE) {
@@ -184,7 +160,7 @@ setMethodS3("readUnits", "WeightsFile", function(this, units=NULL, cdf=NULL, ...
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  res <- NextMethod("readUnits", this, cdf=cdf, ..., force=force, verbose=less(verbose));
+  res <- NextMethod("readUnits", cdf=cdf, force=force, verbose=less(verbose));
 
   # Store read units in cache?
   if (cache) {
@@ -208,7 +184,7 @@ setMethodS3("updateUnits", "WeightsFile", function(this, units=NULL, cdf=NULL, d
 
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
-  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
+  NextMethod("updateUnits", cdf=cdf, data=data);
 }, private=TRUE);
 
 
@@ -283,10 +259,6 @@ setMethodS3("findUnitsTodo", "WeightsFile", function(this, units=NULL, ..., forc
 })
 
 
-setMethodS3("getCellMap", "WeightsFile", function(this, ...) {
-  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
-}, deprecated=TRUE)
-
 
 setMethodS3("getUnitGroupCellMap", "WeightsFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -341,19 +313,19 @@ setMethodS3("getUnitGroupCellMap", "WeightsFile", function(this, units=NULL, ...
   uUnitSizes <- unique(unitSizes);
   if (is.null(units)) {
     cdf <- getCdf(this);
-    units <- seq(length=nbrOfUnits(cdf));
+    units <- seq_len(nbrOfUnits(cdf));
   }
   units <- rep(units, each=unitSizes);
 
   # The following is too slow:
-  #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
+  #  groups <- sapply(unitSizes, FUN=function(n) seq_len(n));
 
   # Instead, updated size by size
   naValue <- as.integer(NA);
   groups <- matrix(naValue, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     cc <- which(unitSizes == size);
-    seq <- seq(length=size);
+    seq <- seq_len(size);
     groups[seq,cc] <- seq;
   }
   groups <- groups[!is.na(groups)];
@@ -392,7 +364,7 @@ setMethodS3("getDataFlat", "WeightsFile", function(this, units=NULL, fields=c("t
   suppressWarnings({
     data <- getData(this, indices=map[,"cell"], fields=celFields[fields]);
   })
-  rownames(data) <- seq(length=nrow(data));  # Work around?!? /HB 2006-11-28
+  rownames(data) <- seq_len(nrow(data));  # Work around?!? /HB 2006-11-28
 
   # Decode
   names <- colnames(data);
@@ -465,11 +437,11 @@ setMethodS3("updateDataFlat", "WeightsFile", function(this, data, ..., verbose=F
 
 
 setMethodS3("getImage", "WeightsFile", function(this, zrange=c(-1,1)*15, transform=log2, palette=rainbow(256), ...) {
-  NextMethod("getImage", this, zrange=zrange, transform=transform, palette=palette, ...);
+  NextMethod("getImage", zrange=zrange, transform=transform, palette=palette);
 })
 
 setMethodS3("writeImage", "WeightsFile", function(this, ..., tags=c("*", "log2", "rainbow")) {
-  NextMethod("writeImage", this, ..., tags=tags);
+  NextMethod("writeImage", tags=tags);
 })
 
 

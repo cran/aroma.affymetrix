@@ -8,12 +8,6 @@ setConstructorS3("AffymetrixTsvFile", function(...) {
   this;
 })
 
-setMethodS3("clearCache", "AffymetrixTsvFile", function(this, ...) {
-  for (ff in c(".cdf", ".data")) {
-    this[[ff]] <- NULL;
-  }
-})
-
 setMethodS3("getChipType", "AffymetrixTsvFile", function(this, ...) {
   getName(this);
 })
@@ -38,14 +32,6 @@ setMethodS3("findByChipType", "AffymetrixTsvFile", function(static, chipType, ..
 
   pathname;
 }, static=TRUE, protected=TRUE)
-
-
-setMethodS3("fromChipType", "AffymetrixTsvFile", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
 
 
 setMethodS3("byChipType", "AffymetrixTsvFile", function(static, chipType, ...) {
@@ -134,15 +120,10 @@ setMethodS3("readDataFrame", "AffymetrixTsvFile", function(this, ..., verbose=FA
 })
 
 
-setMethodS3("readData", "AffymetrixTsvFile", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE)
-
-
 setMethodS3("getField", "AffymetrixTsvFile", function(this, units=NULL, field, ...) {
   if (is.null(units)) {
     unf <- getUnitNamesFile(this);
-    units <- seq(length=nbrOfUnits(unf));
+    units <- seq_len(nbrOfUnits(unf));
   }
 
   data <- getData(this, ...);

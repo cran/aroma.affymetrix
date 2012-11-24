@@ -27,9 +27,8 @@ setConstructorS3("CrlmmParametersFile", function(...) {
 })
 
 
-setMethodS3("allocate", "CrlmmParametersFile", function(static, ..., nbrOfStrands=2, types=rep("double", 1+3*nbrOfStrands), sizes=rep(4, 1+3*nbrOfStrands), signed=rep(TRUE, 1+3*nbrOfStrands)) { 
-  res <- allocate.AromaUnitSignalBinaryFile(static, types=types, sizes=sizes, signed=signed, ...);
-  res;
+setMethodS3("allocate", "CrlmmParametersFile", function(static, ..., nbrOfStrands=2, types=rep("double", times=1+3*nbrOfStrands), sizes=rep(4L, times=1+3*nbrOfStrands), signed=rep(TRUE, times=1+3*nbrOfStrands)) { 
+  NextMethod("allocate", types=types, sizes=sizes, signed=signed);
 })
 
 
@@ -51,7 +50,7 @@ setMethodS3("findUnitsTodo", "CrlmmParametersFile", function(this, units=NULL, .
   # Reading all calls
   values <- this[,1,drop=TRUE];
 
-  units <- whichVector(values == 0);
+  units <- which(values == 0);
   verbose && exit(verbose);
 
   units;

@@ -43,7 +43,7 @@
 setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this <- extend(AffymetrixFile(...), "AffymetrixCelFile",
     "cached:.header" = NULL,
-    "cached:lastPlotData" = NULL,
+    "cached:.lastPlotData" = NULL,
     .cdf = NULL
   )
 
@@ -65,28 +65,17 @@ setConstructorS3("AffymetrixCelFile", function(..., cdf=NULL) {
   this;
 })
 
-setMethodS3("clearCache", "AffymetrixCelFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".lastPlotData")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
 
 setMethodS3("clone", "AffymetrixCelFile", function(this, ..., verbose=TRUE) {
   # Clone itself (and clear the cached fields)
-  object <- NextMethod("clone", clear=TRUE, ...);
+  object <- NextMethod("clone", clear=TRUE);
 
   # Clone the CDF here.
   if (!is.null(object$.cdf))
     object$.cdf <- clone(object$.cdf);
 
   object;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getExtensionPattern", "AffymetrixCelFile", function(static, ...) {
@@ -123,14 +112,14 @@ setMethodS3("as.character", "AffymetrixCelFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", ...);
+  s <- NextMethod("as.character");
   s <- c(s, sprintf("File format: %s", getFileFormat(this, asString=TRUE)));
   s <- c(s, sprintf("Platform: %s", getPlatform(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getIdentifier", "AffymetrixCelFile", function(this, ..., force=FALSE) {
@@ -222,7 +211,7 @@ setMethodS3("fromFile", "AffymetrixCelFile", function(static, filename, path=NUL
 
   # Create a new instance of the same class
   newInstance(static, pathname);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -752,19 +741,6 @@ setMethodS3("clearData", "AffymetrixCelFile", function(this, fields=c("intensiti
 
 
 
-setMethodS3("[", "AffymetrixCelFile", function(this, units=NULL, drop=FALSE) {
-  data <- readUnits(this, units=units);
-  if (drop && length(data) == 1)
-    data <- data[[1]];
-  data;
-})
-
-setMethodS3("[[", "AffymetrixCelFile", function(this, unit=NULL) {
-  this[units=unit, drop=TRUE];
-})
-
-
-
 ###########################################################################/**
 # @RdocMethod readRawData
 # @aliasmethod getData
@@ -837,7 +813,7 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
     
   # Workaround for readCel() not handling NA indices
   if (!is.null(indices)) {
-    nas <- whichVector(is.na(indices));
+    nas <- which(is.na(indices));
     hasNAs <- length(nas);
     if (hasNAs)
       indices[nas] <- 1;
@@ -870,7 +846,7 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
   stopifnot(length(cel) > 0);
 
   if (hasNAs) {
-    for (kk in seq(along=cel)) {
+    for (kk in seq_along(cel)) {
       naValue <- NA;
       storage.mode(naValue) <- storage.mode(cel[[kk]]);
       cel[[kk]][nas] <- naValue;
@@ -914,16 +890,10 @@ setMethodS3("readRawData", "AffymetrixCelFile", function(this, indices=NULL, fie
 }, private=TRUE)
 
 
-setMethodS3("getData", "AffymetrixCelFile", function(this, ...) {
-  readRawData(this, ...);
-}, private=TRUE, deprecated=TRUE)
-
-
-
 setMethodS3("range", "AffymetrixCelFile", function(this, ..., na.rm=TRUE) {
   x <- getData(this, ...);
   range(x, na.rm=na.rm);
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("readRawDataRectangle", "AffymetrixCelFile", function(this, xrange=c(0,Inf), yrange=c(0,Inf), fields=c("intensities", "stdvs", "pixels"), ..., drop=FALSE) {
@@ -946,6 +916,9 @@ setMethodS3("getRectangle", "AffymetrixCelFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2012-11-20
+# o CLEANUP: Deprecated "[" and "[[", because they should be used to
+#   subset files and not units.
 # 2011-11-18
 # o ROBUSTNESS: Added validiation of argument 'fields' to readRawData()
 #   of AffymetrixCelFile and more internal sanity checks in that method.

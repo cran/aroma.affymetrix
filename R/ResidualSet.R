@@ -35,49 +35,28 @@ setConstructorS3("ResidualSet", function(..., probeModel=c("pm")) {
   # Argument 'probeModel':
   probeModel <- match.arg(probeModel);
 
-  extend(AffymetrixCelSet(...), "ResidualSet",
+  extend(AffymetrixCelSet(...), c("ResidualSet", uses("ParametersInterface")),
     "cached:.firstCells" = NULL,
     probeModel = probeModel
   )
 })
-
-setMethodS3("clearCache", "ResidualSet", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
 
 
 setMethodS3("as.character", "ResidualSet", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", object=this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "ResidualSet", function(this, ...) {
-  rf <- getFile(this, 1);
+  rf <- getFile(this, 1L);
   getParameters(rf, ...);
-})
-
-setMethodS3("getParametersAsString", "ResidualSet", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getResidualFileClass", "ResidualSet", function(static, ...) {
@@ -95,7 +74,7 @@ setMethodS3("byPath", "ResidualSet", function(static, ..., pattern=",residuals[.
   if (is.null(fileClass))
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
-  res <- byPath.AffymetrixFileSet(static, ..., pattern=pattern, fileClass=fileClass);
+  res <- NextMethod("byPath", pattern=pattern, fileClass=fileClass);
 
   # Set CDF?
   if (!is.null(cdf))
@@ -117,7 +96,7 @@ setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullna
   verbose && enter(verbose, "Retrieving probe-level residuals from data set");
   rs <- vector("list", length(dataSet));
   verbose && cat(verbose, "Data set: ", fullname);
-  for (kk in seq(dataSet)) {
+  for (kk in seq_along(dataSet)) {
     df <- getFile(dataSet, kk);
     verbose && enter(verbose, 
                            sprintf("Retrieving residual file #%d of %d (%s)",
@@ -141,7 +120,7 @@ setMethodS3("fromDataSet", "ResidualSet", function(static, dataSet, path, fullna
 
   # Create an ResidualSet
   newInstance(static, rs);
-})
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "ResidualSet", function(this, ...) {
@@ -164,7 +143,7 @@ setMethodS3("readUnits", "ResidualSet", function(this, units=NULL, cdf=NULL, ...
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Reading residuals unit by unit for ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Reading residuals unit by unit for ", length(this), " arrays");
 
   if (is.null(cdf)) {
     verbose && enter(verbose, "Getting cell indices from CDF");
@@ -175,7 +154,7 @@ setMethodS3("readUnits", "ResidualSet", function(this, units=NULL, cdf=NULL, ...
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
   verbose && enter(verbose, "Calling readUnits() in superclass");
-  res <- NextMethod("readUnits", this, units=cdf, ..., verbose=less(verbose));
+  res <- NextMethod("readUnits", units=cdf, verbose=less(verbose));
   verbose && exit(verbose);
 
   # Get first residual file and use that to decode the read structure
@@ -216,7 +195,7 @@ setMethodS3("updateUnits", "ResidualSet", function(this, units=NULL, cdf=NULL, d
   verbose && exit(verbose);
 
   verbose <- less(verbose);
-  for (ii in seq(this)) {
+  for (ii in seq_along(this)) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", 
                                        ii, nbrOfArrays, names[ii]));
     rf <- getFile(this, ii);
@@ -258,7 +237,7 @@ setMethodS3("getAverageFile", "ResidualSet", function(this, ..., verbose=FALSE, 
     indices <- unlist(indices, use.names=FALSE);
   }
 
-  NextMethod(generic="getAverageFile", object=this, ..., indices=indices, verbose=verbose);
+  NextMethod("getAverageFile", indices=indices, verbose=verbose);
 })
 
 

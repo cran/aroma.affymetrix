@@ -37,7 +37,7 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("median", "
     rmaPlm <- Arguments$getInstanceOf(rmaPlm, "ExonRmaPlm");
 
     # Assert that the RmaPlm has 'mergeGroups=TRUE'.
-    params <- getParameterSet(rmaPlm);
+    params <- getParameters(rmaPlm);
     if (!params$mergeGroups) {
       throw("Cannot setup FirmaModel. The probe-level model must be for transcripts (mergeGroups=TRUE), not exons.");
     }
@@ -53,14 +53,17 @@ setConstructorS3("FirmaModel", function(rmaPlm=NULL, summaryMethod=c("median", "
      .plm = rmaPlm,
      summaryMethod = summaryMethod,
      operateOn = operateOn,
-     "cached:.fs" = NULL
+     "cached:.fs" = NULL,
+     "cached:.paFile" = NULL,
+     "cached:.chipFiles" = NULL,
+     "cached:.lastPlotData" = NULL
    );
 })
 
 
 setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) {
   # Returns 'U' (but allow for future extensions)
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "FIRMA";
 
   # Append parameter tags
@@ -85,7 +88,7 @@ setMethodS3("getAsteriskTags", "FirmaModel", function(this, collapse=NULL, ...) 
   tags <- paste(tags, collapse=collapse);
 
   tags;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getTags", "FirmaModel", function(this, collapse=NULL, ...) {
@@ -155,28 +158,17 @@ setMethodS3("as.character", "FirmaModel", function(x, ...) {
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
   s <- c(s, sprintf("Input tags: %s", getTags(this$.plm, collapse=",")));
   s <- c(s, sprintf("Output tags: %s", getTags(this, collapse=",")));
-  s <- c(s, sprintf("Parameters: (%s).", getParametersAsString(this)));
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   s <- c(s, sprintf("Path: %s", getPath(this)));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("calculateWeights", "FirmaModel", function(this, ...) {
   calculateWeights(this$.plm, ...);
-})
-
-setMethodS3("clearCache", "FirmaModel", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".fs", ".paFile", ".chipFiles", ".lastPlotData")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -187,7 +179,7 @@ setMethodS3("getFileSetClass", "FirmaModel", function(static, ...) {
 
 setMethodS3("getRootPath", "FirmaModel", function(this, ...) {
   "firmaData";
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -258,7 +250,7 @@ setMethodS3("getFirmaSet", "FirmaModel", function(this, ..., verbose=FALSE) {
 
 setMethodS3("getFirmaScores", "FirmaModel", function(this, ...) {
   getFirmaSet(this, ...);
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -290,11 +282,8 @@ setMethodS3("getFirmaScores", "FirmaModel", function(this, ...) {
 #*/###########################################################################
 setMethodS3("calculateResidualSet", "FirmaModel", function(this, ...) {
   calculateResidualSet(this$.plm, ...)
-})
+}, protected=TRUE)
 
-setMethodS3("calculateResiduals", "FirmaModel", function(this, ...) {
-  calculateResidualSet(this, ...);
-}, private=TRUE)
 
 
 
@@ -386,7 +375,7 @@ setMethodS3("getFitUnitGroupFunction", "FirmaModel", function(this, ...) {
     }
   }
   fitfcn;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getFitUnitFunction", "FirmaModel", function(this, ...) {

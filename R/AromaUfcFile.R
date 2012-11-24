@@ -26,7 +26,7 @@ setMethodS3("nbrOfEnzymes", "AromaUfcFile", function(this, ...) {
 })
 
 
-setMethodS3("getColumnNames", "AromaUfcFile", function(this, ...) {
+setMethodS3("getDefaultColumnNames", "AromaUfcFile", function(this, ...) {
   nbrOfColumns <- nbrOfColumns(this);
   names <- rep("fragmentClass", nbrOfColumns);
   tags <- sprintf(".%02d", 1:nbrOfColumns);
@@ -36,10 +36,10 @@ setMethodS3("getColumnNames", "AromaUfcFile", function(this, ...) {
 })
 
 setMethodS3("readDataFrame", "AromaUfcFile", function(this, ...) {
-  data <- NextMethod("readDataFrame", this, ...);
+  data <- NextMethod("readDataFrame");
 
   # Interpret zeros as NAs
-  for (cc in seq(length=ncol(data))) {
+  for (cc in seq_len(ncol(data))) {
     nas <- (data[,cc] == 0);
     data[nas,cc] <- NA;
   }
@@ -51,11 +51,10 @@ setMethodS3("allocateFromCdf", "AromaUfcFile", function(static, cdf, nbrOfEnzyme
   # Argument 'nbrOfEnzymes':
   nbrOfEnzymes <- Arguments$getInteger(nbrOfEnzymes, range=c(1,10));
 
-  types <- rep("integer", nbrOfEnzymes);
-  sizes <- rep(1, nbrOfEnzymes);
+  types <- rep("integer", times=nbrOfEnzymes);
+  sizes <- rep(1L, times=nbrOfEnzymes);
 
-  # NextMethod() not supported here.
-  allocateFromCdf.AromaUnitTabularBinaryFile(static, cdf=cdf, types=types, sizes=sizes, ...);
+  NextMethod("allocateFromCdf", cdf=cdf, types=types, sizes=sizes);
 }, static=TRUE)
 
 

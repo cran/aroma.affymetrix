@@ -325,7 +325,7 @@ setMethodS3("bpmapCluster2Cdf", "default", function(pathname, chipType, tags=NUL
   unitGroups <- vector("list", length=1L);
 
   uu <- 1L;
-  for (ii in seq(along=bpmapdfList)) {
+  for (ii in seq_along(bpmapdfList)) {
     name <- names(bpmapdfList)[ii];
     verbose && enter(verbose, sprintf("Sequence #%d ('%s') of %d", ii, name, length(bpmapdfList)));
 
@@ -349,7 +349,7 @@ setMethodS3("bpmapCluster2Cdf", "default", function(pathname, chipType, tags=NUL
     # Splitting when distances between neighboring probes are too large
     d <- diff(sp);
     keep <- (d > maxProbeDistance);
-    idxsII <- whichVector(keep);
+    idxsII <- which(keep);
     nbrOfSplitsII <- length(idxsII);
     if (nbrOfSplitsII > 0L) {
       verbose && printf(verbose, "Splitting into %d subsequence because there were %d too large (>%d) gaps between neighboring probes.\n", nbrOfSplitsII+1L, nbrOfSplitsII, maxProbeDistance);
@@ -371,7 +371,7 @@ setMethodS3("bpmapCluster2Cdf", "default", function(pathname, chipType, tags=NUL
     } else if (flavor == "v1") {
       keep <- (counts >= minNbrOfProbes + 2L);
     }
-    rowsII <- whichVector(keep);
+    rowsII <- which(keep);
     nbrOfUnitsII <- length(rowsII);
     nbrOfDroppedSeqs <- length(starts) - nbrOfUnitsII;
     if (nbrOfDroppedSeqs > 0L) {
@@ -392,7 +392,7 @@ setMethodS3("bpmapCluster2Cdf", "default", function(pathname, chipType, tags=NUL
     # Only for verbose output
     unitNamesII <- character(length=nbrOfUnitsII);
 
-    for (jj in seq(length=nbrOfUnitsII)) {
+    for (jj in seq_len(nbrOfUnitsII)) {
       rowsJJ <- rowsII[jj];
       startJJ <- starts[rowsJJ];
       endJJ <- ends[rowsJJ];

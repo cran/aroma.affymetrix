@@ -42,40 +42,29 @@ setConstructorS3("CnagCfhFile", function(..., cdf=NULL) {
   this;
 })
 
-setMethodS3("clearCache", "CnagCfhFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
 
 setMethodS3("clone", "CnagCfhFile", function(this, ..., verbose=TRUE) {
   # Clone itself (and clear the cached fields)
-  object <- NextMethod("clone", clear=TRUE, ...);
+  object <- NextMethod("clone", clear=TRUE);
 
   # Clone the CDF here.
   if (!is.null(object$.cdf))
     object$.cdf <- clone(object$.cdf);
 
   object;
-})
+}, protected=TRUE)
 
 
 setMethodS3("as.character", "CnagCfhFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", ...);
+  s <- NextMethod("as.character");
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
   s <- c(s, sprintf("Timestamp: %s", as.character(getTimestamp(this))));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getExtensionPattern", "CnagCfhFile", function(static, ...) {
@@ -164,7 +153,7 @@ setMethodS3("fromFile", "CnagCfhFile", function(static, filename, path=NULL, ...
 
   # Create a new instance of the same class
   newInstance(static, pathname);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -333,7 +322,7 @@ setMethodS3("getTimestamp", "CnagCfhFile", function(this, format="%m/%d/%y %H:%M
 
 
 setMethodS3("nbrOfCells", "CnagCfhFile", function(this, ...) {
-  NA;
+  as.integer(NA);
 })
 
 
@@ -461,31 +450,18 @@ setMethodS3("readUnits", "CnagCfhFile", function(this, units=NULL, ..., verbose=
 }, private=TRUE)
 
 
-setMethodS3("[", "CnagCfhFile", function(this, units=NULL, alleles=NULL, drop=FALSE) {
-  data <- readUnits(this, units=units);
-  if (!is.null(alleles)) {
-    data <- data[, alleles, drop=drop];
-  } else {
-    if (drop && length(data) == 1)
-      data <- data[[1]];
-  }
-  data;
-})
-
-setMethodS3("[[", "CnagCfhFile", function(this, unit=NULL) {
-  this[units=unit, drop=TRUE];
-})
-
-
 setMethodS3("range", "CnagCfhFile", function(this, ..., na.rm=TRUE) {
   x <- readDataFrame(this, ...);
   range(x, na.rm=na.rm);
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-11-20
+# o CLEANUP: Deprecated "[" and "[[", because they should be used to
+#   subset files and not units.
 # 2011-02-24
 # o BACKWARD COMPATILITY: getIdentifier() for CnagCfhFile generates
 #   a checksum id based on the relative pathname.  For now, we simply

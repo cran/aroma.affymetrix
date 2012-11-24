@@ -84,7 +84,7 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
       }
     } else if (is.list(target)) {
       # Validate each element
-      for (kk in seq(along=target)) {
+      for (kk in seq_along(target)) {
         if (!is.function(target[[kk]])) {
           throw("One element in 'target' is not a function: ", 
                                           class(target[[kk]])[1]);
@@ -124,8 +124,9 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 
 
   extend(ChipEffectTransform(dataSet, ...), "FragmentLengthNormalization", 
+    "cached:.targetFunctions" = NULL,
+    "cached:.target" = target,
     .subsetToFit = subsetToFit,
-    .target = target,
     .lengthRange = lengthRange,
     .onMissing = onMissing,
     .extraTags = extraTags,
@@ -134,9 +135,8 @@ setConstructorS3("FragmentLengthNormalization", function(dataSet=NULL, ..., targ
 })
 
 
-
 setMethodS3("getAsteriskTags", "FragmentLengthNormalization", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
@@ -151,23 +151,13 @@ setMethodS3("getAsteriskTags", "FragmentLengthNormalization", function(this, col
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
-
-setMethodS3("clearCache", "FragmentLengthNormalization", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".target", ".targetFunctions")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object 
-  NextMethod("clearCache", object=this, ...);
-})
 
 
 setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
+  params <- NextMethod("getParameters", expand=expand);
 
   # Get parameters of this class
   params <- c(params, list(
@@ -185,7 +175,7 @@ setMethodS3("getParameters", "FragmentLengthNormalization", function(this, expan
   }
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCdf", "FragmentLengthNormalization", function(this, ...) {
@@ -213,7 +203,7 @@ setMethodS3("getOutputDataSet00", "FragmentLengthNormalization", function(this, 
 
   verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
 
-  args <- list(generic="getOutputDataSet", object=this, ...);
+  args <- list("getOutputDataSet");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Inherit certain arguments from the input data set
@@ -246,7 +236,7 @@ setMethodS3("getOutputDataSet00", "FragmentLengthNormalization", function(this, 
   verbose && exit(verbose);
 
   res;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getFilteredFragmentLengths", "FragmentLengthNormalization", function(this, ..., verbose=FALSE) {
@@ -282,7 +272,7 @@ setMethodS3("getFilteredFragmentLengths", "FragmentLengthNormalization", functio
 
   if (!is.null(range)) {
     naValue <- as.double(NA);
-    for (ee in seq(length=ncol(fl))) {
+    for (ee in seq_len(ncol(fl))) {
       flEE <- fl[,ee];
       ok <- (!is.na(flEE));
   
@@ -365,7 +355,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
     verbose && enter(verbose, "Identifying finite fragment lengths");
     fl <- getFilteredFragmentLengths(this, units=units, verbose=less(verbose,3));
     keep <- rep(FALSE, nrow(fl));
-    for (ee in seq(length=ncol(fl))) {
+    for (ee in seq_len(ncol(fl))) {
       keep <- keep | is.finite(fl[,ee]);
     }
     units <- units[keep];
@@ -434,7 +424,7 @@ setMethodS3("getSubsetToFit", "FragmentLengthNormalization", function(this, forc
 
     # Make sure to keep data points at the tails too
     extremeUnits <- c();
-    for (ee in seq(length=ncol(fl))) {
+    for (ee in seq_len(ncol(fl))) {
       extremeUnits <- c(extremeUnits, which.min(fl[,ee]), which.max(fl[,ee]));
     }
     rm(fl);
@@ -609,7 +599,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
     verbose && summary(verbose, hasFL);
 
     nbrOfEnzymes <- ncol(fl);
-    allEnzymes <- seq(length=nbrOfEnzymes);
+    allEnzymes <- seq_len(nbrOfEnzymes);
 
     fits <- list();
     for (ee in allEnzymes) {
@@ -653,7 +643,7 @@ setMethodS3("getTargetFunctions", "FragmentLengthNormalization", function(this, 
 
     # Create a target prediction function for each enzyme
     fcns <- vector("list", length(fits));
-    for (ee in seq(along=fits)) {
+    for (ee in seq_along(fits)) {
       fcns[[ee]] <- function(x, ...) {
         predict(fits[[ee]], x, ...);  # Dispatched predict.lowess().
       }
@@ -782,7 +772,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   targetFcns <- NULL;
 #  map <- NULL;
   cellMatrixMap <- NULL;
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
@@ -1016,7 +1006,6 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 #   normalization function on the total thetas, if allele specific.
 # o Now getTargetFunctions() utilizes extractTheta() and no longer 
 #   getDataFlat().
-# o Removed deprecated getTargetFunction().
 # 2008-03-29
 # o Added more verbose output for the getTargetFunctions() in order to
 #   simplify troubleshooting.

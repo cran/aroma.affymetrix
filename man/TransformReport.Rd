@@ -41,7 +41,6 @@ extends \link[R.oo]{Object}\cr
  \section{Fields and Methods}{
   \bold{Methods:}\cr
 \tabular{rll}{
- \tab \code{getAlias} \tab  -\cr
  \tab \code{getCdf} \tab  -\cr
  \tab \code{\link[aroma.affymetrix:getFullName.TransformReport]{getFullName}} \tab Gets the full name of the output data set.\cr
  \tab \code{\link[aroma.affymetrix:getInputDataSet.TransformReport]{getInputDataSet}} \tab Gets the source data set.\cr
@@ -56,14 +55,13 @@ extends \link[R.oo]{Object}\cr
  \tab \code{plotXYCurve} \tab  -\cr
  \tab \code{plotXYCurveLog2} \tab  -\cr
  \tab \code{seq} \tab  -\cr
- \tab \code{setAlias} \tab  -\cr
  \tab \code{writeImageCombined} \tab  -\cr
  \tab \code{writeImages} \tab  -\cr
 }
 
 
  \bold{Methods inherited from Object}:\cr
-asThis, getChecksum, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, print
 
 
  }

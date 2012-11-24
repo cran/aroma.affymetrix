@@ -47,7 +47,7 @@
 # @keyword "IO"
 #*/###########################################################################
 setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFunction=NULL) {
-  this <- extend(AffymetrixCelFile(...), "ParameterCelFile",
+  this <- extend(AffymetrixCelFile(...), c("ParameterCelFile", uses("ParametersInterface")),
     "cached:.readUnitsCache" = NULL,
     encodeFunction = encodeFunction,
     decodeFunction = decodeFunction
@@ -59,23 +59,6 @@ setConstructorS3("ParameterCelFile", function(..., encodeFunction=NULL, decodeFu
 
   this;
 })
-
-setMethodS3("getParameters", "ParameterCelFile", function(this, ...) {
-  list();
-}, protected=TRUE)
-
-
-setMethodS3("clearCache", "ParameterCelFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".readUnitsCache")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
 
 setMethodS3("setEncodeFunction", "ParameterCelFile", function(this, fcn, ...) {
   if (is.null(fcn)) {
@@ -153,7 +136,7 @@ setMethodS3("readUnits", "ParameterCelFile", function(this, ..., readStdvs=FALSE
   # Retrieve and decoding data
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Reading units");
-  units <- NextMethod("readUnits", this, ..., readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy, verbose=less(verbose));
+  units <- NextMethod("readUnits", readStdvs=readStdvs, readPixels=readPixels, stratifyBy=stratifyBy, verbose=less(verbose));
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Decoding ", length(units), " units");
@@ -191,7 +174,7 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 #  verbose && str(verbose, cdf[1]);
 #  verbose && str(verbose, data[1]);
 
-  NextMethod("updateUnits", this, cdf=cdf, data=data, ..., verbose=less(verbose));
+  NextMethod("updateUnits", cdf=cdf, data=data, verbose=less(verbose));
 
   verbose && exit(verbose);
 
@@ -204,6 +187,9 @@ setMethodS3("updateUnits", "ParameterCelFile", function(this, data, cdf=NULL, ..
 
 ############################################################################
 # HISTORY:
+# 2012-11-20
+# o Added getParametersAsString() to ParameterCelFile.  Used to be in
+#   direct subclasses.
 # 2007-08-10
 # o Now all lapply() calls are done to base::lapply() explicitly to avoid
 #   method dispatching, because lapply() is made into a generic function
