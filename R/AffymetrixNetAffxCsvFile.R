@@ -1,7 +1,7 @@
 setConstructorS3("AffymetrixNetAffxCsvFile", function(..., .verify=TRUE) {
   this <- extend(AffymetrixCsvFile(..., .verify=FALSE), 
                   c("AffymetrixNetAffxCsvFile", uses("UnitNamesFile")),
-    "cache:.unitNames" = NULL
+    "cached:.unitNames" = NULL
   );
 
   if (.verify)
@@ -10,22 +10,13 @@ setConstructorS3("AffymetrixNetAffxCsvFile", function(..., .verify=TRUE) {
 })
 
 
-setMethodS3("clearCache", "AffymetrixNetAffxCsvFile", function(this, ...) {
-  NextMethod("clearCache", this, ...);
-  for (ff in c(".unitNames")) {
-    this[[ff]] <- NULL;
-  }
-})
-
-
-
 setMethodS3("getDefaultExtension", "AffymetrixNetAffxCsvFile", function(static, ...) {
   "annot.csv";
 }, static=TRUE, protected=TRUE)
 
 
 setMethodS3("findByChipType", "AffymetrixNetAffxCsvFile", function(static, chipType, tags=".*", pattern=sprintf("^%s%s([.]|_)%s$", chipType, tags, getDefaultExtension(static)), ...) {
-  findByChipType.AffymetrixCsvFile(static, chipType=chipType, pattern=pattern, ...);
+  NextMethod("findByChipType", chipType=chipType, pattern=pattern);
 }, static=TRUE, protected=TRUE)
 
 
@@ -89,8 +80,8 @@ setMethodS3("readDataUnitChromosomePosition", "AffymetrixNetAffxCsvFile", functi
 
   map <- c(X=23, Y=24, M=25, MT=25, Z=25);
   values <- data[[cc]];
-  for (kk in seq(along=map)) {
-    idxs <- whichVector(values == names(map)[kk]);
+  for (kk in seq_along(map)) {
+    idxs <- which(values == names(map)[kk]);
     values[idxs] <- map[kk];
   }
   values <- as.integer(values);
@@ -166,7 +157,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
   # Are enzyme names specified?
   verbose && enter(verbose, "Inferring if enzyme names are specified");
   hasNames <- NA;
-  for (kk in seq(along=fln)) {
+  for (kk in seq_along(fln)) {
     unit <- fln[kk]; 
     if (nchar(unit) > 0) {
       hasNames <- (regexpr("^([abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]+|---)", unit) != -1);
@@ -256,7 +247,7 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
 
     verbose && enter(verbose, "Identifying the location of the fragment lengths");
     offset <- 1;
-    for (kk in seq(along=fln)) {
+    for (kk in seq_along(fln)) {
       unit <- fln[[kk]][[1]]; 
       if (length(unit) > 1) {
         if (length(unit) == 5) {
@@ -296,8 +287,8 @@ setMethodS3("readDataUnitFragmentLength", "AffymetrixNetAffxCsvFile", function(t
     # Reorganize as an JxE matrix (transposed compared with 'fln'!)
     naValue <- as.integer(NA);
     fln2 <- matrix(naValue, nrow=ncol(fln), ncol=nbrOfEnzymes);
-    for (ee in seq(along=allEnzymes)) {
-      for (rr in seq(along=allEnzymes)) {
+    for (ee in seq_along(allEnzymes)) {
+      for (rr in seq_along(allEnzymes)) {
         # Identify all indices that have enzyme 'ee' in row 'rr'
         idxs <- which(enzymeIdxs[rr,] == ee);
         if (length(idxs) > 0) {

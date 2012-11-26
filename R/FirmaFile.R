@@ -44,18 +44,6 @@ setConstructorS3("FirmaFile", function(...) {
   this;
 })
 
-setMethodS3("clearCache", "FirmaFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c()) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 
 setMethodS3("findUnitsTodo", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # Argument 'verbose':
@@ -116,17 +104,8 @@ setMethodS3("createParamCdf", "FirmaFile", function(static, sourceCdf, ..., verb
   # Warn about deprecated filname <chipType>-monocell.
   if (!is.null(pathname) && (sep == "-")) {
     msg <- paste("Deprecated filename of monocell CDF detected (uses dash instead of comma): ", pathname);
-    warning(msg);
     verbose && cat(verbose, msg);
-    verbose && enter(verbose, "Renaming (old-style) monocell CDF");
-    verbose && cat(verbose, "Source: ", pathname);
-    dest <- gsub("-monocell[.]", ",monocell.", pathname);
-    verbose && cat(verbose, "Destination: ", dest);
-    res <- file.rename(pathname, dest);
-    if (!res)
-      throw("Failed to rename monocell CDF file: ", pathname, " -> ", dest);
-    pathname <- dest;
-    verbose && exit(verbose, msg);
+    throw(msg);
   }
 
   if (is.null(pathname)) {
@@ -172,7 +151,7 @@ setMethodS3("readUnits", "FirmaFile", function(this, units=NULL, cdf=NULL,
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  res <- NextMethod("readUnits", this, cdf=cdf, ..., force=force, verbose=less(verbose));
+  res <- NextMethod("readUnits", cdf=cdf, force=force, verbose=less(verbose));
 
   # Store read units in cache?
   if (cache) {
@@ -195,7 +174,7 @@ setMethodS3("updateUnits", "FirmaFile", function(this, units=NULL, cdf=NULL, dat
   if (is.null(cdf))
     cdf <- getCellIndices(this, units=units);
 
-  NextMethod("updateUnits", this, cdf=cdf, data=data, ...);
+  NextMethod("updateUnits", cdf=cdf, data=data);
 }, private=TRUE);
 
 
@@ -278,10 +257,6 @@ setMethodS3("fromDataFile", "FirmaFile", function(static, df=NULL, filename=spri
 }, static=TRUE, private=TRUE)
 
 
-setMethodS3("getCellMap", "FirmaFile", function(this, ...) {
-  throw("getCellMap() is defunct. Use getUnitGroupCellMap() instead.");
-}, deprecated=TRUE)
-
 setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., force=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -339,7 +314,7 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
   uUnitSizes <- unique(unitSizes);
   if (is.null(units)) {
     cdf <- getCdf(this);
-    units <- seq(length=nbrOfUnits(cdf));
+    units <- seq_len(nbrOfUnits(cdf));
   }
 
 # BUG!  Fix this in ChipEffectFile.R
@@ -347,14 +322,14 @@ setMethodS3("getUnitGroupCellMap", "FirmaFile", function(this, units=NULL, ..., 
   units <- rep(units, unitSizes);  
 
   # The following is too slow:
-  #  groups <- sapply(unitSizes, FUN=function(n) seq(length=n));
+  #  groups <- sapply(unitSizes, FUN=function(n) seq_len(n));
 
   # Instead, updated size by size
   naValue <- as.integer(NA);
   groups <- matrix(naValue, nrow=max(uUnitSizes), ncol=length(unitNames));
   for (size in uUnitSizes) {
     cc <- which(unitSizes == size);
-    seq <- seq(length=size);
+    seq <- seq_len(size);
     groups[seq,cc] <- seq;
   }
 
@@ -393,7 +368,7 @@ setMethodS3("getDataFlat", "FirmaFile", function(this, units=NULL, fields=c("int
   suppressWarnings({
     data <- getData(this, indices=map[,"cell"], fields=celFields[fields]);
   })
-  rownames(data) <- seq(length=nrow(data));  # Work around?!? /HB 2006-11-28
+  rownames(data) <- seq_len(nrow(data));  # Work around?!? /HB 2006-11-28
 
   verbose && str(verbose, data);
 
@@ -452,12 +427,16 @@ setMethodS3("extractMatrix", "FirmaFile", function (this, ..., field=c("intensit
   # Argument 'field':
   field <- match.arg(field);
 
-  NextMethod("extractMatrix", this, ..., field=field);
+  NextMethod("extractMatrix", field=field);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2012-10-14
+# o CLEANUP: createParamCdf() for FirmaFile no longer support 
+#   '<chipType>-monocell' filenames.  If detected, an informative
+#   error is thrown.
 # 2010-05-12
 # o ROBUSTNESS: When fromDataFile() of FirmaFile creates a file, it
 #   is created first as a temporary file which is then renamed.  This

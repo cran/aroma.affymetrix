@@ -69,7 +69,7 @@ setConstructorS3("FragmentEquivalentClassNormalization", function(dataSet=NULL, 
     }
     
     # Validate each element
-    for (kk in seq(along=targetAvgs)) {
+    for (kk in seq_along(targetAvgs)) {
     }
   }
 
@@ -100,34 +100,23 @@ setConstructorS3("FragmentEquivalentClassNormalization", function(dataSet=NULL, 
 })
 
 
-
 setMethodS3("getAsteriskTags", "FragmentEquivalentClassNormalization", function(this, collapse=NULL, ...) {
-  tag <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Extra tags?
-  tag <- c(tag, this$.extraTags);
+  tags <- c(tags, this$.extraTags);
 
   # Collapse?
-  tag <- paste(tag, collapse=collapse);
+  tags <- paste(tags, collapse=collapse);
 
-  tag;
-}, private=TRUE)
+  tags;
+}, protected=TRUE)
 
-
-setMethodS3("clearCache", "FragmentEquivalentClassNormalization", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".units", ".unitSets", ".ufc")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object 
-  NextMethod("clearCache", object=this, ...);
-})
 
 
 setMethodS3("getParameters", "FragmentEquivalentClassNormalization", function(this, expand=TRUE, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, expand=expand, ...);
+  params <- NextMethod("getParameters", expand=expand);
 
   # Get parameters of this class
   params <- c(params, list(
@@ -141,7 +130,7 @@ setMethodS3("getParameters", "FragmentEquivalentClassNormalization", function(th
   }
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCdf", "FragmentEquivalentClassNormalization", function(this, ...) {
@@ -184,7 +173,7 @@ setMethodS3("getOutputDataSet00", "FragmentEquivalentClassNormalization", functi
 
   verbose && enter(verbose, "Getting output data set for ", class(this)[1]);
 
-  args <- list(generic="getOutputDataSet", object=this, ...);
+  args <- list("getOutputDataSet");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Inherit certain arguments from the input data set
@@ -217,7 +206,7 @@ setMethodS3("getOutputDataSet00", "FragmentEquivalentClassNormalization", functi
   verbose && exit(verbose);
 
   res;
-})
+}, protected=TRUE)
 
 setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(this, force=FALSE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -260,7 +249,7 @@ setMethodS3("getSubsetToFit", "FragmentEquivalentClassNormalization", function(t
   verbose && enter(verbose, "Reading fragment equivalent classes");
   ufe <- getOrderedFragmentPairs(ufc, verbose=less(verbose, 5));
   keep <- rep(FALSE, nrow(ufe));
-  for (ee in seq(length=ncol(ufe))) {
+  for (ee in seq_len(ncol(ufe))) {
     keep <- keep | is.finite(ufe[,ee]);
   }
   units <- units[keep];
@@ -387,7 +376,7 @@ setMethodS3("getExclusiveUnitSubsets", "FragmentEquivalentClassNormalization", f
     verbose && enter(verbose, "Identifying sets");
     hasUfe <- is.finite(ufe);
     nbrOfEnzymes <- ncol(ufe);
-    allEnzymes <- seq(length=nbrOfEnzymes);
+    allEnzymes <- seq_len(nbrOfEnzymes);
 
     unitSets <- list();
     for (ee in allEnzymes) {
@@ -416,7 +405,7 @@ setMethodS3("getExclusiveUnitSubsets", "FragmentEquivalentClassNormalization", f
 
       sets <- vector("list", nbrOfEqClasses);
       names(sets) <- sprintf("0x%02x", classes);
-      for (cc in seq(length=nbrOfEqClasses)) {
+      for (cc in seq_len(nbrOfEqClasses)) {
         verbose && enter(verbose, "Equivalent class #", cc, 
                                   " ('", names(sets)[cc], "')");
         subset <- which(data == classes[cc]);
@@ -485,7 +474,7 @@ setMethodS3("calculateAverages", "FragmentEquivalentClassNormalization", functio
   # Calculate the average for each subset
   verbose && enter(verbose, "Calculating the average for each subset");
   nbrOfEnzymes <- length(unitSubsets);
-  allEnzymes <- seq(length=nbrOfEnzymes);
+  allEnzymes <- seq_len(nbrOfEnzymes);
 
   avgs <- vector("list", nbrOfEnzymes);
   names(avgs) <- names(unitSubsets);
@@ -498,7 +487,7 @@ setMethodS3("calculateAverages", "FragmentEquivalentClassNormalization", functio
     avgsEE <- vector("list", nbrOfSubsets);
     names(avgsEE) <- names(subsets);
 
-    for (kk in seq(length=nbrOfSubsets)) {
+    for (kk in seq_len(nbrOfSubsets)) {
 #      verbose && enter(verbose, "Subset #", kk, " of ", nbrOfSubsets);
       subset <- subsets[[kk]];
 
@@ -664,7 +653,7 @@ setMethodS3("normalizeOneArrayVector", "FragmentEquivalentClassNormalization", f
 
   nbrOfEnzymes <- length(targetAvgs);
   deltas <- vector("list", nbrOfEnzymes);
-  for (ee in seq(length=nbrOfEnzymes))
+  for (ee in seq_len(nbrOfEnzymes))
     deltas[[ee]] <- targetAvgs[[ee]] - avgs[[ee]];
   verbose && print(verbose, deltas);
 
@@ -676,7 +665,7 @@ setMethodS3("normalizeOneArrayVector", "FragmentEquivalentClassNormalization", f
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   naValue <- as.double(NA);
   deltas2 <- matrix(naValue, nrow=length(y), ncol=nbrOfEnzymes);
-  for (ee in seq(length=nbrOfEnzymes)) {
+  for (ee in seq_len(nbrOfEnzymes)) {
     verbose && enter(verbose, "Enzyme #", ee, " of ", nbrOfEnzymes);
 
     # Get correction factors
@@ -709,7 +698,7 @@ setMethodS3("normalizeOneArrayVector", "FragmentEquivalentClassNormalization", f
   # Calculate the number of correction factors per unit
   counts <- integer(nrow(deltas2));
   dy <- double(nrow(deltas2));
-  for (ee in seq(length=nbrOfEnzymes)) {
+  for (ee in seq_len(nbrOfEnzymes)) {
     ok <- is.finite(deltas2[,ee]);
     counts <- counts + as.integer(ok);
     dy[ok] <- dy[ok] + deltas2[ok,ee];
@@ -845,7 +834,7 @@ setMethodS3("process", "FragmentEquivalentClassNormalization", function(this, ..
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ufe <- map <- NULL;
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",

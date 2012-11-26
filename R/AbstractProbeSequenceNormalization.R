@@ -53,14 +53,14 @@ setConstructorS3("AbstractProbeSequenceNormalization", function(..., target=NULL
 
 setMethodS3("getParameters", "AbstractProbeSequenceNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   params <- c(params, list(
     target = this$.target
   ));
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -142,7 +142,7 @@ setMethodS3("indexOfMissingSequences", "AbstractProbeSequenceNormalization", fun
   acs <- getAromaCellSequenceFile(this, verbose=less(verbose, 5));
 
   idxs <- isMissing(acs, verbose=less(verbose, 5));
-  idxs <- whichVector(idxs);
+  idxs <- which(idxs);
   verbose && cat(verbose, "Cells with unknown sequences:");
   verbose && str(verbose, idxs);
   rm(acs);
@@ -218,7 +218,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   }
 
 
-  verbose && enter(verbose, "Normalization data set for probe-sequence effects");
+  verbose && enter(verbose, "Normalizing data set for probe-sequence effects");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
@@ -255,7 +255,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfArrays <- nbrOfArrays(ds);
+  nbrOfArrays <- length(ds);
   df <- getFile(ds, 1);
   nbrOfCells <- nbrOfCells(df);
   verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
@@ -432,7 +432,7 @@ setMethodS3("process", "AbstractProbeSequenceNormalization", function(this, ...,
       summary(verbose, rho);
 
       # Update only subset with "finite" corrections
-      keep <- whichVector(is.finite(rho));
+      keep <- which(is.finite(rho));
       rho <- rho[keep];
       y <- y[keep];
       cellsToUpdateKK <- cellsToUpdate[keep];

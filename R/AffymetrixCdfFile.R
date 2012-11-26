@@ -26,6 +26,7 @@ setConstructorS3("AffymetrixCdfFile", function(...) {
             uses("UnitNamesFile", "UnitTypesFile", "AromaPlatformInterface")),
     "cached:.header" = NULL,
     "cached:.unitNames" = NULL,
+    "cached:.unitTypes" = NULL,
     "cached:.cellIndices" = NULL,
     "cached:.isPm" = NULL,
     "cached:.gi" = NULL,
@@ -44,18 +45,6 @@ setMethodS3("getExtensionPattern", "AffymetrixCdfFile", function(static, ...) {
   "[.](cdf|CDF)$";
 }, static=TRUE, protected=TRUE)
 
-
-
-setMethodS3("clearCache", "AffymetrixCdfFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".unitNames", ".unitTypes", ".cellIndices", ".isPm", ".gi", ".si")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
 
 
 setMethodS3("getUnitNamesFile", "AffymetrixCdfFile", function(this, ...) {
@@ -83,7 +72,8 @@ setMethodS3("getFileFormat", "AffymetrixCdfFile", function(this, ...) {
   if (rawToChar(raw[1:5]) == "[CDF]")
     return("v3 (text; ASCII)");
 
-  return(NA);
+  naValue <- as.character(NA);
+  return(naValue);
 })
 
 
@@ -91,7 +81,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   class <- class(s);
 
   s <- c(s, sprintf("File format: %s", getFileFormat(this)));
@@ -108,7 +98,7 @@ setMethodS3("as.character", "AffymetrixCdfFile", function(x, ...) {
   class(s) <- class;
 
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -152,7 +142,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
   # Assert that it is a CDF file
   header <- readCdfHeader(pathname);
 
-  fromFile.AromaChipTypeAnnotationFile(static, filename=pathname, ...);
+  NextMethod("fromFile", filename=pathname);
 }, static=TRUE, protected=TRUE)
 
 
@@ -239,13 +229,14 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ta
       pattern <- sprintf("^%s%s$", chipType, extPattern);
       pathname <- findAnnotationDataByChipType(parentChipType, pattern=pattern);
       if (!is.null(pathname)) {
-        msg <- paste("Deprecated filename of monocell CDF detected. Rename CDF file by replacing dash ('-') with a comma (','): ", pathname, sep="");
-        warning(msg);
+        msg <- paste("Deprecated filename of monocell CDF detected. Rename CDF file by replacing dash ('-') after 'monocell' with a comma (','): ", pathname, sep="");
+        throw(msg);
       }
     }
 
-    return(pathname);
+    throw("Detected obsolete filename pattern. Monocell CDF should no longer be named '.*-monocell.CDF' but rather '.*,monocell.CDF': ", pattern);
   }
+
 
   # Create the fullname
   fullname <- paste(c(chipType, tags), collapse=",");
@@ -274,7 +265,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ta
     pathname <- do.call("findAnnotationDataByChipType", args=args);
     if (!is.null(pathname)) {
       # ..and expand it
-      pathname <- filePath(pathname, expandLinks="any");
+      pathname <- Arguments$getReadablePathname(pathname, mustExist=FALSE);
       if (!isFile(pathname))
         pathname <- NULL;
     }
@@ -434,7 +425,7 @@ setMethodS3("hasUnitTypes", "AffymetrixCdfFile", function(this, types, ..., verb
   }
 
   # ...otherwise, scan for unit types
-  allUnits <- seq(length=nbrOfUnits(this));
+  allUnits <- seq_len(nbrOfUnits(this));
   chunkSize <- 5000;
   while (length(allUnits) > 0) {
     idxs <- 1:min(chunkSize, length(allUnits));
@@ -779,7 +770,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
 
   units0 <- units;
   if (is.null(units)) {
-    units <- seq(length=nbrOfUnits(this));
+    units <- seq_len(nbrOfUnits(this));
   }
   nbrOfUnits <- length(units);
 
@@ -1460,7 +1451,9 @@ setMethodS3("setGenomeInformation", "AffymetrixCdfFile", function(this, gi=NULL,
 
 
   this$.gi <- gi;
-})
+
+  invisible(this);
+}, protected=TRUE)
 
 
 setMethodS3("getSnpInformation", "AffymetrixCdfFile", function(this, types=c("UFL", "dChip"), ..., force=FALSE, verbose=FALSE) {
@@ -1543,7 +1536,9 @@ setMethodS3("setSnpInformation", "AffymetrixCdfFile", function(this, si=NULL, ..
   }
 
   this$.si <- si;
-})
+
+  invisible(this);
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -1605,8 +1600,58 @@ setMethodS3("convertUnits", "AffymetrixCdfFile", function(this, units=NULL, keep
 }, private=TRUE)
 
 
+setMethodS3("validate", "AffymetrixCdfFile", function(this, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  assertUnits <- function(expr, fmtstr="%d unit(s) (i.e. %s) are invalid: %s") {
+    units <- which(expr);
+    nunits <- length(units);
+    if (nunits > 0L) {
+      fmtstr <- paste("Detected invalid/corrupt CDF: ", fmtstr, sep="");
+      msg <- sprintf(fmtstr, nunits, hpaste(units), getPathname(this));
+      throw(msg);
+    }
+  } # assertUnits()
+
+  
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for empty unit names
+  #
+  # Examples: 
+  # o HTHGU133A_Hs_ENTREZG.cdf (v 12.0.0):
+  #    Error: Detected 1 unit(s) (i.e. 11973) with empty unit names: ...
+  #   because it's CDF header claims to have 11,973 units, whereas there
+  #   are only 11,972.  See also thread '[customcdf] ENTREZG, AUGUSTUST
+  #   for pig species is updated' on May 8, 2012 [http://goo.gl/Xg1pp]
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  unitNames <- getUnitNames(this);
+  assertUnits(nchar(unitNames) == 0L, "%d unit(s) (i.e. %s) with empty unit names: %s");
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for units with zero unit groups
+  #
+  # Examples:
+  # o HTHGU133A_Hs_ENTREZG.cdf (v 12.0.0) [as above]
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ns <- nbrOfGroupsPerUnit(this);
+  assertUnits(ns == 0L, "%d unit(s) (i.e. %s) with zero unit groups: %s");
+
+  invisible(this);
+}, protected=TRUE)
+
+
 ############################################################################
 # HISTORY:
+# 2012-10-18
+# o Added validate() for AffymetrixCdfFile, which validate a CDF for
+#   the most "common" errors, to help troubleshooting.  Note that the
+#   validation is not complete, i.e. rare/unknown errors are not caught.
+# 2012-10-14
+# o CLEANUP: findByChipType() for AffymetrixCdfFile no longer support
+#   monocell CDF file named <chipType>-monocell.CDF, and gives an 
+#   informative error if that is still the case.  Since December 2012,
+#   the filename should instead be <chipType>,monocell.CDF.
 # 2011-11-18
 # o CLEANUP: Now the filename extension pattern for findByChipType() 
 #   of AffymetrixCdfFile is inferred from getDefaultExtension().

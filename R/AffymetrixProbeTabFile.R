@@ -52,23 +52,11 @@ setConstructorS3("AffymetrixProbeTabFile", function(...) {
 }, private=TRUE)
 
 
-setMethodS3("clearCache", "AffymetrixProbeTabFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".indexToRowMap")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("as.character", "AffymetrixProbeTabFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   class <- class(s);
 
 #  s <- sprintf("%s:", class(this)[1]);
@@ -85,7 +73,7 @@ setMethodS3("as.character", "AffymetrixProbeTabFile", function(x, ...) {
 
   class(s) <- class;
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, ...) {
@@ -113,9 +101,8 @@ setMethodS3("translateFullName", "AffymetrixProbeTabFile", function(this, name, 
     name <- gsub(patterns[idx], sprintf("%s\\2", map[idx]), name);
   }
   
-  name <- NextMethod("translateFullName", this, name, ...);
-  name;
-})
+  NextMethod("translateFullName");
+}, protected=TRUE)
 
 
 setMethodS3("hasColumnHeader", "AffymetrixProbeTabFile", function(this, ...) {
@@ -152,8 +139,7 @@ setMethodS3("translateColumnNames", "AffymetrixProbeTabFile", function(this, nam
   # Finally, convert 'foo bar doo' to 'fooBarDoo'
   names <- toCamelCase(names);
 
-  names <- NextMethod("translateColumnNames", this, names, ...);
-  names;
+  NextMethod("translateColumnNames", names=names);
 }, protected=TRUE)
 
 
@@ -175,8 +161,7 @@ setMethodS3("getColumnNames", "AffymetrixProbeTabFile", function(this, ..., tran
   verbose && enter(verbose, "Retrieving column names");
 
   verbose && enter(verbose, "Using method of super class");
-  columns <- NextMethod("getColumnNames", this, ..., translate=translate, 
-                                               verbose=less(verbose, 5));
+  columns <- NextMethod("getColumnNames", translate=translate, verbose=less(verbose, 5));
   verbose && cat(verbose, "Identfied columns (if any):");
   verbose && print(verbose, columns);
   verbose && exit(verbose);
@@ -490,15 +475,7 @@ setMethodS3("fromCdf", "AffymetrixProbeTabFile", function(static, cdf, ...) {
   res <- byChipType(static, chipType=getChipType(cdf), nbrOfCells=nbrOfCells(cdf), ...);
   res$.cdf <- cdf;
   res;
-}, static=TRUE);
-
-
-setMethodS3("fromChipType", "AffymetrixProbeTabFile", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
+}, static=TRUE, protected=TRUE);
 
 
 setMethodS3("byChipType", "AffymetrixProbeTabFile", function(static, chipType, what=NULL, nbrOfCells=NULL, ...) {
@@ -534,7 +511,7 @@ setMethodS3("getIndexToRowMap", "AffymetrixProbeTabFile", function(this, ..., fo
 
     # Get the cell index to (x,y) map.
     map <- rep(NA, nbrOfCells(cdf));
-    map[indices] <- seq(along=indices);
+    map[indices] <- seq_along(indices);
 
     this$.indexToRowMap <- map;
   }
@@ -604,7 +581,7 @@ setMethodS3("readDataFrame2", "AffymetrixProbeTabFile", function(this, cells=NUL
 #  df <- as.list(df);
 #  nas <- which(!ok);
 #  rm(ok);
-#  for (kk in seq(along=df)) {
+#  for (kk in seq_along(df)) {
 #    df[[kk]] <- insert(df[[kk]], at=nas, values=NA);
 #  }
 #  df <- as.data.frame(df);
@@ -649,18 +626,18 @@ setMethodS3("readSequenceDataFrame", "AffymetrixProbeTabFile", function(this, ..
   verbose && enter(verbose, "Asserting that columns for probe (x,y) and sequence exist");
 
   # Identify the columns with (x,y) cell positions
-  xcol <- whichVector(columnNames == "probeXPos");
+  xcol <- which(columnNames == "probeXPos");
   if (length(xcol) != 1) {
     throw("Failed to identify the column with x cell positions: ", getPathname(xcol));
   }
 
-  ycol <- whichVector(columnNames == "probeYPos");
+  ycol <- which(columnNames == "probeYPos");
   if (length(ycol) != 1) {
     throw("Failed to identify the column with y cell positions: ", getPathname(ycol));
   }
 
   # Identify the column with probe sequences
-  seqcol <- whichVector(columnNames == "probeSequence");
+  seqcol <- which(columnNames == "probeSequence");
   if (length(seqcol) != 1) {
     throw("Failed to identify the column with probe sequences: ", getPathname(seqcol));
   }

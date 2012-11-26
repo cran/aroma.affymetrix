@@ -88,7 +88,7 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
   unitTypes <- getUnitTypes(this, units=units, verbose=less(verbose, 1));
   verbose && exit(verbose);
 
-  keep <- whichVector(unitTypes == 2);
+  keep <- which(unitTypes == 2);
   if (is.null(units)) {
     units <- keep;
   } else {
@@ -103,7 +103,7 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
   verbose && print(verbose, table(unitSizes));
   verbose && exit(verbose);
 
-  keep <- whichVector(is.element(unitSizes, c(2,4)));
+  keep <- which(is.element(unitSizes, c(2,4)));
   units <- units[keep];
   rm(unitSizes, keep); 
  
@@ -129,7 +129,7 @@ setMethodS3("getAlleleCellPairs", "AffymetrixCdfFile", function(this, units=NULL
 
   verbose && enter(verbose, "Merging groups by allele pair");
   verbose && printf(verbose, "Units left: ");
-  for (uu in seq(along=cells)) {
+  for (uu in seq_along(cells)) {
     if (uu %% 5000 == 0)
       verbose && writeRaw(verbose, length(cells)-uu, ", ");
     unit <- cells[[uu]];

@@ -29,7 +29,7 @@ setConstructorS3("SmoothRmaModel", function(...) {
 
 
 setMethodS3("getAsteriskTags", "SmoothRmaModel", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Replace first tags
   tags[1] <- "SRMA";
@@ -46,12 +46,12 @@ setMethodS3("getAsteriskTags", "SmoothRmaModel", function(this, collapse=NULL, .
 
 setMethodS3("getRootPath", "SmoothRmaModel", function(this, ...) {
   "plmData";
-})
+}, protected=TRUE)
 
 
 setMethodS3("getFitUnitGroupFunction", "SmoothRmaModel", function(this, ...) {
   smoothWRMA;
-})
+}, protected=TRUE)
 
 
 ##############################################################################

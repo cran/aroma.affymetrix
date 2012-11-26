@@ -32,23 +32,11 @@ setConstructorS3("DChipCdfBinFile", function(...) {
 })
 
 
-setMethodS3("clearCache", "DChipCdfBinFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".unitNames")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
- 
-
 setMethodS3("as.character", "DChipCdfBinFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   class <- class(s);
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   s <- c(s, sprintf("File format: %s", getFileFormat(this)));
@@ -57,7 +45,7 @@ setMethodS3("as.character", "DChipCdfBinFile", function(x, ...) {
 
   class(s) <- class;
   s;
-}, private=TRUE) 
+}, protected=TRUE)
 
 
 setMethodS3("getFileFormat", "DChipCdfBinFile", function(this, ...) {
@@ -111,7 +99,8 @@ setMethodS3("findByChipType", "DChipCdfBinFile", function(this, chipType, tags=N
   pathname <- findAnnotationDataByChipType(chipType, pattern=pattern);
 
   pathname;
-})
+}, protected=TRUE)
+
 
 setMethodS3("byChipType", "DChipCdfBinFile", function(this, ...) {
   pathname <- findByChipType(this, ...);
@@ -124,7 +113,7 @@ setMethodS3("fromFile", "DChipCdfBinFile", function(static, filename, path=NULL,
   # Try to read the header
   hdr <- getHeader(df);
   df;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getHeader", "DChipCdfBinFile", function(this, force=FALSE, ...) {
@@ -175,7 +164,7 @@ setMethodS3("readDataFrame", "DChipCdfBinFile", function(this, units=NULL, field
   names <- gsub("unitNames", "unitName", names, fixed=TRUE);
   names <- gsub("numProbes", "unitSize", names, fixed=TRUE);
   names <- gsub("CellPos", "cellPos", names, fixed=TRUE);
-  keep <- whichVector(is.element(names, fields));
+  keep <- which(is.element(names, fields));
   data <- data[keep];
   names(data) <- fields;
 

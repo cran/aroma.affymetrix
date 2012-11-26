@@ -39,7 +39,7 @@ setConstructorS3("ScaleNormalization3", function(..., targetAvg=4400) {
 
 setMethodS3("getParameters", "ScaleNormalization3", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -50,7 +50,7 @@ setMethodS3("getParameters", "ScaleNormalization3", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -240,8 +240,8 @@ setMethodS3("process", "ScaleNormalization3", function(this, ..., skip=FALSE, fo
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays(dataSet), " arrays");
-  for (kk in seq(dataSet)) {
+  verbose && enter(verbose, "Normalizing ", length(dataSet), " arrays");
+  for (kk in seq_along(dataSet)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(dataSet, kk);
     verbose && print(verbose, df);

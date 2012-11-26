@@ -82,7 +82,7 @@ setMethodS3("getAlleleProbePairs3", "AffymetrixCdfFile", function(this, units=NU
   unitTypes <- getUnitTypes(this, verbose=less(verbose, 1));
   verbose && exit(verbose);
 
-  units <- whichVector(unitTypes == 2);
+  units <- which(unitTypes == 2);
   verbose && cat(verbose, "Number of SNP units: ", length(units));
   rm(unitTypes);
 
@@ -165,14 +165,14 @@ setMethodS3("getAlleleProbePairs3", "AffymetrixCdfFile", function(this, units=NU
 
     verbose && enter(verbose, "Pairing up cell indices");
     verbose && printf(verbose, "Progress: %d, ", length(unitsChunk));
-    for (uu in seq(along=cdfData)) {
+    for (uu in seq_along(cdfData)) {
       if (uu %% 1000 == 0)
         verbose && writeRaw(verbose, length(unitsChunk)-uu, ", ");
       unit <- cdfData[[uu]];
       nucleotides <- names(unit);
       directions <- sapply(unit, .subset2, "groupdirection");
       directions <- unlist(directions, use.names=FALSE);
-      swap <- whichVector(directions == "sense");
+      swap <- which(directions == "sense");
       if (length(swap) > 0) {
         nucleotides[swap] <- complementaryMap[nucleotides[swap]];
       }
@@ -219,7 +219,7 @@ setMethodS3("getAlleleProbePairs3", "AffymetrixCdfFile", function(this, units=NU
     rm(cdfData);
 
 ##    # Turn each group into a matrix
-##    for (kk in seq(along=cellGroups)) {
+##    for (kk in seq_along(cellGroups)) {
 ##      values <- matrix(cellGroups[[kk]], nrow=4);
 ##      rownames(values) <- c("unit", "group", "A", "B");
 ##      cellGroups[[kk]] <- values;
@@ -260,7 +260,7 @@ setMethodS3("getAlleleProbePairs3", "AffymetrixCdfFile", function(this, units=NU
   rm(cdfData);
 
   # Turn each group into a matrix
-  for (kk in seq(along=cellGroups)) {
+  for (kk in seq_along(cellGroups)) {
     pair <- names(cellGroups)[kk];
     pair <- strsplit(pair, split="", fixed=TRUE)[[1]];
     values <- matrix(cellGroups[[kk]], nrow=4);
@@ -290,7 +290,7 @@ setMethodS3("getAlleleProbePairs3", "AffymetrixCdfFile", function(this, units=NU
   unitTypes <- getUnitTypes(this, verbose=verbose);  # Takes time
   verbose && cat(verbose, "Table of identified unit types:");
   verbose && print(verbose, table(unitTypes));
-  units <- whichVector(unitTypes != 2);
+  units <- which(unitTypes != 2);
   rm(unitTypes);
 
   if (!is.null(unitsWanted)) {

@@ -31,7 +31,7 @@ setMethodS3("exportTotalAndFracB", "SnpChipEffectSet", function(this, fields=c("
   chipType <- NULL;
   
   fullnamesList <- list();
-  for (kk in seq(this)) {
+  for (kk in seq_along(this)) {
     cf <- getFile(this, kk);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                       kk, getName(cf), length(this)));
@@ -104,7 +104,7 @@ setMethodS3("exportTotalAndFracB", "CnChipEffectSet", function(this, fields=c("t
     fields <- setdiff(fields, "fracB");
   }
 
-  NextMethod("exportTotalAndFracB", this, fields=fields, ...);
+  NextMethod("exportTotalAndFracB", fields=fields);
 })
 
 

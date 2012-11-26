@@ -45,41 +45,19 @@ setMethodS3("as.character", "ProbeAffinityFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod(generic="as.character", object=this, ...);
-  params <- paste(getParametersAsString(this), collapse=", ");
-  s <- c(s, sprintf("Parameters: (%s)", params));
+  s <- NextMethod("as.character");
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
+
 
 setMethodS3("getParameters", "ProbeAffinityFile", function(this, ...) {
-  params <- list(
-    probeModel = this$probeModel
-  );
+  params <- NextMethod("getParameters");
+  params$.firstCells <- NULL;
+  params$probeModel <- this$probeModel;
   params;
-})
-
-
-setMethodS3("getParametersAsString", "ProbeAffinityFile", function(this, ...) {
-  params <- getParameters(this);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE)
-
-
-setMethodS3("clearCache", "ProbeAffinityFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".firstCells")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "ProbeAffinityFile", function(this, ..., verbose=FALSE) {
@@ -116,7 +94,7 @@ setMethodS3("readUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=NUL
 
   # Note that the actually call to the decoding is done in readUnits()
   # of the superclass.
-  NextMethod("readUnits", this, cdf=cdf, readStdvs=TRUE, readPixels=TRUE, ...);
+  NextMethod("readUnits", cdf=cdf, readStdvs=TRUE, readPixels=TRUE);
 });
 
 
@@ -141,8 +119,7 @@ setMethodS3("updateUnits", "ProbeAffinityFile", function(this, units=NULL, cdf=N
 
   # Note that the actually call to the encoding is done in updateUnits()
   # of the superclass.
-  res <- NextMethod("updateUnits", this, cdf=cdf, data=data, ..., 
-                                               verbose=less(verbose, 1));
+  res <- NextMethod("updateUnits", cdf=cdf, data=data, verbose=less(verbose, 1));
 
   verbose && exit(verbose);
 

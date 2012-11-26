@@ -63,7 +63,11 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
   if (identical(getPath(this), path)) {
     throw("Cannot calibrate data file. Argument 'path' refers to the same path as the path of the data file to be calibrated: ", path);
   }
-  mkdirs(path);
+
+  # Argument 'xTarget':
+  if (is.null(xTarget)) {
+    throw("DEPRECATED: normalizeQuantile() must no longer be called with xTarget=NULL.");
+  }
 
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
@@ -72,34 +76,6 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
     on.exit(popState(verbose));
   }
 
-
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  # Get the average empirical quantiles across all arrays
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  if (is.null(xTarget)) {
-    filename <- paste(getChipType(cdf), "-quantiles.apq", sep="");
-    pathname <- filePath(path, filename, expandLinks="any");
-    verbose && enter(verbose, "Getting average empirical distribution");
-    if (isFile(pathname)) {
-      verbose && enter(verbose, "Reading saved distribution: ", pathname);
-      xTarget <- readApd(pathname)$quantiles;
-      verbose && exit(verbose);
-    } else {
-      probes <- identifyCells(cdf, indices=subsetToAvg, types=typesToAvg,
-                                                  verbose=less(verbose));
-      verbose && cat(verbose, "Using ", length(probes), " probes");
-      verbose && cat(verbose, "Calculating target distribution from ", 
-                                                length(this), " arrays");
-
-      xTarget <- averageQuantile(this, probes=probes, 
-                                                  verbose=less(verbose));
-      rm(probes);
-      verbose && cat(verbose, "Saving distribution: ", pathname);
-      writeApd(pathname, data=xTarget, name="quantiles");
-    }
-    verbose && exit(verbose);
-  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify the subset of probes to be updated
@@ -114,9 +90,9 @@ setMethodS3("normalizeQuantile", "AffymetrixCelSet", function(this, path=NULL, n
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays(this), " arrays");
+  verbose && enter(verbose, "Normalizing ", length(this), " arrays");
   dataFiles <- list();
-  for (kk in seq(this)) {
+  for (kk in seq_along(this)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(this, kk);
     verbose && print(verbose, df);
@@ -220,7 +196,7 @@ setMethodS3("averageQuantile", "AffymetrixCelSet", function(this, probes=NULL, e
   quantiles <- (0:(nbrOfObservations-1))/(nbrOfObservations-1);
 
   # Create a vector to hold the target distribution
-  xTarget <- vector("double", nbrOfObservations);
+  xTarget <- vector("double", length=nbrOfObservations);
 
   verbose && enter(verbose, "Calculating the average empircal distribution across ", nbrOfChannels, " arrays");
 
@@ -328,9 +304,9 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   verbose && enter(verbose, "Transforming ", length(subsetToUpdate),
-                               " probes on ", nbrOfArrays(this), " arrays");
+                               " probes on ", length(this), " arrays");
   dataFiles <- list();
-  for (kk in seq(this)) {
+  for (kk in seq_along(this)) {
     df <- getFile(this, kk);
     verbose && enter(verbose, "Array #", kk, " (", getName(df), ")");
     dataFiles[[kk]] <- transformAffine(df, outPath=outPath, 
@@ -349,6 +325,9 @@ setMethodS3("transformAffine", "AffymetrixCelSet", function(this, outPath=file.p
 
 ############################################################################
 # HISTORY:
+# 2012-10-21 [HB]
+# o CLEANUP: Dropped unneeded mkdirs(), because they were all preceeded
+#   by an Arguments$getWritablePath().
 # 2007-04-11
 # o Added more verbose output to averageQuantile() in the case when NAs
 #   are detected.  Added some Rdoc comments on how NAs are handles.

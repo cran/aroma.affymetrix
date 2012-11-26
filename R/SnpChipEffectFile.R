@@ -41,24 +41,11 @@ setConstructorS3("SnpChipEffectFile", function(..., mergeStrands=FALSE) {
 })
 
 
-setMethodS3("clearCache", "SnpChipEffectFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".cellIndices")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
-
 setMethodS3("getParameters", "SnpChipEffectFile", function(this, ...) {
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
   params$mergeStrands <- this$mergeStrands;
   params;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, units=NULL, ..., force=FALSE, .cache=TRUE, verbose=FALSE) {
@@ -119,15 +106,14 @@ setMethodS3("getCellIndices", "SnpChipEffectFile", function(this, units=NULL, ..
   # Get units in chunks
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (is.null(units))
-    units <- seq(length=nbrOfUnits(cdf));
+    units <- seq_len(nbrOfUnits(cdf));
 
   cells <- lapplyInChunks(units, function(unitChunk) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Get and restructure cell indices
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## NOTE: NextMethod() does not work from within another function
-##    cells <- NextMethod("getCellIndices", this, units=unitChunk, ..., 
-##                            force=force, .cache=FALSE, verbose=verbose);
+##    cells <- NextMethod("getCellIndices", units=unitChunk, force=force, .cache=FALSE, verbose=verbose);
     cells <- getCellIndices.ChipEffectFile(this, units=unitChunk, ..., 
                              force=force, .cache=FALSE, verbose=verbose);
 
@@ -248,7 +234,7 @@ setMethodS3("readUnits", "SnpChipEffectFile", function(this, ..., force=FALSE, c
   }
 
   # Retrieve the data
-  res <- NextMethod("readUnits", this, ..., force=TRUE, cache=FALSE, verbose=verbose);
+  res <- NextMethod("readUnits", force=TRUE, cache=FALSE, verbose=verbose);
 
   # Store read units in cache?
   if (cache) {

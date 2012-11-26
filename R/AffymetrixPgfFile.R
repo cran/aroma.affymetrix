@@ -50,19 +50,6 @@ setMethodS3("getExtensionPattern", "AffymetrixPgfFile", function(static, ...) {
 }, static=TRUE, protected=TRUE)
 
 
-
-setMethodS3("clearCache", "AffymetrixPgfFile", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".header", ".data")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
-
 setMethodS3("getUnitNamesFile", "AffymetrixPgfFile", function(this, ...) {
   this;
 }, protected=TRUE)
@@ -73,7 +60,7 @@ setMethodS3("as.character", "AffymetrixPgfFile", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   class <- class(s);
 
   s <- c(s, sprintf("Dimension: %s", paste(getDimension(this), collapse="x")));
@@ -83,7 +70,7 @@ setMethodS3("as.character", "AffymetrixPgfFile", function(x, ...) {
   class(s) <- class;
 
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -127,7 +114,7 @@ setMethodS3("fromFile", "AffymetrixPgfFile", function(static, filename, path=NUL
   # Assert that it is a PGF file
   header <- readPgfHeader(pathname);
 
-  fromFile.AromaChipTypeAnnotationFile(static, filename=pathname, ...);
+  NextMethod("fromFile", filename=pathname);
 }, static=TRUE, protected=TRUE)
 
 
@@ -219,7 +206,7 @@ setMethodS3("findByChipType", "AffymetrixPgfFile", function(static, chipType, ta
     pathname <- do.call("findAnnotationDataByChipType", args=args);
     if (!is.null(pathname)) {
       # ..and expand it
-      pathname <- filePath(pathname, expandLinks="any");
+      pathname <- Arguments$getReadablePathname(pathname, mustExist=FALSE);
       if (!isFile(pathname))
         pathname <- NULL;
     }

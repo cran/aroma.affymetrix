@@ -51,19 +51,19 @@ setMethodS3("as.character", "DChipQuantileNormalization", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   nExcl <- length(getExclCells(this));
   n <- nbrOfCells(getCdf(getInputDataSet(this)));
   s <- c(s, sprintf("Number of cells excluded (when fitting): %d (%.1f%%)", 
                                                          nExcl, 100*nExcl/n));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   params$robust <- this$.robust;
   subsetToAvg <- params$subsetToAvg;
@@ -81,11 +81,11 @@ setMethodS3("getParameters", "DChipQuantileNormalization", function(this, ...) {
   params$subsetToAvg <- subsetToAvg;
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getSubsetToUpdate", "DChipQuantileNormalization", function(this, ...) {
-  subsetToUpdate <- NextMethod("getSubsetToUpdate", this, ...);
+  subsetToUpdate <- NextMethod("getSubsetToUpdate");
   if (is.null(subsetToUpdate)) {
     if (is.null(this$.typesToUpdate)) {
     } else if (this$.typesToUpdate == "pm") {
@@ -249,9 +249,9 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays(ds), " arrays");
+  verbose && enter(verbose, "Normalizing ", length(ds), " arrays");
   dataFiles <- list();
-  for (kk in seq(ds)) {
+  for (kk in seq_along(ds)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(ds, kk);
     verbose && print(verbose, df);
@@ -317,7 +317,7 @@ setMethodS3("process", "DChipQuantileNormalization", function(this, ..., force=F
     dataFiles[[kk]] <- fromFile(df, pathname);
     
     verbose && exit(verbose);
-  } # for (kk in seq(ds))
+  } # for (kk ...)
   verbose && exit(verbose);
 
   # Not needed anymore

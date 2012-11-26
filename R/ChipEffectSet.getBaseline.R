@@ -58,7 +58,7 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   verbose && cat(verbose, "Filename: ", filename);
 
   pathname <- NULL;
-  for (kk in seq(along=paths)) {
+  for (kk in seq_along(paths)) {
     path <- paths[kk];
     verbose && enter(verbose, sprintf("Searching path #%d of %d", kk, length(paths)));
 
@@ -107,21 +107,22 @@ setMethodS3("getBaseline", "ChipEffectSet", function(this, force=FALSE, verbose=
   verbose && exit(verbose);
 
   res;
-})
+}, protected=TRUE)
 
 
 
 setMethodS3("getBaseline", "SnpChipEffectSet", function(this, ...) {
-  res <- NextMethod("getBaseline", this, ...);
+  res <- NextMethod("getBaseline");
   res$mergeStrands <- getMergeStrands(this);
   res;
-})
+}, protected=TRUE)
+
 
 setMethodS3("getBaseline", "CnChipEffectSet", function(this, ...) {
-  res <- NextMethod("getBaseline", this, ...);
+  res <- NextMethod("getBaseline");
   res$combineAlleles <- getCombineAlleles(this);
   res;
-})
+}, protected=TRUE)
 
 
 

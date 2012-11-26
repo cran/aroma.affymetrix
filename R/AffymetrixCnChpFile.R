@@ -26,7 +26,7 @@ setMethodS3("as.character", "AffymetrixCnChpFile", function(x, ...) {
   # To please R CMD check
   this <- x; 
 
-  s <- NextMethod("as.character", ...);
+  s <- NextMethod("as.character");
   class <- class(s);
   s <- c(s, sprintf("File format: %s", getFileFormat(this)));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(this))));
@@ -34,31 +34,19 @@ setMethodS3("as.character", "AffymetrixCnChpFile", function(x, ...) {
   s <- c(s, sprintf("Unit read map: %s", capture.output(str(getUnitReadMap(this)))));
   class(s) <- class;
   s;
-}, private=TRUE) 
-
-
-setMethodS3("clearCache", "AffymetrixCnChpFile", function(this, ...) {
-  # Clear all cached values.
-  for (ff in c(".header", ".unitReadMap")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
+}, protected=TRUE)
 
 
 setMethodS3("clone", "AffymetrixCnChpFile", function(this, ..., verbose=TRUE) {
   # Clone itself (and clear the cached fields)
-  object <- NextMethod("clone", clear=TRUE, ...);
+  object <- NextMethod("clone", clear=TRUE);
 
   # Clone the CDF here.
   if (!is.null(object$.cdf))
     object$.cdf <- clone(object$.cdf);
 
   object;
-}) 
+}, protected=TRUE)
 
 
 setMethodS3("getExtensionPattern", "AffymetrixCnChpFile", function(static, ...) {
@@ -82,7 +70,8 @@ setMethodS3("getFileFormat", "AffymetrixCnChpFile", function(this, ...) {
   if (rawToChar(raw[1:5]) == "[CEL]")
     return("v3 (text; ASCII)");
 
-  return(NA);
+  naValue <- as.character(NA);
+  return(naValue);
 })
  
 
@@ -115,7 +104,7 @@ setMethodS3("fromFile", "AffymetrixCnChpFile", function(static, filename, path=N
 
   # Create a new instance of the same class
   newInstance(static, pathname, ...);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("getChipType", "AffymetrixCnChpFile", function(this, ...) {
@@ -296,7 +285,7 @@ setMethodS3("readRawData", "AffymetrixCnChpFile", function(this, fields=c("Probe
   verbose && str(verbose, res);
 
   # Trim all strings (should really be done by readCcg(). /HB 2008-08-23)
-  for (kk in seq(length=ncol(res))) {
+  for (kk in seq_len(ncol(res))) {
     values <- res[,kk];
     if (is.character(values)) {
       values <- trim(values);
@@ -358,7 +347,6 @@ setMethodS3("getData", "AffymetrixCnChpFile", function(this, units=NULL, fields=
   key <- list(method="getData", class="AffymetrixCnChpFile", 
               header=unlist(getHeader(this)), fields=fields, units=units);
   dirs <- c("aroma.affymetrix", "GTC");
-  verbose && print(verbose, generateCache(key=key, dirs=dirs));
   res <- loadCache(key=key, dirs=dirs);
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "Cached results found.");
@@ -395,7 +383,6 @@ setMethodS3("getData", "AffymetrixCnChpFile", function(this, units=NULL, fields=
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Caching to file");
-  verbose && print(verbose, generateCache(key=key, dirs=dirs));
   saveCache(res, key=key, dirs=dirs);
   verbose && exit(verbose);
 

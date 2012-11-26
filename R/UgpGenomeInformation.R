@@ -25,20 +25,13 @@
 #*/###########################################################################
 setConstructorS3("UgpGenomeInformation", function(..., .ugp=NULL, .verify=TRUE) {
   this <- extend(GenomeInformation(..., .verify=FALSE), "UgpGenomeInformation",
-    .ugp = .ugp
+    "cached:.ugp" = .ugp
   );
   if (.verify) {
     if (!is.null(getPathname(this)))
       verify(this);
   }
   this;
-})
-
-setMethodS3("clearCache", "UgpGenomeInformation", function(this, ...) {
-  NextMethod("clearCache", this, ...);
-  for (ff in c(".ugp")) {
-    this[[ff]] <- NULL;
-  }
 })
 
 
@@ -129,13 +122,6 @@ setMethodS3("byChipType", "UgpGenomeInformation", function(static, chipType, tag
   res;
 }, static=TRUE)
 
-
-setMethodS3("fromChipType", "UgpGenomeInformation", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
 
 
 setMethodS3("nbrOfUnits", "UgpGenomeInformation", function(this, ...) {

@@ -1,6 +1,135 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.7.0 [2012-11-24]
+o Bumped version for CRAN submission.
+o Bumped up package dependencies.
+o No updates.
+o Package passes all redundancy tests.
+
+
+Version: 2.6.16 [2012-11-21]
+o Updated verbose output of parameters.
+
+
+Version: 2.6.14 [2012-11-21]
+o DOCUMENTATION: Hiding more internal methods from the help indices.
+o CLEANUP: Now utilizing the new ParametersInterface.
+o CLEANUP: Replaced all getParameterSet() with getParameters().
+o CLEANUP: Deprecated "[" and "[[" for AffymetrixCelFile,
+  AffymetrixCelSet CnagCfhFile, and CnagCfhSet.
+o CLEANUP: bgAdjustOptical() and bgAdjustRma() for AffymetrixCelSet
+  are now defunct.  Instead, see OpticalBackgroundCorrection and
+  RmaBackgroundCorrection.
+o CLEANUP: bgAdjustGcrma() for AffymetrixCelSet no longer reads 
+  and write probe affinity files in the deprecated APD format.
+o CLEANUP: Removed obsolete code from internal bgAdjustOptical() that 
+  was never reached and that loaded affinities via obsolete APD files.
+
+
+Version: 2.6.13 [2012-11-18]
+o Now package explicitly imports R.cache, because aroma.core is no
+  longer loading it.
+
+
+Version: 2.6.12 [2012-11-14]
+o CLEANUP: getWeights() for QualityAssessmentModel no longer sets the
+  alias of the returned data set, because the use aliases is deprecated.
+o CLEANUP: writeImage() for AffymetrixCelFile no longer supports
+  sample name aliases.
+
+
+Version: 2.6.11 [2012-11-13]
+o CLEANUP: Properly declared all cached fields, making it possible
+  to remove nearly all clearCache() implementations because the one
+  for Object takes does the job.
+
+
+Version: 2.6.10 [2012-11-12]
+o CLEANUP: Now seq_along(x) instead of seq(along=x) everywhere.
+  Similarly, seq(ds) where 'ds' is GenericDataFileSet is now
+  replaced by seq_along(ds).  Likewise, seq_len(x) replaces 
+  seq(length=x), and length(ds) replaces nbrOfFiles(ds).
+
+
+Version: 2.6.9 [2012-11-08]
+o Renamed getColumnNames() to getDefaultColumnNames() for all
+  classes inheriting from GenericTabularFile, because of the
+  new ColumnNamesInterface interface.
+
+
+Version: 2.6.8 [2012-11-05]
+o CLEANUP: Replaced all whichVector() with which(), because the
+  latter is now the fastest again.
+
+
+Version: 2.6.7 [2012-10-29]
+o CLEANUP: Now using Arguments$get(Read|Writ)ablePath() instead of
+  filePath(..., expandLinks="any"). 
+
+
+Version: 2.6.6 [2012-10-21]
+o ROBUSTNESS: Now using Arguments$getWritablePath() everywhere instead
+  of mkdirs(), because the former will do a better job in creating
+  and asserting directories on slow shared file systems, and when it
+  fails it gives a more informative error message.
+
+
+Version: 2.6.5 [2012-10-18]
+o ROBUSTNESS: Now createMonocellCdf() for AffymetrixCdfFile validates
+  the CDF (via new validate()).  This will give more informative
+  error message in case the CDF is invalid, e.g. containing "empty"
+  units.
+o ROBUSTNESS: Added validate() for AffymetrixCdfFile, which validate
+  a CDF for the most "common" errors, to help troubleshooting.  Note
+  that the validation is not complete, i.e. rare/unknown errors are 
+  not caught.
+o Now as.character() for all AromaChipTypeAnnotationFile classes,
+  and hence print(), reports the file size both as abbreviated as
+  well as in exact number of bytes, e.g. "24.66 MB (25853850 bytes)"
+  (used to only be "24.66 MB").
+
+
+Version: 2.6.4 [2012-10-16]
+o ROBUSTNESS/BUG FIX: No longer passing '...' to NextMethod(), cf.
+  R-devel thread 'Do *not* pass '...' to NextMethod() - it'll do it 
+  for you; missing documentation, a bug or just me?' on Oct 16, 2012. 
+
+
+Version: 2.6.3 [2012-10-14]
+o CLEANUP: Moved AromaUnitGcContentFile to aroma.core.
+o CLEANUP: Removed several defunct/obsolete methods and made
+  deprecated methods defunct/obsolete.
+o CLEANUP: findByChipType() for AffymetrixCdfFile no longer support
+  monocell CDF file named <chipType>-monocell.CDF, and gives an 
+  informative error if that is still the case.  Since December 2007,
+  the filename should instead be <chipType>,monocell.CDF.
+o CLEANUP: createParamCdf() for ChipEffectFile and FirmaFile no longer 
+  support '<chipType>-monocell' filenames.  If detected, an informative
+  error is thrown.
+
+
+Version: 2.6.2 [2012-09-15]
+o BUG FIX: doCRMAv2() failed to quickly located already available results
+  if the chip type of the CDF had tags, e.g. 'GenomeWideSNP_6,Full'.
+
+
+Version: 2.6.1 [2012-09-14]
+o BUG FIX/ROBUSTNESS: Although getUnitIntensities() for AffymetrixCelSet
+  would retrieve the CDF tree structure and pass it to affxparser's
+  readCelIntensities(), it was done in such a way that the latter would
+  still need to find and read the CDF.  This meant that it would not
+  necessarily retrieve the same CDF as the AffymetrixCelSet used.
+o MEMORY: Now getUnitIntensities() and readUnits() for AffymetrixCelSet
+  no longer cache the results in memory if argument 'units' is NULL.
+o CLEANUP: Restructured part of the test scripts tree.  Added a new
+  batch launcher.
+o BUG FIX: The utility function for downloading individual CEL files
+  from GEO would give an error that it could not gunzip the downloaded
+  file, iff the filename extension was lower case, e.g. *.cel.gz
+  instead of *.CEL.gz.
+
+
 Version: 2.6.0 [2012-09-05]
 o Submitted to CRAN.
 o The package passes all redundancy tests.

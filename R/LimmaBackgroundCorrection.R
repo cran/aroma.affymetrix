@@ -70,7 +70,7 @@ setConstructorS3("LimmaBackgroundCorrection", function(..., args=NULL, addJitter
 })
 
 setMethodS3("getAsteriskTags", "LimmaBackgroundCorrection", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Extra tags?
   params <- getParameters(this);
@@ -81,12 +81,12 @@ setMethodS3("getAsteriskTags", "LimmaBackgroundCorrection", function(this, colla
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "LimmaBackgroundCorrection", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   pmOnly <- (this$.typesToUpdate == "pm");
   
@@ -104,7 +104,7 @@ setMethodS3("getParameters", "LimmaBackgroundCorrection", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getSubsetToUpdate0", "LimmaBackgroundCorrection", function(this, ..., verbose=FALSE) {
@@ -224,10 +224,10 @@ setMethodS3("process", "LimmaBackgroundCorrection", function(this, ..., force=FA
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # apply normal+exponential model to each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfArrays <- nbrOfArrays(ds);
+  nbrOfArrays <- length(ds);
   verbose && enter(verbose, "Adjusting ", nbrOfArrays, " arrays");
   dataFiles <- list();
-  for (kk in seq(ds)) {
+  for (kk in seq_along(ds)) {
     verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
     df <- getFile(ds, kk);
     verbose && print(verbose, df);

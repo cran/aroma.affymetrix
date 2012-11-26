@@ -34,14 +34,14 @@ setConstructorS3("HetLogAddPlm", function(...) {
 
 setMethodS3("getAsteriskTags", "HetLogAddPlm", function(this, collapse=NULL, ...) {
   # Returns 'RMA[,<flavor>]'
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
   tags[1] <- "HLA";
 
   # Collapse
   tags <- paste(tags, collapse=collapse); 
 
   tags;
-})
+}, protected=TRUE)
 
 
 
@@ -142,8 +142,7 @@ setMethodS3("getFitUnitGroupFunction", "HetLogAddPlm", function(this, ..., verbo
   verbose && exit(verbose);
 
   fitPlm;
-}, private=TRUE)
-
+}, protected=TRUE)
 
 
 

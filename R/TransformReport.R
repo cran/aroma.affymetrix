@@ -44,17 +44,6 @@ setConstructorS3("TransformReport", function(inSet=NULL, outSet=NULL, ...) {
 }, abstract=TRUE)
 
 
-setMethodS3("clearCache", "TransformReport", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c()) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
 
 setMethodS3("getRootPath", "TransformReport", function(this, ...) {
   "reports";
@@ -71,12 +60,13 @@ setMethodS3("as.character", "TransformReport", function(x, ...) {
   ds <- getOutputDataSet(this);
   s <- c(s, sprintf("Output data set: %s", getFullName(ds)));
   s <- c(s, sprintf("Number of arrays: %d (%.2fMB)", 
-                           nbrOfArrays(ds), getFileSize(ds)/1024^2));
+                           length(ds), getFileSize(ds)/1024^2));
   s <- c(s, sprintf("Chip type: %s", getChipType(getCdf(ds))));
   s <- c(s, sprintf("RAM: %.2fMB", objectSize(this)/1024^2));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
+
 
 
 ###########################################################################/**
@@ -115,14 +105,14 @@ setMethodS3("getName", "TransformReport", function(this, ...) {
 
 setMethodS3("getAlias", "TransformReport", function(this, ...) {
   this$.alias;
-})
+}, protected=TRUE)
 
 setMethodS3("setAlias", "TransformReport", function(this, alias, ...) {
   if (!is.null(alias)) {
     alias <- Arguments$getCharacter(alias, nchar=c(1,Inf), length=c(1,1));
   }
   this$.alias <- alias;
-})
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -250,14 +240,8 @@ setMethodS3("getPath", "TransformReport", function(this, ...) {
   set <- "transform";
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, set, expandLinks="any");
-
-  # Create path?
-  if (!isDirectory(path)) {
-    mkdirs(path);
-    if (!isDirectory(path))
-      throw("Failed to create output directory: ", path);
-  }
+  path <- filePath(rootPath, fullname, chipType, set);
+  path <- Arguments$getWritablePath(path);
 
   path;
 })
@@ -342,11 +326,11 @@ setMethodS3("getUnitTypesFile", "TransformReport", function(this, ...) {
 
 
 setMethodS3("nbrOfArrays", "TransformReport", function(this, ...) { 
-  nbrOfArrays(getOutputDataSet(this));
+  length(getOutputDataSet(this));
 })
 
 setMethodS3("seq", "TransformReport", function(this, ...) { 
-  seq(length=nbrOfArrays(this));
+  seq_len(length(this));
 })
 
 
@@ -382,11 +366,11 @@ setMethodS3("getYY", "TransformReport", function(this, array, transform=NULL, su
 
 
 
-setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq(this), lwd=2, col=arrays, xlim=c(0,65535), xlab=expression(y[1]), ylab=expression(y[2]), main=NULL, ..., add=FALSE, verbose=FALSE) {
+setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq_along(this), lwd=2, col=arrays, xlim=c(0,65535), xlab=expression(y[1]), ylab=expression(y[2]), main=NULL, ..., add=FALSE, verbose=FALSE) {
 
-  nbrOfArrays <- nbrOfArrays(this);
+  nbrOfArrays <- length(this);
   if (is.null(col)) {
-    col <- seq(length=nbrOfArrays);
+    col <- seq_len(nbrOfArrays);
   } else {
     col <- rep(col, length.out=nbrOfArrays);
   }
@@ -394,7 +378,7 @@ setMethodS3("plotXYCurve", "TransformReport", function(this, arrays=seq(this), l
   outSet <- getOutputDataSet(this);
   unf <- getUnitNamesFile(this);
   chipType <- getChipType(unf);
-  for (kk in seq(along=arrays)) {
+  for (kk in seq_along(arrays)) {
     array <- arrays[kk];
 
     df <- getFile(outSet, array);
@@ -460,13 +444,13 @@ setMethodS3("writeImages", "TransformReport", function(this, path=NULL, width=80
   path <- Arguments$getWritablePath(path);
 
   outSet <- getOutputDataSet(this);
-  nbrOfArrays <- nbrOfArrays(outSet);
+  nbrOfArrays <- length(outSet);
 
   verbose && enter(verbose, "Writing images for ", nbrOfArrays, " arrays");
 
   verbose && printf(verbose, "Image dimension: %.0fx%.0f\n", width, height);
 
-  for (kk in seq(length=nbrOfArrays)) {
+  for (kk in seq_len(nbrOfArrays)) {
     df <- getFile(outSet, kk);
     fullname <- getFullName(df);
     verbose && enter(verbose, "Output CEL file: ", fullname);
@@ -517,7 +501,7 @@ setMethodS3("writeImageCombined", "TransformReport", function(this, path=NULL, w
   path <- Arguments$getWritablePath(path);
 
   outSet <- getOutputDataSet(this);
-  nbrOfArrays <- nbrOfArrays(outSet);
+  nbrOfArrays <- length(outSet);
 
   verbose && enter(verbose, "Writing combined image for ", nbrOfArrays, " arrays");
 

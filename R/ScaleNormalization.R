@@ -80,7 +80,7 @@ setConstructorS3("ScaleNormalization", function(dataSet=NULL, ..., targetAvg=440
 
 
 setMethodS3("getAsteriskTags", "ScaleNormalization", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Extra tags?
   tags <- c(tags, this$.extraTags);
@@ -95,7 +95,7 @@ setMethodS3("getAsteriskTags", "ScaleNormalization", function(this, collapse=NUL
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
  
 
 
@@ -265,7 +265,7 @@ setMethodS3("getSubsetToAvg", "ScaleNormalization", function(this, ..., verbose=
 
 setMethodS3("getParameters", "ScaleNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -281,7 +281,7 @@ setMethodS3("getParameters", "ScaleNormalization", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -370,8 +370,8 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize each array
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  verbose && enter(verbose, "Normalizing ", nbrOfArrays(ds), " arrays");
-  for (kk in seq(ds)) {
+  verbose && enter(verbose, "Normalizing ", length(ds), " arrays");
+  for (kk in seq_along(ds)) {
     verbose && enter(verbose, "Array #", kk);
     df <- getFile(ds, kk);
     verbose && print(verbose, df);
@@ -463,7 +463,7 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
     verbose && print(verbose, gc);
 
     verbose && exit(verbose);
-  } # for (kk in seq(ds))
+  } # for (kk ...)
   verbose && exit(verbose);
 
   # Garbage collection

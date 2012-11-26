@@ -85,7 +85,7 @@ setMethodS3("getAromaCellMatchScoreFile", "MatNormalization", function(this, ...
 
 
 setMethodS3("getAsteriskTags", "MatNormalization", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=collapse, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Add model tag?
   model <- this$.model;
@@ -95,12 +95,12 @@ setMethodS3("getAsteriskTags", "MatNormalization", function(this, collapse=NULL,
   tags <- paste(tags, collapse=collapse);
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getParameters", "MatNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   params <- c(params, list(
     model = this$.model,
@@ -108,7 +108,7 @@ setMethodS3("getParameters", "MatNormalization", function(this, ...) {
   ));
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -201,7 +201,7 @@ setMethodS3("fitOne", "MatNormalization", function(this, df, ram=NULL, ..., verb
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
-  cellsToFit <- whichVector( !(isMissing(aps) | isMissing(apm)) );
+  cellsToFit <- which( !(isMissing(aps) | isMissing(apm)) );
   nbrOfCells <- length(cellsToFit);
   verbose && cat(verbose, "Cells to fit:");
   verbose && str(verbose, cellsToFit);
@@ -303,7 +303,7 @@ setMethodS3("predictOne", "MatNormalization", function(this, fit, ram=NULL, ...,
   verbose && exit(verbose);
   
   verbose && enter(verbose, "Reading 'non-missing' cells to predict");
-  cellsToPredict <- whichVector( !(isMissing(aps) | isMissing(apm)) );
+  cellsToPredict <- which( !(isMissing(aps) | isMissing(apm)) );
   nbrOfCells <- length(cellsToPredict);
   verbose && cat(verbose, "Cells to predict:");
   verbose && str(verbose, cellsToPredict);
@@ -410,7 +410,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
     on.exit(popState(verbose));
   }
 
-  verbose && enter(verbose, "Normalization data set for probe-sequence effects");
+  verbose && enter(verbose, "Normalizing data set for probe-sequence effects");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Already done?
@@ -442,7 +442,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Reading 'non-missing' cells to fit");
-  cellsToFit <- whichVector( !(isMissing(aps) | isMissing(apm)) );
+  cellsToFit <- which( !(isMissing(aps) | isMissing(apm)) );
   verbose && cat(verbose, "Cells to fit:");
   verbose && str(verbose, cellsToFit);
   verbose && exit(verbose);
@@ -451,7 +451,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize all arrays simultaneously
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  nbrOfArrays <- nbrOfArrays(ds);
+  nbrOfArrays <- length(ds);
   verbose && enter(verbose, "Normalizing ", nbrOfArrays, " arrays");
   verbose && enter(verbose, "Path: ", outputPath);
 
@@ -499,7 +499,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Calculating cross product X'y for each array");
-    for (ii in seq(length=nbrOfArrays)) {
+    for (ii in seq_len(nbrOfArrays)) {
       df <- getFile(ds, ii);
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                           ii, getName(df), nbrOfArrays));
@@ -538,7 +538,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save model fits
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  for (ii in seq(length=nbrOfArrays)) {
+  for (ii in seq_len(nbrOfArrays)) {
     df <- getFile(ds, ii);
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                               ii, getName(df), nbrOfArrays));
@@ -613,7 +613,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
     xtx <- xtx + crossprod(X);
 
     verbose && enter(verbose, "Processing ", nbrOfArrays, " arrays");
-    for (ii in seq(length=nbrOfArrays)) {
+    for (ii in seq_len(nbrOfArrays)) {
       df <- getFile(ds, ii);
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", 
                                               ii, getName(df), nbrOfArrays));
@@ -664,9 +664,9 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
   probs <- (0:nbrOfBins) / nbrOfBins;
   verbose && cat(verbose, "Quantile probabilities:");
   verbose && str(verbose, probs);
-  cutLabels <- seq(length=nbrOfBins);
+  cutLabels <- seq_len(nbrOfBins);
 
-  for (ii in seq(length=nbrOfArrays)) {
+  for (ii in seq_len(nbrOfArrays)) {
     verbose && enter(verbose, "Binning predicted values, calculating and scaling residuals");
     df <- getFile(ds, ii);
 

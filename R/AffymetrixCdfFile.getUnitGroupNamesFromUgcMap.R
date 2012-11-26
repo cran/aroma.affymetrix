@@ -49,7 +49,7 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 
   verbose && enter(verbose, "Building (unit name, group name) map");
 
-  for (uu in seq(along=uniqueUnitSizes)) {
+  for (uu in seq_along(uniqueUnitSizes)) {
     unitSize <- uniqueUnitSizes[uu];
     verbose && enter(verbose, "Processing set #%d of %d containing units with a maximum of %d group(s)", uu, length(uniqueUnitSizes), unitSize);
 
@@ -71,7 +71,7 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
 #      verbose && str(verbose, rrU);
 
       # For each possible group index...
-      for (group in seq(length=unitSize)) {
+      for (group in seq_len(unitSize)) {
         verbose && enter(verbose, "Group ", group);
         # Identify row in the UGC map containing those units and the group
         rrG <- (ugcMap[,"group"] == group);
@@ -104,12 +104,12 @@ setMethodS3("getUnitGroupNamesFromUgcMap", "AffymetrixCdfFile", function(this, u
   verbose && exit(verbose);
 
   res;
-}) # getUnitGroupNamesFromUgcMap()
+}, protected=TRUE) # getUnitGroupNamesFromUgcMap()
 
 
 ############################################################################
 # HISTORY:
-# 2011-11-18:
+# 2011-11-18
 # o Now the verbose progress output of getUnitGroupNamesFromUgcMap()
 #   is more informative on what subset in order is currently processed.
 # 2008-04-28

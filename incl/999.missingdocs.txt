@@ -16,8 +16,8 @@
   applyCCF0.CopyNumberChromosomalModel applyCFC0
   applyCFC0.CopyNumberChromosomalModel applyToUnitIntensities
   applyToUnitIntensities.AffymetrixCelSet AromaAffymetrix
-  AromaCellMatchScoreFile AromaPipeline AromaUfcFile AromaUgcFile
-  AromaUnitGcContentFile as.AffymetrixCelSet as.AffymetrixCnChpSet
+  AromaCellMatchScoreFile AromaPipeline 
+  as.AffymetrixCelSet as.AffymetrixCnChpSet
   as.AffymetrixFileSet as.character.AffymetrixCdfFile
   as.character.AffymetrixCelFile as.character.AffymetrixCelSetReporter
   as.character.AffymetrixCnChpFile as.character.AffymetrixProbeTabFile
@@ -66,25 +66,8 @@
   calculateWeights.ExonRmaPlm calculateWeights.FirmaModel
   calculateWeights.ProbeLevelModel calibrateOne
   calibrateOne.ReseqCrosstalkCalibration cdfMergeGroups
-  ChipEffectSetTuple clearCache.AdditiveCovariatesNormalization
-  clearCache.AffymetrixCdfFile clearCache.AffymetrixCelFile
-  clearCache.AffymetrixCelSet clearCache.AffymetrixCnChpFile
-  clearCache.AffymetrixNetAffxCsvFile clearCache.AffymetrixProbeTabFile
-  clearCache.AffymetrixTsvFile clearCache.AllelicCrosstalkCalibration
-  clearCache.ChipEffectFile clearCache.ChipEffectSet
-  clearCache.CnagCfhFile clearCache.CnagCfhSet
-  clearCache.DChipCdfBinFile clearCache.ExonChipEffectFile
-  clearCache.FirmaFile clearCache.FirmaModel clearCache.FirmaSet
-  clearCache.FragmentEquivalentClassNormalization
-  clearCache.FragmentLengthNormalization clearCache.GenomeInformation
-  clearCache.ParameterCelFile clearCache.ProbeAffinityFile
-  clearCache.ProbeLevelModel clearCache.ProbeLevelTransform3
-  clearCache.QualityAssessmentFile clearCache.QuantileNormalization
-  clearCache.ReseqCrosstalkCalibration clearCache.ResidualFile
-  clearCache.ResidualSet clearCache.SmoothMultiarrayModel
-  clearCache.SnpChipEffectFile clearCache.SnpInformation
-  clearCache.TransformReport clearCache.UgpGenomeInformation
-  clearCache.WeightsFile clearCache.WeightsSet clearData
+  ChipEffectSetTuple 
+  clearCache.AffymetrixCelSet
   clone.AffymetrixCelFile clone.AffymetrixCelSet
   clone.AffymetrixCnChpFile clone.CnagCfhFile clone.CnagCfhSet
   CnChipEffectSetTuple compare computeAffinities convert
@@ -266,7 +249,7 @@
   getColorMaps getColorMaps.ArrayExplorer getColorMaps.SpatialReporter
   getColumnNames.AffymetrixProbeTabFile
   getColumnNames.AromaCellMatchScoreFile getColumnNames.AromaUfcFile
-  getColumnNames.AromaUnitGcContentFile getCombineAlleles
+ getCombineAlleles
   getCombineAlleles.CnChipEffectSet getCombineAlleles.CnPlm
   getConfidenceScoreSet getConfidenceScoreSet.CrlmmModel getCovariates
   getCovariates.AdditiveCovariatesNormalization
@@ -309,7 +292,6 @@
   getExtensionPattern.AffymetrixTsvFile
   getExtensionPattern.AromaCellMatchScoreFile
   getExtensionPattern.AromaUfcFile
-  getExtensionPattern.AromaUnitGcContentFile
   getExtensionPattern.CnagCfhFile getExtensionPattern.DChipDcpFile
   getField getField.AffymetrixTsvFile getFields.SnpInformation
   getFields.UflSnpInformation getFileClass.FirmaSet getFileFormat
@@ -318,7 +300,7 @@
   getFileFormat.DChipDcpFile
   getFilenameExtension.AromaCellMatchScoreFile
   getFilenameExtension.AromaUfcFile
-  getFilenameExtension.AromaUnitGcContentFile getFileSet
+getFileSet
   getFileSet.AffymetrixFileSetReporter getFileSetClass
   getFileSetClass.FirmaModel getFirmaScores getFirmaSet
   getFirstCellIndices getFirstCellIndices.AffymetrixCdfFile
@@ -416,15 +398,11 @@
   getParameters.SnpChipEffectFile getParameters.SnpChipEffectGroupMerge
   getParameters.SpatialRowColumnNormalization
   getParameters.UnitTypeScaleNormalization getParameters.WeightsFile
-  getParameters.WeightsSet getParametersAsString.ChipEffectFile
-  getParametersAsString.ChipEffectSet getParametersAsString.Model
-  getParametersAsString.ProbeAffinityFile
-  getParametersAsString.ResidualFile getParametersAsString.ResidualSet
-  getParametersAsString.WeightsFile getParametersAsString.WeightsSet
-  getParameterSet getParameterSet.AvgPlm getParameterSet.CnPlm
-  getParameterSet.CrlmmModel getParameterSet.ExonRmaPlm
-  getParameterSet.Model getParameterSet.RmaPlm getParameterSet.SnpPlm
-  getParameterSet.UnitModel getPath.AffymetrixCelSetReporter
+  getParameters.WeightsSet 
+  getParameters.AvgPlm getParameters.CnPlm
+  getParameters.CrlmmModel getParameters.ExonRmaPlm
+  getParameters.Model getParameters.RmaPlm getParameters.SnpPlm
+  getParameters.UnitModel getPath.AffymetrixCelSetReporter
   getPath.GenericReporter getPath.QualityAssessmentModel getPcuTheta
   getPcuTheta.ChromosomalModel getPlasqTypes
   getPlatform.AffymetrixCdfFile getPlatform.AffymetrixCelFile
@@ -747,7 +725,7 @@ writeCdfByExcludingCells.AffymetrixCdfFile writeCdfByExcludingCells
   getDefaultExtension.AromaCellMatchScoreFile
   getDefaultExtension.AromaChipTypeAnnotationFile
 updateSetupExplorerFile.ArrayExplorer
-as.character.AffymetrixPgfFile clearCache.AffymetrixPgfFile
+as.character.AffymetrixPgfFile 
 getChipType.AffymetrixPgfFile
 getDefaultExtension.AffymetrixPgfFile
 getDimension.AffymetrixPgfFile
@@ -756,3 +734,11 @@ getPlatform.AffymetrixPgfFile getUnitNamesFile.AffymetrixPgfFile
 nbrOfCells.AffymetrixPgfFile nbrOfColumns.AffymetrixPgfFile
 nbrOfRows.AffymetrixPgfFile nbrOfUnits.AffymetrixPgfFile
 readRawData.AffymetrixPgfFile
+AromaUfcFile
+validate.AffymetrixCdfFile
+getDefaultColumnNames.AromaCellMatchScoreFile
+getDefaultColumnNames.AromaUfcFile
+clearData
+bgAdjustOptical.AffymetrixCelSet  bgAdjustRma.AffymetrixCelSet
+calculateAffinities calculateAffinities.GcRmaBackgroundCorrection
+getParameterSet getParameterSet.Model

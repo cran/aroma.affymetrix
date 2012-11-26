@@ -45,7 +45,7 @@ setMethodS3("extractCNT", "SnpChipEffectFile", function(this, reference, units=N
 
   # Subset by chromosome?
   if (!is.null(chromosomes)) {
-    keep <- whichVector(gp[,1] %in% chromosomes);
+    keep <- which(gp[,1] %in% chromosomes);
     units <- units[keep];
     gp <- gp[keep,,drop=FALSE];
     rm(keep);
@@ -118,9 +118,9 @@ setMethodS3("extractCNT", "SnpChipEffectFile", function(this, reference, units=N
   rm(dataHead);
 
   data;  
-})
+}, protected=TRUE)
 
-setMethodS3("extractCNT", "SnpChipEffectSet", extractCNT.SnpChipEffectFile);
+setMethodS3("extractCNT", "SnpChipEffectSet", extractCNT.SnpChipEffectFile, protected=TRUE)
 
 
 

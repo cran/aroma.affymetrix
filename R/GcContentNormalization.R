@@ -62,7 +62,7 @@ setConstructorS3("GcContentNormalization", function(dataSet=NULL, ..., targetFun
 
 setMethodS3("getParameters", "GcContentNormalization", function(this, ...) {
   # Get parameters from super class
-  params <- NextMethod(generic="getParameters", object=this, ...);
+  params <- NextMethod("getParameters");
 
   # Get parameters of this class
   params2 <- list(
@@ -74,7 +74,7 @@ setMethodS3("getParameters", "GcContentNormalization", function(this, ...) {
   params <- c(params, params2);
 
   params;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getCdf", "GcContentNormalization", function(this, ...) {
@@ -84,7 +84,7 @@ setMethodS3("getCdf", "GcContentNormalization", function(this, ...) {
 
 
 setMethodS3("getOutputDataSet00", "GcContentNormalization", function(this, ...) {
-  res <- NextMethod(generic="getOutputDataSet", object=this, ...);
+  res <- NextMethod("getOutputDataSet");
 
   # Carry over parameters too.  AD HOC for now. /HB 2007-01-07
   if (inherits(res, "SnpChipEffectSet")) {
@@ -99,7 +99,7 @@ setMethodS3("getOutputDataSet00", "GcContentNormalization", function(this, ...) 
   update2(res, verbose=less(verbose, 1));
 
   res;
-})
+}, protected=TRUE)
 
 
 setMethodS3("getGcContent", "GcContentNormalization", function(this, units=NULL, force=FALSE, ..., verbose=FALSE) {
@@ -363,7 +363,7 @@ setMethodS3("process", "GcContentNormalization", function(this, ..., force=FALSE
   gcContents <- NULL;
   targetFcn <- NULL;
   map <- NULL;
-  nbrOfArrays <- nbrOfArrays(ces);
+  nbrOfArrays <- length(ces);
   res <- vector("list", nbrOfArrays);
   for (kk in seq_len(nbrOfArrays)) {
     ce <- getFile(ces, kk);

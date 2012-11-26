@@ -22,7 +22,8 @@
 #*/###########################################################################
 setConstructorS3("GenomeInformation", function(..., .verify=TRUE) {
   extend(GenericDataFile(...), "GenomeInformation",
-    "cached:.data"=NULL
+    "cached:.data"=NULL,
+    "cached:.chromosomeStats"=NULL
   );
 })
 
@@ -31,23 +32,12 @@ setMethodS3("as.character", "GenomeInformation", function(x, ...) {
   # To please R CMD check
   this <- x;
 
-  s <- NextMethod("as.character", this, ...);
+  s <- NextMethod("as.character");
   s <- c(s, sprintf("Chip type: %s", getChipType(this)));
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
-
-setMethodS3("clearCache", "GenomeInformation", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC. clearCache() in Object should be enough! /HB 2007-01-16
-  for (ff in c(".data", ".chromosomeStats")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
 
 
 
@@ -79,7 +69,7 @@ setMethodS3("clearCache", "GenomeInformation", function(this, ...) {
 #*/###########################################################################
 setMethodS3("verify", "GenomeInformation", function(this, ...) {
   TRUE;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -111,18 +101,12 @@ setMethodS3("verify", "GenomeInformation", function(this, ...) {
 #*/###########################################################################
 setMethodS3("byChipType", "GenomeInformation", static=TRUE, abstract=TRUE);
 
-setMethodS3("fromChipType", "GenomeInformation", function(static, ...) {
-  className <- class(static)[1];
-  msg <- sprintf("%s$fromChipType() is defunct. Use %s$byChipType() instead.", 
-                                                        className, className);
-  throw(msg);
-}, static=TRUE, deprecated=TRUE)
 
 
 setMethodS3("fromDataSet", "GenomeInformation", function(static, dataSet, ...) {
   chipType <- getChipType(dataSet);
   byChipType(static, chipType=chipType, ...);
-}, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -189,10 +173,6 @@ setMethodS3("getUnitsOnChromosomes", "GenomeInformation", function(this, chromos
   units;
 })
 
-
-setMethodS3("readData", "GenomeInformation", function(this, ...) {
-  readDataFrame(this, ...);
-}, protected=TRUE, deprecated=TRUE);
 
 setMethodS3("readDataFrame", "GenomeInformation", function(this, ...) {
   readTableInternal(this, ...);
@@ -304,7 +284,7 @@ setMethodS3("getChromosomeStats", "GenomeInformation", function(this, na.rm=TRUE
     stats <- matrix(naValue, nrow=nbrOfChromosomes, ncol=3);
     colnames(stats) <- c("min", "max", "n");
     rownames(stats) <- chromosomes;
-    for (kk in seq(along=chromosomes)) {
+    for (kk in seq_along(chromosomes)) {
       chr <- chromosomes[kk];
       verbose && enter(verbose, sprintf("Chromosome %d ('Chr%02d') of %d", 
                                           kk, chr, nbrOfChromosomes));
