@@ -243,7 +243,7 @@ setMethodS3("getTimestamps", "AffymetrixCelSet", function(this, ..., force=FALSE
 
   if (force || is.null(ts)) {
     # Get CEL header dates
-    ts <- lapply(this, getTimestamp);
+    ts <- lapply(this, FUN=getTimestamp);
     ts <- do.call("c", args=ts);
     this$.timestamps <- ts;
   }
@@ -257,7 +257,7 @@ setMethodS3("getIdentifier", "AffymetrixCelSet", function(this, ..., force=FALSE
   if (force || is.null(identifier)) {
     identifier <- NextMethod("getIdentifier");
     if (is.null(identifier)) {
-      identifiers <- lapply(this, getIdentifier);
+      identifiers <- lapply(this, FUN=getIdentifier);
       identifier <- digest2(identifiers);
     }
     this$.identifier <- identifier;
@@ -310,13 +310,11 @@ setMethodS3("getPlatform", "AffymetrixCelSet", function(this, ...) {
 
 
 setMethodS3("getUnitNamesFile", "AffymetrixCelSet", function(this, ...) {
-  aFile <- getFile(this, 1);
-  getUnitNamesFile(aFile, ...);
+  getUnitNamesFile(getOneFile(this), ...);
 })
 
 setMethodS3("getUnitTypesFile", "AffymetrixCelSet", function(this, ...) {
-  aFile <- getFile(this, 1);
-  getUnitTypesFile(aFile, ...);
+  getUnitTypesFile(getOneFile(this), ...);
 })
 
 
@@ -350,8 +348,7 @@ setMethodS3("getUnitTypesFile", "AffymetrixCelSet", function(this, ...) {
 # @keyword IO
 #*/###########################################################################
 setMethodS3("getCdf", "AffymetrixCelSet", function(this, ...) {
-  aFile <- getFile(this, 1);
-  getCdf(aFile, ...);
+  getCdf(getOneFile(this), ...);
 })
 
 
@@ -396,8 +393,8 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
     cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
   
     # Assure that the CDF is compatible with the CEL file
-    if (length(this) > 0) {
-      cf <- getFile(this, 1);
+    if (length(this) > 0L) {
+      cf <- getOneFile(this);
       if (nbrOfCells(cdf) != nbrOfCells(cf)) {
         throw("Cannot set CDF. The specified CDF structure ('", getChipType(cdf), "') is not compatible with the chip type ('", getChipType(cf), "') of the CEL file. The number of cells do not match: ", nbrOfCells(cdf), " != ", nbrOfCells(cf));
       }
@@ -432,7 +429,7 @@ setMethodS3("setCdf", "AffymetrixCelSet", function(this, cdf, verbose=FALSE, ...
 
   # Set the CDF for all CEL files
   verbose && enter(verbose, "Setting CDF for each CEL file");
-  lapply(this, setCdf, cdf, .checkArgs=FALSE, ...);
+  lapply(this, FUN=setCdf, cdf, .checkArgs=FALSE, ...);
   verbose && exit(verbose);
 
   # Have to clear the cache 
@@ -648,7 +645,7 @@ setMethodS3("byPath", "AffymetrixCelSet", function(static, path, cdf=NULL, patte
   # Look for cached results (useful for extremely large data set)
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   key <- list(method="byPath", class=class(static)[1], path=path, pattern=pattern, cdf=cdf, checkChipType=checkChipType, ..., fileClass=fileClass);
-  dirs <- "aroma.affymetrix";
+  dirs <- c("aroma.affymetrix", "dataSets", class(static)[1]);
   res <- loadCache(key=key, dirs=dirs);
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "Found cached results");
@@ -743,7 +740,7 @@ setMethodS3("byPath", "AffymetrixCelSet", function(static, path, cdf=NULL, patte
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (is.null(cdf)) {
       verbose && enter(verbose, "Retrieving the CDF for chip type '", chipType, "' inferred from path");
-      cf <- getFile(set, 1);
+      cf <- getOneFile(set);
       nbrOfCells <- nbrOfCells(cf);
       cdf <- AffymetrixCdfFile$byChipType(chipType, nbrOfCells=nbrOfCells);
       verbose && exit(verbose);
@@ -1079,7 +1076,7 @@ setMethodS3("getUnitIntensities", "AffymetrixCelSet", function(this, units=NULL,
   # Read signals
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Get the pathnames of all CEL files
-  pathnames <- unlist(lapply(this, getPathname), use.names=FALSE);
+  pathnames <- unlist(lapply(this, FUN=getPathname), use.names=FALSE);
 
   # Is 'units' a (pre-created) CDF structure?
   if (is.list(units)) {
@@ -1231,13 +1228,15 @@ setMethodS3("applyToUnitIntensities", "AffymetrixCelSet", function(this, units=N
 
 
 setMethodS3("getUnitGroupCellMap", "AffymetrixCelSet", function(this, ...) {
-  ce <- getFile(this, 1);
-  getUnitGroupCellMap(ce, ...);
+  getUnitGroupCellMap(getOneFile(this), ...);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2012-11-28
+# o CLARIFICATION: Now the cache path used by byPath() for AffymetrixCelSet
+#   includes "dataSets" and <staticClassName>.
 # 2012-11-20
 # o CLEANUP: Deprecated "[" and "[[", because they should be used to
 #   subset files and not units.

@@ -184,7 +184,7 @@ setMethodS3("getTimestamps", "CnagCfhSet", function(this, ..., force=FALSE) {
 
   if (force || is.null(ts)) {
     # Get CFH header dates
-    ts <- lapply(this, getTimestamp);
+    ts <- lapply(this, FUN=getTimestamp);
     ts <- do.call("c", args=ts);
     this$.timestamps <- ts;
   }
@@ -198,7 +198,7 @@ setMethodS3("getIdentifier", "CnagCfhSet", function(this, ..., force=FALSE) {
   if (force || is.null(identifier)) {
     identifier <- NextMethod("getIdentifier");
     if (is.null(identifier)) {
-      identifiers <- lapply(this, getIdentifier);
+      identifiers <- lapply(this, FUN=getIdentifier);
       identifier <- digest2(identifiers);
     }
     this$.identifier <- identifier;
@@ -289,7 +289,7 @@ setMethodS3("setCdf", "CnagCfhSet", function(this, cdf, verbose=FALSE, ...) {
 
   # Set the CDF for all CFH files
   verbose && enter(verbose, "Setting CDF for each CFH file");
-  lapply(this, setCdf, cdf, ...);
+  lapply(this, FUN=setCdf, cdf, ...);
   verbose && exit(verbose);
 
   # Have to clear the cache 
@@ -421,12 +421,6 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
     verbose && enter(verbose, "Updating the CDF for all files");
     verbose && cat(verbose, "Chip type: ", chipType);
     cdf <- AffymetrixCdfFile$byChipType(chipType);
-    cf <- getFile(this, 1);
-  #  if (nbrOfCells(cdf) != nbrOfCells(cf)) {
-  #    cdf <- getCdf(cf);
-  #    chipType <- getChipType(cdf);
-  #    verbose && cat(verbose, "Chip type: ", chipType);
-  #  }
     setCdf(this, cdf, .checkArgs=FALSE);
     verbose && exit(verbose);
   
@@ -435,7 +429,7 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     verbose && enter(verbose, "Scanning for and applying sample annotation files");
     sas <- SampleAnnotationSet$loadAll(verbose=less(verbose));
-    if (length(sas) == 0) {
+    if (length(sas) == 0L) {
       verbose && cat(verbose, "No sample annotation files found.");
     } else {
       verbose && print(verbose, sas);
@@ -948,7 +942,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
   verbose && cat(verbose, "Number cells per chunk: ", cellsPerChunk);
 
   # Get the pathnames of all CFH files to average
-  pathnames <- lapply(this, getPathname);
+  pathnames <- lapply(this, FUN=getPathname);
   pathnames <- unlist(pathnames, use.names=FALSE);
   nbrOfArrays <- length(pathnames);
 

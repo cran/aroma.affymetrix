@@ -135,7 +135,7 @@ setMethodS3("getCellIndices", "ChipEffectSet", function(this, ...) {
   # Use the first chip-effect file to get the CDF structure.
   # Note: Ideally we want to define a special CDF class doing this
   # instead of letting the data file do this. /HB 2006-12-18
-  ce <- getFile(this, 1);
+  ce <- getOneFile(this);
   getCellIndices(ce, ...);
 })
 
@@ -167,7 +167,7 @@ setMethodS3("readUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL, .
 
   # Get first chip-effect file and use that to decode the read structure
   # This takes some time for a large number of units /HB 2006-10-04
-  ce <- getFile(this, 1);
+  ce <- getOneFile(this);
   res <- decode(ce, res, verbose=less(verbose));
 
   verbose && exit(verbose);
@@ -200,19 +200,20 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
   nbrOfArrays <- length(arrays);
   verbose && cat(verbose, "Number of files: ", nbrOfArrays);
 
-  names <- getNames(this);
-
-  verbose && enter(verbose, "Making sure the files are updated in lexicographic order");
-  # Reorder such that the file with the "last" name is saved last
-  fullnames <- getFullNames(this);
-  o <- order(fullnames, decreasing=FALSE);
-  arrays <- arrays[o];
-  verbose && str(verbose, arrays);
-  verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
-  rm(fullnames, o);
-  verbose && exit(verbose);
+  if (nbrOfArrays > 1L) {
+    verbose && enter(verbose, "Making sure the files are updated in lexicographic order");
+    # Reorder such that the file with the "last" name is saved last
+    fullnames <- getFullNames(this);
+    o <- order(fullnames, decreasing=FALSE);
+    arrays <- arrays[o];
+    verbose && str(verbose, arrays);
+    verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
+    rm(fullnames, o);
+    verbose && exit(verbose);
+  }
 
   verbose <- less(verbose);
+  names <- getNames(this);
   for (ii in arrays) {
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
                                          ii, nbrOfArrays, names[ii]));

@@ -517,6 +517,9 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
       # Check in file cache
       chipType <- getChipType(this);
       key <- list(method="getUnitTypes", class=class(this)[1], version="2008-09-03", chipType=chipType);
+      if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+        key <- getCacheKey(this, method="getUnitTypes", chipType=chipType);
+      }
       dirs <- c("aroma.affymetrix", chipType);
       if (force) {
         types <- NULL;
@@ -591,6 +594,9 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
     # Check in file cache
     chipType <- getChipType(this);
     key <- list(method="getGroupDirections", class=class(this)[1], chipType=chipType);
+    if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+      key <- getCacheKey(this, method="getGroupDirections", chipType=chipType);
+    }
     dirs <- c("aroma.affymetrix", chipType);
     if (force) {
       groupDirections <- NULL;
@@ -741,6 +747,9 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   key <- list(method="getCellIndices", class=class(this)[1], 
              chipType=getChipType(this), units=units, ...,
              useNames=useNames, unlist=unlist);
+  if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+    key <- getCacheKey(this, method="getCellIndices", chipType=getChipType(this), units=units, ..., useNames=useNames, unlist=unlist);
+  }
 
   # This is a trick to store either to memory or file cache
   key <- digest2(key);
@@ -1094,6 +1103,9 @@ setMethodS3("identifyCells", "AffymetrixCdfFile", function(this, indices=NULL, f
     verbose && enter(verbose, "Checking cache");
     chipType <- getChipType(this);
     key <- list(method="identifyCells", class=class(this)[1], chipType=chipType, indices=indices, from=from, to=to, types=types, sort=sort);
+    if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+      key <- getCacheKey(this, method="identifyCells", chipType=chipType, indices=indices, from=from, to=to, types=types, sort=sort);
+    }
     comment <- sprintf("%s: %s", key$method, key$chipType);
     dirs <- c("aroma.affymetrix", chipType);
     if (!.force) {
@@ -1190,6 +1202,9 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
   verbose && enter(verbose, "Trying to load cached results");
   chipType <- getChipType(this);
   key <- list(method="getFirstCellIndices", class=class(this)[1], chipType=chipType, stratifyBy=stratifyBy, restructor=body(this$.restructor));
+  if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+    key <- getCacheKey(this, method="getFirstCellIndices", chipType=chipType, stratifyBy=stratifyBy, restructor=body(this$.restructor));
+  }
   dirs <- c("aroma.affymetrix", chipType);
   res <- if (force) {
     NULL;
@@ -1616,6 +1631,23 @@ setMethodS3("validate", "AffymetrixCdfFile", function(this, ...) {
 
   
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Check for units with zero unit groups
+  #
+  # Examples: 
+  # o HTHGU133A_Hs_ENTREZG.cdf (v 12.0.0):
+  #    Error: Detected 1 unit(s) (i.e. 11973) with zero unit groups: ...
+  #   because it's CDF header claims to have 11,973 units, whereas there
+  #   are only 11,972.  See also thread '[customcdf] ENTREZG, AUGUSTUST
+  #   for pig species is updated' on May 8, 2012 [http://goo.gl/Xg1pp]
+  #
+  # Examples:
+  # o HTHGU133A_Hs_ENTREZG.cdf (v 12.0.0) [as above]
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ns <- nbrOfGroupsPerUnit(this);
+  assertUnits(ns == 0L, "%d unit(s) (i.e. %s) with zero unit groups: %s");
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for empty unit names
   #
   # Examples: 
@@ -1624,18 +1656,13 @@ setMethodS3("validate", "AffymetrixCdfFile", function(this, ...) {
   #   because it's CDF header claims to have 11,973 units, whereas there
   #   are only 11,972.  See also thread '[customcdf] ENTREZG, AUGUSTUST
   #   for pig species is updated' on May 8, 2012 [http://goo.gl/Xg1pp]
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  unitNames <- getUnitNames(this);
-  assertUnits(nchar(unitNames) == 0L, "%d unit(s) (i.e. %s) with empty unit names: %s");
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Check for units with zero unit groups
   #
   # Examples:
   # o HTHGU133A_Hs_ENTREZG.cdf (v 12.0.0) [as above]
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ns <- nbrOfGroupsPerUnit(this);
-  assertUnits(ns == 0L, "%d unit(s) (i.e. %s) with zero unit groups: %s");
+  unitNames <- getUnitNames(this);
+  assertUnits(((ns == 0L) & (nchar(unitNames) == 0L)), "%d unit(s) (i.e. %s) with zero unit groups and empty unit names: %s");
+
 
   invisible(this);
 }, protected=TRUE)
@@ -1643,6 +1670,9 @@ setMethodS3("validate", "AffymetrixCdfFile", function(this, ...) {
 
 ############################################################################
 # HISTORY:
+# 2012-12-16
+# o Now validate() for AffymetrixCdfFile accepts empty unit names as
+#   long as the unit is not empty.
 # 2012-10-18
 # o Added validate() for AffymetrixCdfFile, which validate a CDF for
 #   the most "common" errors, to help troubleshooting.  Note that the
