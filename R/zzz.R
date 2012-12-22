@@ -13,7 +13,7 @@
 
 # R.filesets:
 append <- R.filesets::append;
-sapply <- R.filesets::sapply;
+##sapply <- R.filesets::sapply;
 
 # aroma.core:
 apply <- aroma.core::apply;
@@ -51,9 +51,7 @@ require <- aroma.core::require;
 
   pkg <- AromaAffymetrix(pkgname);
   assign(pkgname, pkg, pos=getPosition(pkg));
-
-  packageStartupMessage(getName(pkg), " v", getVersion(pkg), " (", 
-    getDate(pkg), ") successfully loaded. See ?", pkgname, " for help.");
+  startupMessage(pkg);
 
   # Setup package
   .setupAromaAffymetrix(pkg);

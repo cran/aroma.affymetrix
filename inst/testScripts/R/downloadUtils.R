@@ -244,10 +244,52 @@ downloadGeoRawDataFiles <- function(..., sampleNames, skip=TRUE) {
 # Affymetrix
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 downloadAffymetrixFile <- function(pathname, ..., urlRoot=Sys.getenv("AFFY_URLROOT", "http://www.affymetrix.com/Auth"), skip=TRUE) {
+  # Argument 'pathname':
   filename <- basename(pathname);
+  filename <- Arguments$getFilename(filename);
+
+  # Download URL
   url <- file.path(urlRoot, pathname);
   downloadFile(url, filename=filename, path="downloads/", skip=skip);
 } # downloadAffymetrixFile()
+
+
+downloadAffymetrixNetAffxCsvFile <- function(pathname, ..., skip=TRUE) {
+  # Argument 'pathname':
+  filename <- basename(pathname);
+  filename <- Arguments$getFilename(filename);
+  pattern <- "^([^.]*)[.]((cn[.])*na[0-9]{2})[.].*.csv$";
+  stopifnot(regexpr(pattern, filename) != -1L);
+
+  # Infer chip type and NA tag
+  chipType <- gsub(pattern, "\\1", filename);
+  naTag <- gsub(pattern, "\\2", filename);
+
+  tags <- sprintf(".%s", naTag);
+
+  # Already available?
+  pathnameD <- AffymetrixNetAffxCsvFile$findByChipType(chipType, tags=tags);
+  if (skip && isFile(pathnameD)) {
+    return(pathnameD);
+  }
+
+  # Destination path
+  path <- file.path("annotationData", "chipTypes", chipType);
+  path <- Arguments$getWritablePath(path);
+
+  # Download file
+  pathnameZ <- sprintf("%s.zip", pathname);
+  pathnameZ <- downloadAffymetrixFile(pathnameZ, ...);
+
+  # Unzip to destination
+  unzip(pathnameZ, exdir=path);
+
+  # Assert
+  pathnameD <- AffymetrixNetAffxCsvFile$findByChipType(chipType, tags=tags);
+  stopifnot(!is.null(pathnameD));
+
+  pathnameD;
+} # downloadAffymetrixNetAffxCsvFile()
 
 
 downloadAffymetrixDataSet <- function(dataSet, tags=NULL, chipType=chipType, ..., skip=TRUE) {
@@ -266,7 +308,7 @@ downloadAffymetrixDataSet <- function(dataSet, tags=NULL, chipType=chipType, ...
     pathS <- paths[1];
     # Move all files in up one level
     pathnamesT <- gsub(pathS, path, pathnames, fixed=TRUE);
-    for (kk in seq(along=pathnames)) {
+    for (kk in seq_along(pathnames)) {
       file.rename(from=pathnames[kk], to=pathnamesT[kk]);
     }
   }
@@ -278,6 +320,10 @@ downloadAffymetrixDataSet <- function(dataSet, tags=NULL, chipType=chipType, ...
 
 ############################################################################
 # HISTORY:
+# 2012-11-29
+# o Added argument 'path' to downloadAffymetrixFile().
+# 2012-11-28
+# o Added downloadAffymetrixNetAffxCsvFile().
 # 2012-09-12
 # o BUG FIX: downloadGeoRawDataFile(..., gunzip=TRUE) would give an
 #   error that it could not gunzip the downloaded file, iff the filename

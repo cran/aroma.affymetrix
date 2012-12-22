@@ -1,6 +1,83 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.8.0 [2012-12-21]
+o No updates.
+o Bumped version for CRAN submission.
+o Package passes all redundancy tests.
+
+
+Version: 2.7.9 [2012-12-21]
+o Bumped up package dependencies.
+o Utilizing new startupMessage() of R.oo.
+o Now using argument 'colClasses' (was 'colClassPatterns')
+  for all readDataFrame():s and elsewhere.
+o ROBUSTNESS: Now all internal pathnames are shorter than 100
+  characters, which is the upper limit that 'tar' supports.
+
+
+Version: 2.7.8 [2012-12-18]
+o ROBUSTNESS: Added argument 'unitsBy' (and 'namesBy') to writeCdf() 
+  for AffyGenePDInfo, where 'unitsBy' defaults to "transcript".  It
+  now also drops any duplicated probe entries.  Furthermore, calling
+  writeCdf() for other classes of DBPDInfo objects will now give a
+  more informative error message that those classes are yet not
+  supported.  Thanks Guido Hooiveld (Wageningen University, Netherlands)
+  for suggestions and tests.
+o Now validate() for AffymetrixCdfFile accepts empty unit names as
+  long as the unit is not empty.
+o BUG FIX: writeCdf(..., useTranscriptCluster=FALSE) for AffyGenePDInfo
+  could generate empty unit names files for units with 'fsetid' <= 9999.
+
+
+Version: 2.7.7 [2012-12-10]
+o BUG FIX: getTimestamp() for AffymetrixCelFile would throw an error
+  if the CEL file header did not have a timestamp.  Thanks Guido
+  Hooiveld (Wageningen University, Netherlands) for reporting this.
+
+
+Version: 2.7.6 [2012-12-06]
+o ROBUSTNESS: Utilizing new getOneFile() internally. 
+
+
+Version: 2.7.5 [2012-12-01]
+o BUG FIX/ROBUSTNESS: convertToUnique() for AffymetrixCelSet would
+  return all CEL files found in the output directory, not just the ones
+  corresponding to the input set, and possibly in a different order.
+
+
+Version: 2.7.4 [2012-11-29]
+o DOCUMENTATION: Added help pages to more methods.
+o ROBUSTNESS: updateUnits() for ResidualSet did not update the
+  files in lexicographic order as previously claimed.
+
+
+Version: 2.7.3 [2012-11-28]
+o ROBUSTNESS: Added system test scripts for building UGP and UFL
+  file from Affymetrix CSF and NetAffx CSV files for GenomeWideSNP_6.
+o BUG FIX: Static allocateFromCdf() for AromaUfcFile and AromaUflFile
+  would throw errors on "Cannot retrieve writable file/directory 
+  because it is NA.".  This turns out to be related to the trap
+  reported in R-devel thread 'Do *not* pass '...' to NextMethod() - 
+  it'll do it for you; missing documentation, a bug or just me?' 
+  on Oct 16, 2012.  Thanks Ioana Cutcutache (Duke-NUS in Singapore)
+  for reporting on this.
+
+
+Version: 2.7.2 [2012-11-28]
+o ROBUSTNESS: Added the FileCacheKeyInterface to all classes directly
+  extending GenericDataFile and TabularTextFile.
+o MEMORY: readUnits() for ChipEffectFile, FirmaFile, ParameterCelFile,
+  ResidualFile, and WeightsFile no longer cache results in memory 
+  by default.
+
+
+Version: 2.7.1 [2012-11-26]
+o Lowered the package dependencies to aroma.light (>= 1.22.0)
+  and affxparser (>= 1.26.4) so that this package can be easily
+  installed on R (>= 2.14.0).
+
+
 Version: 2.7.0 [2012-11-24]
 o Bumped version for CRAN submission.
 o Bumped up package dependencies.
@@ -17,7 +94,7 @@ o DOCUMENTATION: Hiding more internal methods from the help indices.
 o CLEANUP: Now utilizing the new ParametersInterface.
 o CLEANUP: Replaced all getParameterSet() with getParameters().
 o CLEANUP: Deprecated "[" and "[[" for AffymetrixCelFile,
-  AffymetrixCelSet CnagCfhFile, and CnagCfhSet.
+  AffymetrixCelSet, CnagCfhFile, and CnagCfhSet.
 o CLEANUP: bgAdjustOptical() and bgAdjustRma() for AffymetrixCelSet
   are now defunct.  Instead, see OpticalBackgroundCorrection and
   RmaBackgroundCorrection.
@@ -34,7 +111,7 @@ o Now package explicitly imports R.cache, because aroma.core is no
 
 Version: 2.6.12 [2012-11-14]
 o CLEANUP: getWeights() for QualityAssessmentModel no longer sets the
-  alias of the returned data set, because the use aliases is deprecated.
+  alias of the returned data set, because the use of aliases is deprecated.
 o CLEANUP: writeImage() for AffymetrixCelFile no longer supports
   sample name aliases.
 
@@ -98,8 +175,8 @@ o ROBUSTNESS/BUG FIX: No longer passing '...' to NextMethod(), cf.
 
 Version: 2.6.3 [2012-10-14]
 o CLEANUP: Moved AromaUnitGcContentFile to aroma.core.
-o CLEANUP: Removed several defunct/obsolete methods and made
-  deprecated methods defunct/obsolete.
+o CLEANUP: Removed several defunct/obsolete methods and turned
+  deprecated methods into defunct/obsolete ones.
 o CLEANUP: findByChipType() for AffymetrixCdfFile no longer support
   monocell CDF file named <chipType>-monocell.CDF, and gives an 
   informative error if that is still the case.  Since December 2007,

@@ -54,7 +54,7 @@ setMethodS3("as.character", "WeightsSet", function(x, ...) {
 
 
 setMethodS3("getParameters", "WeightsSet", function(this, ...) {
-  rf <- getFile(this, 1L);
+  rf <- getOneFile(this);
   getParameters(rf, ...);
 }, protected=TRUE)
 
@@ -107,7 +107,7 @@ setMethodS3("getCellIndices", "WeightsSet", function(this, ...) {
   # Use the first weights file to get the CDF structure.
   # Note: Ideally we want to define a special CDF class doing this
   # instead of letting the data file do this. /HB 2006-12-18
-  wf <- getFile(this, 1);
+  wf <- getOneFile(this);
   getCellIndices(wf, ...);
 })
 
@@ -139,7 +139,7 @@ setMethodS3("readUnits", "WeightsSet", function(this, units=NULL, cdf=NULL, ...,
 
   # Get first weights file and use that to decode the read structure
   # This takes some time for a large number of units /HB 2006-10-04
-  wf <- getFile(this, 1);
+  wf <- getOneFile(this);
   res <- decode(wf, res, verbose=less(verbose));
 
   verbose && exit(verbose);
@@ -164,19 +164,20 @@ setMethodS3("updateUnits", "WeightsSet", function(this, units=NULL, cdf=NULL, da
   nbrOfArrays <- length(arrays);
   verbose && cat(verbose, "Number of files: ", nbrOfArrays);
 
-  names <- getNames(this);
-
-  verbose && enter(verbose, "Making sure the files are updated in lexicographic order");
-  # Reorder such that the file with the "last" name is saved last
-  fullnames <- getFullNames(this);
-  o <- order(fullnames, decreasing=FALSE);
-  arrays <- arrays[o];
-  verbose && str(verbose, arrays);
-  verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
-  rm(fullnames, o);
-  verbose && exit(verbose);
+  if (nbrOfArrays > 1L) {
+    verbose && enter(verbose, "Making sure the files are updated in lexicographic order");
+    # Reorder such that the file with the "last" name is saved last
+    fullnames <- getFullNames(this);
+    o <- order(fullnames, decreasing=FALSE);
+    arrays <- arrays[o];
+    verbose && str(verbose, arrays);
+    verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
+    rm(fullnames, o);
+    verbose && exit(verbose);
+  }
 
   verbose <- less(verbose);
+  names <- getNames(this);
   for (ii in arrays) {
     verbose && enter(verbose, sprintf("Array #%d of %d: %s", 
                                        ii, nbrOfArrays, names[ii]));

@@ -47,14 +47,17 @@ setMethodS3("readDataFrame", "AromaUfcFile", function(this, ...) {
   data;
 })
 
-setMethodS3("allocateFromCdf", "AromaUfcFile", function(static, cdf, nbrOfEnzymes=1, ...) {
+setMethodS3("allocateFromCdf", "AromaUfcFile", function(static, cdf, nbrOfEnzymes=1L, ...) {
+  # Argument 'cdf':
+  cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
+
   # Argument 'nbrOfEnzymes':
   nbrOfEnzymes <- Arguments$getInteger(nbrOfEnzymes, range=c(1,10));
 
   types <- rep("integer", times=nbrOfEnzymes);
   sizes <- rep(1L, times=nbrOfEnzymes);
 
-  NextMethod("allocateFromCdf", cdf=cdf, types=types, sizes=sizes);
+  NextMethod("allocateFromCdf", types=types, sizes=sizes);
 }, static=TRUE)
 
 
@@ -78,13 +81,13 @@ setMethodS3("importFromAffymetrixTabularFile", "AromaUfcFile", function(this, at
   verbose && cat(verbose, "Pathname: ", getPathname(atf));
 
   verbose && enter(verbose, "Reading data");
-  colClassPatterns <- c("probesetId"="character", "^.*iFragType"="character");
+  colClasses <- c("probesetId"="character", "^.*iFragType"="character");
   verbose && cat(verbose, "Column patterns:");
-  verbose && print(verbose, colClassPatterns);
+  verbose && print(verbose, colClasses);
 
   t <- system.time({
     # Read annotation data
-    data0 <- readDataFrame(atf, colClassPatterns=colClassPatterns);
+    data0 <- readDataFrame(atf, colClasses=colClasses);
   });
 
   verbose && printf(verbose, "Reading time: %.1fs\n", t[3]);

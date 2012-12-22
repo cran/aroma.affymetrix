@@ -1,8 +1,11 @@
 setMethodS3("allocateFromCdf", "AromaUnitGcContentFile", function(static, cdf, ...) {
+  # Argument 'cdf':
+  cdf <- Arguments$getInstanceOf(cdf, "AffymetrixCdfFile");
+
   types <- "double";
   sizes <- 4L;
 
-  res <- NextMethod("allocateFromCdf", cdf=cdf, types=types, sizes=sizes);
+  res <- NextMethod("allocateFromCdf", types=types, sizes=sizes);
   res[,1] <- as.double(NA);
 
   res;
@@ -31,7 +34,7 @@ setMethodS3("importFromAffymetrixNetAffxCsvFile", "AromaUnitGcContentFile", func
   cdf <- getCdf(this);
 
   # Read data
-  data <- readDataFrame(csv, colClassPattern=c("^(probeSetID|%GC)$"="character")); 
+  data <- readDataFrame(csv, colClasses=c("^(probeSetID|%GC)$"="character")); 
   unitNames <- data[,1];
   verbose && str(verbose, unitNames);
   values <- as.double(data[,2]);

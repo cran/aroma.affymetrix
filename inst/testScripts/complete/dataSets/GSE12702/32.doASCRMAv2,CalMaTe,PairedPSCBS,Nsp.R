@@ -11,7 +11,7 @@ verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 # Setup
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dataSet <- "GSE12702";
-chipType <- "Mapping250K_Sty";
+chipType <- "Mapping250K_Nsp";
 
 csR <- AffymetrixCelSet$byName(dataSet, chipType=chipType);
 
@@ -27,6 +27,19 @@ print(dsN);
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# CalMaTe
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+cmt <- CalMaTeCalibration(dsNList);
+print(cmt);
+  
+dsCList <- process(cmt, verbose=verbose);
+print(dsCList);
+  
+dsC <- exportAromaUnitPscnBinarySet(dsCList);
+print(dsC);
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Group samples by name and type
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # AD HOC: For now, just hardwire the path.
@@ -37,14 +50,14 @@ setColumnNameTranslator(db, function(names, ...) {
   names <- gsub("fullname", "replacement", names);
   names;
 });
-df <- readDataFrame(db, colClassPatterns=c("*"="character"));
-setFullNamesTranslator(dsN, df);
+df <- readDataFrame(db, colClasses=c("*"="character"));
+setFullNamesTranslator(dsC, df);
 
 # Identify unique sample names
-sampleNames <- unique(getNames(dsN));
+sampleNames <- unique(getNames(dsC));
 
 dsList <- lapply(sampleNames, FUN=function(sampleName) {
-  ds <- extract(dsN, sampleName);
+  ds <- extract(dsC, sampleName);
   lapply(c(T="T", N="N"), FUN=function(type) {
     extract(ds, sapply(ds, hasTag, type));
   });

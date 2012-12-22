@@ -147,7 +147,7 @@ setMethodS3("createParamCdf", "ChipEffectFile", function(static, sourceCdf, ...,
 
 
 
-setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ..., force=FALSE, cache=TRUE, verbose=FALSE) {
+setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, ..., force=FALSE, cache=FALSE, verbose=FALSE) {
   # Argument 'verbose':
   verbose <- Arguments$getVerbose(verbose);
 
@@ -156,6 +156,9 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
   key <- list(method="readUnits", class=class(this)[1], 
               pathname=getPathname(this),
               cdf=cdf, units=units, ...);
+  if (getOption(aromaSettings, "devel/useCacheKeyInterface", FALSE)) {
+    key <- getCacheKey(this, method="readUnits", pathname=getPathname(this), cdf=cdf, units=units, ...);
+  }
   id <- digest2(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
@@ -185,9 +188,42 @@ setMethodS3("readUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, 
 })
 
 
+
+###########################################################################/**
+# @RdocMethod getCellIndices
+#
+# @title "Retrieves tree list of cell indices for a set of units"
+#
+# \description{
+#   @get "title" from the associated CDF.
+# }
+#
+# @synopsis
+#
+# \arguments{
+#  \item{...}{Additional arguments passed to \code{getCellIndices()}
+#             of @see "AffymetrixCdfFile".}
+#  \item{.cache}{Ignored.}
+# }
+#
+# \value{
+#   Returns a @list structure, where each element corresponds to a unit.
+#   If argument \code{unlist=TRUE} is passed, an @integer @vector is returned.
+# }
+#
+# @author
+#
+# \seealso{
+#   @seeclass
+# }
+#
+# @keyword internal
+#*/###########################################################################
 setMethodS3("getCellIndices", "ChipEffectFile", function(this, ..., .cache=TRUE) {
-  getCellIndices(getCdf(this), ...);
-})
+  cdf <- getCdf(this);
+  getCellIndices(cdf, ...);
+}, protected=TRUE)
+
 
 
 setMethodS3("updateUnits", "ChipEffectFile", function(this, units=NULL, cdf=NULL, data, ...) {
@@ -857,6 +893,9 @@ setMethodS3("extractMatrix", "ChipEffectFile", function(this, ..., field=c("thet
 
 ############################################################################
 # HISTORY:
+# 2012-11-28
+# o MEMORY: readUnits() for ChipEffectFile no longer caches results
+#   by default.
 # 2012-10-14
 # o CLEANUP: createParamCdf() for ChipEffectFile no longer support 
 #   '<chipType>-monocell' filenames.  If detected, an informative
