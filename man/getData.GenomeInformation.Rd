@@ -9,9 +9,7 @@
 \name{getData.GenomeInformation}
 \alias{getData.GenomeInformation}
 \alias{GenomeInformation.getData}
-\alias{getData.GenomeInformation}
 \alias{getData,GenomeInformation-method}
-
 
 \title{Gets all or a subset of the genome information data}
 
@@ -19,7 +17,9 @@
   Gets all or a subset of the genome information data.
 }
 
-\usage{\method{getData}{GenomeInformation}(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=NULL, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{getData}{GenomeInformation}(this, units=NULL, fields=c("chromosome", "physicalPosition"), orderBy=NULL, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
  \item{units}{The units for which the data should be returned.}
@@ -35,8 +35,6 @@
   Returns a \code{\link[base]{data.frame}}, where the row names correspond to unit indices
   as defined by the annotation unit names file.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:getUnitIndices.GenomeInformation]{*getUnitIndices}()}.

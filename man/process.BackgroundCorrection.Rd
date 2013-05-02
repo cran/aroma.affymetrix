@@ -9,9 +9,7 @@
 \name{process.BackgroundCorrection}
 \alias{process.BackgroundCorrection}
 \alias{BackgroundCorrection.process}
-\alias{process.BackgroundCorrection}
 \alias{process,BackgroundCorrection-method}
-
 
 \title{Processes the data set}
 
@@ -19,7 +17,9 @@
  Processes the data set.
 }
 
-\usage{\method{process}{BackgroundCorrection}(...)}
+\usage{
+\method{process}{BackgroundCorrection}(...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -32,7 +32,7 @@
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{BackgroundCorrection}}.

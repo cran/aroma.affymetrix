@@ -9,9 +9,7 @@
 \name{process.AbstractProbeSequenceNormalization}
 \alias{process.AbstractProbeSequenceNormalization}
 \alias{AbstractProbeSequenceNormalization.process}
-\alias{process.AbstractProbeSequenceNormalization}
 \alias{process,AbstractProbeSequenceNormalization-method}
-
 
 \title{Normalizes the data set}
 
@@ -19,7 +17,9 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{AbstractProbeSequenceNormalization}(this, ..., ram=NULL, force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{AbstractProbeSequenceNormalization}(this, ..., ram=NULL, force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -34,7 +34,7 @@
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{AbstractProbeSequenceNormalization}}.

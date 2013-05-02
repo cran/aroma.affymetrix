@@ -9,9 +9,7 @@
 \name{getTags.GenericReporter}
 \alias{getTags.GenericReporter}
 \alias{GenericReporter.getTags}
-\alias{getTags.GenericReporter}
 \alias{getTags,GenericReporter-method}
-
 
 \title{Gets the tags of the reporter}
 
@@ -19,7 +17,9 @@
  Gets the tags of the reporter, which are the input tags plus additional tags.
 }
 
-\usage{\method{getTags}{GenericReporter}(this, collapse=NULL, ...)}
+\usage{
+\method{getTags}{GenericReporter}(this, collapse=NULL, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns a \code{\link[base]{character}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{GenericReporter}}.

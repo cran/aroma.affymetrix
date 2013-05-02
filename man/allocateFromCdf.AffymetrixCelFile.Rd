@@ -7,12 +7,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\name{allocateFromCdf.AffymetrixCelFile}
+\name{AffymetrixCelFile$allocateFromCdf}
+\alias{AffymetrixCelFile$allocateFromCdf}
 \alias{allocateFromCdf.AffymetrixCelFile}
 \alias{AffymetrixCelFile.allocateFromCdf}
-\alias{allocateFromCdf.AffymetrixCelFile}
 \alias{allocateFromCdf,AffymetrixCelFile-method}
-
 
 \title{Creates an empty CEL file from a template CDF}
 
@@ -20,8 +19,13 @@
  Creates an empty CEL file from a template CDF.
 }
 
-\synopsis{allocateFromCdf.AffymetrixCelFile(static, cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)}
-\usage{AffymetrixCelFile$allocateFromCdf(cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)}
+\usage{
+## Static method (use this):
+## AffymetrixCelFile$allocateFromCdf(cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)
+
+## Don't use the below:
+\method{allocateFromCdf}{AffymetrixCelFile}(static, cdf, name, tags=NULL, path=".", suffix=".CEL", ..., overwrite=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{cdf}{A \code{\link{AffymetrixCdfFile}} to be used as a template.}
@@ -38,7 +42,7 @@
  Returns an \code{\link{AffymetrixCelFile}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelFile}}.

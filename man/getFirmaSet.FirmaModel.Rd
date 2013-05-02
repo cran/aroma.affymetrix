@@ -9,9 +9,7 @@
 \name{getFirmaSet.FirmaModel}
 \alias{getFirmaSet.FirmaModel}
 \alias{FirmaModel.getFirmaSet}
-\alias{getFirmaSet.FirmaModel}
 \alias{getFirmaSet,FirmaModel-method}
-
 \alias{FirmaModel.getFirmaScores}
 \alias{getFirmaScores.FirmaModel}
 \alias{getFirmaScores,FirmaModel-method}
@@ -24,7 +22,9 @@
  There is one chip-effect file per array.
 }
 
-\usage{\method{getFirmaSet}{FirmaModel}(this, ..., verbose=FALSE)}
+\usage{
+\method{getFirmaSet}{FirmaModel}(this, ..., verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -34,8 +34,6 @@
 \value{
  Returns a \code{\link{FirmaSet}} object.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{FirmaModel}}.

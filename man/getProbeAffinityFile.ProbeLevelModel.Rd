@@ -9,9 +9,7 @@
 \name{getProbeAffinityFile.ProbeLevelModel}
 \alias{getProbeAffinityFile.ProbeLevelModel}
 \alias{ProbeLevelModel.getProbeAffinityFile}
-\alias{getProbeAffinityFile.ProbeLevelModel}
 \alias{getProbeAffinityFile,ProbeLevelModel-method}
-
 \alias{ProbeLevelModel.getProbeAffinities}
 \alias{getProbeAffinities.ProbeLevelModel}
 \alias{getProbeAffinities,ProbeLevelModel-method}
@@ -23,7 +21,9 @@
  Gets the probe affinities for this model.
 }
 
-\usage{\method{getProbeAffinityFile}{ProbeLevelModel}(this, ..., .class=ProbeAffinityFile)}
+\usage{
+\method{getProbeAffinityFile}{ProbeLevelModel}(this, ..., .class=ProbeAffinityFile)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -33,8 +33,6 @@
 \value{
  Returns a \code{\link{ProbeAffinityFile}} object.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{ProbeLevelModel}}.

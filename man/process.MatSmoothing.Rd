@@ -9,9 +9,7 @@
 \name{process.MatSmoothing}
 \alias{process.MatSmoothing}
 \alias{MatSmoothing.process}
-\alias{process.MatSmoothing}
 \alias{process,MatSmoothing-method}
-
 
 \title{Processes the data set}
 
@@ -19,7 +17,9 @@
  Processes the data set.
 }
 
-\usage{\method{process}{MatSmoothing}(this, ..., units=NULL, force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{MatSmoothing}(this, ..., units=NULL, force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -31,8 +31,6 @@
 \value{
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{MatSmoothing}}.

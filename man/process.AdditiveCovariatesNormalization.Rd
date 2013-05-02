@@ -9,9 +9,7 @@
 \name{process.AdditiveCovariatesNormalization}
 \alias{process.AdditiveCovariatesNormalization}
 \alias{AdditiveCovariatesNormalization.process}
-\alias{process.AdditiveCovariatesNormalization}
 \alias{process,AdditiveCovariatesNormalization-method}
-
 
 \title{Normalizes the data set}
 
@@ -19,7 +17,9 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{AdditiveCovariatesNormalization}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{AdditiveCovariatesNormalization}(this, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Additional arguments passed to
@@ -33,7 +33,7 @@
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{AdditiveCovariatesNormalization}}.

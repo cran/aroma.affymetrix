@@ -9,9 +9,7 @@
 \name{getFitUnitGroupFunction.FirmaModel}
 \alias{getFitUnitGroupFunction.FirmaModel}
 \alias{FirmaModel.getFitUnitGroupFunction}
-\alias{getFitUnitGroupFunction.FirmaModel}
 \alias{getFitUnitGroupFunction,FirmaModel-method}
-
 
 \title{Static method to get the low-level function that fits the PLM}
 
@@ -19,7 +17,9 @@
  Static method to get the low-level function that fits the PLM.
 }
 
-\usage{\method{getFitUnitGroupFunction}{FirmaModel}(this, ...)}
+\usage{
+\method{getFitUnitGroupFunction}{FirmaModel}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns a \code{\link[base]{function}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{FirmaModel}}.

@@ -10,9 +10,7 @@
 \name{getAM.ChipEffectFile}
 \alias{getAM.ChipEffectFile}
 \alias{ChipEffectFile.getAM}
-\alias{getAM.ChipEffectFile}
 \alias{getAM,ChipEffectFile-method}
-
 
 \title{Gets the log-intensities and log-ratios of chip effects for two arrays}
 
@@ -20,7 +18,9 @@
  Gets the log-intensities and log-ratios of chip effects for two arrays.
 }
 
-\usage{\method{getAM}{ChipEffectFile}(this, other, units=NULL, ..., verbose=FALSE)}
+\usage{
+\method{getAM}{ChipEffectFile}(this, other, units=NULL, ..., verbose=FALSE)
+}
 
 \arguments{
   \item{other}{The second \code{\link{ChipEffectFile}} object used as the
@@ -38,7 +38,7 @@
  The rows are ordered according to \code{units} arguments.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   \code{\link[aroma.affymetrix:getXAM.ChipEffectFile]{*getXAM}()}.

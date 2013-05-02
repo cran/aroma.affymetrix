@@ -43,7 +43,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 
 }
 
-\usage{RmaBackgroundCorrection(..., addJitter=FALSE, jitterSd=0.2)}
+\usage{
+RmaBackgroundCorrection(..., addJitter=FALSE, jitterSd=0.2)
+}
 
 \arguments{
   \item{...}{Arguments passed to the constructor of
@@ -73,10 +75,10 @@ getOutputDataSet, getOutputFiles
 as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
-getParameters, getParametersAsString, getParameterSets
+getParameterSets, getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, asThis
 
 
 }
@@ -95,5 +97,5 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clear
   probe signals.  The default is to background correct PM signals only.
 }
 
-\author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+\author{Ken Simpson, Henrik Bengtsson}
 \keyword{classes}

@@ -10,9 +10,7 @@
 \name{isSnpChip.AffymetrixCdfFile}
 \alias{isSnpChip.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.isSnpChip}
-\alias{isSnpChip.AffymetrixCdfFile}
 \alias{isSnpChip,AffymetrixCdfFile-method}
-
 
 \title{Static method to check if a chip is a mapping (SNP) chip}
 
@@ -20,7 +18,9 @@
   Static method to check if a chip is a mapping (SNP) chip.
 }
 
-\usage{\method{isSnpChip}{AffymetrixCdfFile}(this, ...)}
+\usage{
+\method{isSnpChip}{AffymetrixCdfFile}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -30,7 +30,7 @@
   Returns \code{\link[base:logical]{TRUE}} if the chip type refers to a SNP array, otherwise \code{\link[base:logical]{FALSE}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

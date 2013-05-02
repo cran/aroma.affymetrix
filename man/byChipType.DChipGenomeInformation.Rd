@@ -9,9 +9,7 @@
 \name{byChipType.DChipGenomeInformation}
 \alias{byChipType.DChipGenomeInformation}
 \alias{DChipGenomeInformation.byChipType}
-\alias{byChipType.DChipGenomeInformation}
 \alias{byChipType,DChipGenomeInformation-method}
-
 
 \title{Defines a DChipGenomeInformation object by chip type}
 
@@ -19,7 +17,9 @@
  Defines a DChipGenomeInformation object by chip type.
 }
 
-\usage{\method{byChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ..., verbose=FALSE)}
+\usage{
+\method{byChipType}{DChipGenomeInformation}(static, chipType, version=NULL, ..., verbose=FALSE)
+}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
@@ -33,8 +33,6 @@
  Returns an \code{\link{DChipGenomeInformation}} object.
  If no file was not found, an error is thrown.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{DChipGenomeInformation}}.

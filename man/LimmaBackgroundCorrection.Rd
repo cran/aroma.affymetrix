@@ -43,7 +43,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
  implemented in the \pkg{limma} package.
 }
 
-\usage{LimmaBackgroundCorrection(..., args=NULL, addJitter=FALSE, jitterSd=0.2)}
+\usage{
+LimmaBackgroundCorrection(..., args=NULL, addJitter=FALSE, jitterSd=0.2)
+}
 
 \arguments{
   \item{...}{Arguments passed to the constructor of
@@ -75,10 +77,10 @@ getOutputDataSet, getOutputFiles
 as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
-getParameters, getParametersAsString, getParameterSets
+getParameterSets, getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, asThis
 
 
 }

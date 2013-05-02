@@ -43,7 +43,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 
 }
 
-\usage{GcRmaBackgroundCorrection(..., indicesNegativeControl=NULL, affinities=NULL, type=c("fullmodel", "affinities"), opticalAdjust=TRUE, gsbAdjust=TRUE, gsbParameters=NULL)}
+\usage{
+GcRmaBackgroundCorrection(..., indicesNegativeControl=NULL, affinities=NULL, type=c("fullmodel", "affinities"), opticalAdjust=TRUE, gsbAdjust=TRUE, gsbParameters=NULL)
+}
 
 \arguments{
   \item{...}{Arguments passed to the constructor of
@@ -86,13 +88,19 @@ getOutputDataSet, getOutputFiles
 as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
-getParameters, getParametersAsString, getParameterSets
+getParameterSets, getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, asThis
 
 
 }
 
-\author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+\references{
+ [1] Z. Wu, R. Irizarry, R. Gentleman, F.M. Murillo & F. Spencer.
+     \emph{A Model Based Background Adjustment for Oligonucleotide
+     Expression Arrays}, JASA, 2004.\cr
+}
+
+\author{Ken Simpson, Henrik Bengtsson}
 \keyword{classes}

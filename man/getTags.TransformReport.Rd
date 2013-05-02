@@ -9,9 +9,7 @@
 \name{getTags.TransformReport}
 \alias{getTags.TransformReport}
 \alias{TransformReport.getTags}
-\alias{getTags.TransformReport}
 \alias{getTags,TransformReport-method}
-
 
 \title{Gets the tags of the output data set}
 
@@ -20,7 +18,9 @@
  of this transformation.
 }
 
-\usage{\method{getTags}{TransformReport}(this, collapse=NULL, ...)}
+\usage{
+\method{getTags}{TransformReport}(this, collapse=NULL, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -29,8 +29,6 @@
 \value{
  Returns a \code{\link[base]{character}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{TransformReport}}.

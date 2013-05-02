@@ -9,9 +9,7 @@
 \name{getWeights.QualityAssessmentModel}
 \alias{getWeights.QualityAssessmentModel}
 \alias{QualityAssessmentModel.getWeights}
-\alias{getWeights.QualityAssessmentModel}
 \alias{getWeights,QualityAssessmentModel-method}
-
 
 \title{Calculates the weights from the robust fit to a probe-level model}
 
@@ -19,7 +17,9 @@
   Calculates the weights from the robust fit to a probe-level model.
 }
 
-\usage{\method{getWeights}{QualityAssessmentModel}(this, path=NULL, name="qcData", tags="*", ..., ram=NULL, force=FALSE, verbose=FALSE)}
+\usage{
+\method{getWeights}{QualityAssessmentModel}(this, path=NULL, name="qcData", tags="*", ..., ram=NULL, force=FALSE, verbose=FALSE)
+}
 
 \arguments{
  \item{path}{}
@@ -34,8 +34,6 @@
 \value{
   Returns an \code{\link{QualityAssessmentSet}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{QualityAssessmentModel}}.

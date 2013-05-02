@@ -9,9 +9,7 @@
 \name{updateUnits.AffymetrixCelFile}
 \alias{updateUnits.AffymetrixCelFile}
 \alias{AffymetrixCelFile.updateUnits}
-\alias{updateUnits.AffymetrixCelFile}
 \alias{updateUnits,AffymetrixCelFile-method}
-
 
 \title{Updates CEL data unit by unit}
 
@@ -19,7 +17,9 @@
  Updates CEL data unit by unit for all or a subset of units.
 }
 
-\usage{\method{updateUnits}{AffymetrixCelFile}(this, data, ...)}
+\usage{
+\method{updateUnits}{AffymetrixCelFile}(this, data, ...)
+}
 
 \arguments{
   \item{data}{A \code{\link[base]{list}} structure consisting of grouped data similar to
@@ -31,7 +31,7 @@
  Returns the \code{\link[base]{list}} structure that \code{\link[affxparser]{updateCelUnits}} returns.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   \code{\link[aroma.affymetrix:updateUnits.AffymetrixCelFile]{*updateUnits}()}.

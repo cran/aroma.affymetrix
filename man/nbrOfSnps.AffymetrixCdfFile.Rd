@@ -9,9 +9,7 @@
 \name{nbrOfSnps.AffymetrixCdfFile}
 \alias{nbrOfSnps.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.nbrOfSnps}
-\alias{nbrOfSnps.AffymetrixCdfFile}
 \alias{nbrOfSnps,AffymetrixCdfFile-method}
-
 
 \title{Gets the number of SNPs}
 
@@ -19,7 +17,9 @@
   Gets the number of SNPs.
 }
 
-\usage{\method{nbrOfSnps}{AffymetrixCdfFile}(this, ...)}
+\usage{
+\method{nbrOfSnps}{AffymetrixCdfFile}(this, ...)
+}
 
 \arguments{
  \item{...}{Additional arguments passed to \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{*getSnpNames}()}.}
@@ -29,7 +29,7 @@
   Returns an \code{\link[base]{integer}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   Internally, \code{\link[aroma.affymetrix:getSnpNames.AffymetrixCdfFile]{*getSnpNames}()} is used to identify SNPs.

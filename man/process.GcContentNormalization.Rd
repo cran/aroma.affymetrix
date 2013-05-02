@@ -9,9 +9,7 @@
 \name{process.GcContentNormalization}
 \alias{process.GcContentNormalization}
 \alias{GcContentNormalization.process}
-\alias{process.GcContentNormalization}
 \alias{process,GcContentNormalization-method}
-
 
 \title{Normalizes the data set}
 
@@ -19,7 +17,9 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{GcContentNormalization}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{GcContentNormalization}(this, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -31,8 +31,6 @@
 \value{
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{GcContentNormalization}}.

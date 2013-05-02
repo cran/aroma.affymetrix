@@ -10,9 +10,9 @@
 \name{extractAffyBatch.AffymetrixCelSet}
 \alias{extractAffyBatch.AffymetrixCelSet}
 \alias{AffymetrixCelSet.extractAffyBatch}
-\alias{extractAffyBatch.AffymetrixCelSet}
 \alias{extractAffyBatch,AffymetrixCelSet-method}
-
+\alias{extractAffyBatch.ChipEffectSet}
+\alias{extractAffyBatch}
 
 \title{Extracts an in-memory AffyBatch object from the CEL set}
 
@@ -22,7 +22,9 @@
  be reflected in the original CEL set.
 }
 
-\usage{\method{extractAffyBatch}{AffymetrixCelSet}(this, ..., verbose=FALSE)}
+\usage{
+\method{extractAffyBatch}{AffymetrixCelSet}(this, ..., verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Argument passed to \code{ReadAffy()}
@@ -41,9 +43,10 @@
  automatically.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
+  Internally \code{\link[affy]{read.affybatch}} is used to read the data.
   For more information see \code{\link{AffymetrixCelSet}}.
 }
 

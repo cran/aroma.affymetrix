@@ -9,9 +9,7 @@
 \name{as.character.AffymetrixCnChpSet}
 \alias{as.character.AffymetrixCnChpSet}
 \alias{AffymetrixCnChpSet.as.character}
-\alias{as.character.AffymetrixCnChpSet}
 \alias{as.character,AffymetrixCnChpSet-method}
-
 
 \title{Returns a short string describing the set}
 
@@ -19,7 +17,9 @@
  Returns a short string describing the set.
 }
 
-\usage{\method{as.character}{AffymetrixCnChpSet}(x, ...)}
+\usage{
+\method{as.character}{AffymetrixCnChpSet}(x, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns a \code{\link[base]{character}} string.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCnChpSet}}.

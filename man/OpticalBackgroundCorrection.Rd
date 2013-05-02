@@ -42,7 +42,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
  This class represents "optical" background adjustment.
 }
 
-\usage{OpticalBackgroundCorrection(..., minimum=1)}
+\usage{
+OpticalBackgroundCorrection(..., minimum=1)
+}
 
 \arguments{
   \item{...}{Arguments passed to the constructor of
@@ -70,13 +72,13 @@ getOutputDataSet, getOutputFiles
 as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
-getParameters, getParametersAsString, getParameterSets
+getParameterSets, getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, asThis
 
 
 }
 
-\author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+\author{Ken Simpson}
 \keyword{classes}

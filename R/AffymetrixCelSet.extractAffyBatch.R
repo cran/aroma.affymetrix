@@ -1,6 +1,8 @@
 ###########################################################################/**
 # @set "class=AffymetrixCelSet"
 # @RdocMethod extractAffyBatch
+# @alias extractAffyBatch.ChipEffectSet
+# @alias extractAffyBatch
 #
 # @title "Extracts an in-memory AffyBatch object from the CEL set"
 #
@@ -13,7 +15,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{...}{Argument passed to \code{ReadAffy()} 
+#   \item{...}{Argument passed to \code{ReadAffy()}
 #     (@see "affy::read.affybatch").}
 #   \item{verbose}{See @see "R.utils::Verbose".}
 # }
@@ -29,9 +31,10 @@
 #  automatically.
 # }
 #
-# @author
+# @author "HB"
 #
 # \seealso{
+#   Internally @see "affy::read.affybatch" is used to read the data.
 #   @seeclass
 # }
 #
@@ -73,7 +76,7 @@ setMethodS3("extractAffyBatch", "AffymetrixCelSet", function(this, ..., verbose=
   if (length(dups) > 0) {
     throw(sprintf("Cannot load %s as an AffyBatch. Detected %d files that share the same sample names: %s", class(this)[1], length(dups)+length(unique(dups)), paste(unique(dups), collapse=", ")));
   }
-  
+
   # Specify ReadAffy() of 'affy' to avoid conflicts with the one
   # in 'oligo'.
   read.affybatch <- affy::read.affybatch;
@@ -95,7 +98,7 @@ setMethodS3("extractAffyBatch", "ChipEffectSet", function(this, ...) {
 # HISTORY:
 # 2010-11-17
 # o ROBUSTNESS: Now extractAffyBatch() for AffymetrixCelSet asserts that
-#   the sample names are unique, which affy::ReadAffy() requires.  
+#   the sample names are unique, which affy::ReadAffy() requires.
 #   Moreover, the sample names are now the fullnames not just the names.
 # 2010-09-06
 # o ROBUSTNESS: Added extractAffyBatch() for ChipEffectSet that gives an

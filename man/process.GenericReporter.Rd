@@ -9,9 +9,7 @@
 \name{process.GenericReporter}
 \alias{process.GenericReporter}
 \alias{GenericReporter.process}
-\alias{process.GenericReporter}
 \alias{process,GenericReporter-method}
-
 
 \title{Generates report}
 
@@ -19,7 +17,9 @@
  Generates report.
 }
 
-\usage{\method{process}{GenericReporter}(...)}
+\usage{
+\method{process}{GenericReporter}(...)
+}
 
 \arguments{
   \item{...}{See subclasses.}
@@ -28,8 +28,6 @@
 \value{
  Returns nothing.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{GenericReporter}}.

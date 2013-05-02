@@ -9,9 +9,7 @@
 \name{fit.Model}
 \alias{fit.Model}
 \alias{Model.fit}
-\alias{fit.Model}
 \alias{fit,Model-method}
-
 
 \title{Estimates the model parameters}
 
@@ -19,7 +17,9 @@
  Estimates the model parameters.
 }
 
-\usage{\method{fit}{Model}(...)}
+\usage{
+\method{fit}{Model}(...)
+}
 
 \arguments{
   \item{...}{Arguments specific to any subclass.}
@@ -28,8 +28,6 @@
 \value{
  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} specifying what units where fitted.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{Model}}.

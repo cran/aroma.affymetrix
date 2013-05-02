@@ -9,9 +9,7 @@
 \name{getHeader.AffymetrixPgfFile}
 \alias{getHeader.AffymetrixPgfFile}
 \alias{AffymetrixPgfFile.getHeader}
-\alias{getHeader.AffymetrixPgfFile}
 \alias{getHeader,AffymetrixPgfFile-method}
-
 
 \title{Gets the header of the PGF file}
 
@@ -19,7 +17,9 @@
  Gets the header of the PGF file.
 }
 
-\usage{\method{getHeader}{AffymetrixPgfFile}(this, ...)}
+\usage{
+\method{getHeader}{AffymetrixPgfFile}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns a \code{\link[base]{list}} structure as returned by \code{\link[affxparser]{readPgfHeader}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixPgfFile}}.

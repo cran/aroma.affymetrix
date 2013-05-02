@@ -10,9 +10,7 @@
 \name{groupUnitsByDimension.AffymetrixCdfFile}
 \alias{groupUnitsByDimension.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.groupUnitsByDimension}
-\alias{groupUnitsByDimension.AffymetrixCdfFile}
 \alias{groupUnitsByDimension,AffymetrixCdfFile-method}
-
 
 \title{Groups units by dimensions}
 
@@ -20,7 +18,9 @@
  Groups units by dimensions.
 }
 
-\usage{\method{groupUnitsByDimension}{AffymetrixCdfFile}(this, units=NULL, ..., sort=TRUE, verbose=FALSE)}
+\usage{
+\method{groupUnitsByDimension}{AffymetrixCdfFile}(this, units=NULL, ..., sort=TRUE, verbose=FALSE)
+}
 
 \arguments{
   \item{units}{An optional \code{\link[base]{integer}} \code{\link[base]{vector}} specifying the units to be
@@ -35,7 +35,7 @@
  Returns a named \code{\link[base]{list}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

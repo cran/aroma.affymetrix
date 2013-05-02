@@ -41,7 +41,9 @@ extends \emph{\link[aroma.affymetrix]{ChipEffectTransform}}\cr
   GC-content effects on copy-number chip-effect estimates.
  }
 
- \usage{AdditiveCovariatesNormalization(dataSet=NULL, ..., target=NULL, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore"))}
+ \usage{
+AdditiveCovariatesNormalization(dataSet=NULL, ..., target=NULL, subsetToFit="-XY", shift=0, onMissing=c("median", "ignore"))
+}
 
  \arguments{
    \item{dataSet}{A \code{\link{SnpChipEffectSet}}.}
@@ -75,10 +77,10 @@ getOutputDataSet, getOutputFiles
 as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
-getParameters, getParametersAsString, getParameterSets
+getParameterSets, getParameters, getParametersAsString
 
  \bold{Methods inherited from Object}:\cr
-asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+$, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save, asThis
 
 
  }
@@ -94,5 +96,5 @@ asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clear
    the relative allele signal, e.g. the allele B frequency.
  }
 
- \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+ \author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 \keyword{classes}

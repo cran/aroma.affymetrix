@@ -9,9 +9,7 @@
 \name{findUnitsTodo.UnitModel}
 \alias{findUnitsTodo.UnitModel}
 \alias{UnitModel.findUnitsTodo}
-\alias{findUnitsTodo.UnitModel}
 \alias{findUnitsTodo,UnitModel-method}
-
 
 \title{Identifies non-fitted units}
 
@@ -19,7 +17,9 @@
  Identifies non-fitted units.
 }
 
-\usage{\method{findUnitsTodo}{UnitModel}(...)}
+\usage{
+\method{findUnitsTodo}{UnitModel}(...)
+}
 
 \arguments{
   \item{...}{Arguments specific to any subclass.}
@@ -28,8 +28,6 @@
 \value{
  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} of unit indices.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{UnitModel}}.

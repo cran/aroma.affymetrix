@@ -9,9 +9,7 @@
 \name{getFullName.Model}
 \alias{getFullName.Model}
 \alias{Model.getFullName}
-\alias{getFullName.Model}
 \alias{getFullName,Model-method}
-
 
 \title{Gets the full name of the output set}
 
@@ -20,7 +18,9 @@
  comma-separated tags.
 }
 
-\usage{\method{getFullName}{Model}(this, ...)}
+\usage{
+\method{getFullName}{Model}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -29,8 +29,6 @@
 \value{
  Returns a \code{\link[base]{character}} string.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{Model}}.

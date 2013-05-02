@@ -9,9 +9,7 @@
 \name{getChipType.AffymetrixCelFile}
 \alias{getChipType.AffymetrixCelFile}
 \alias{AffymetrixCelFile.getChipType}
-\alias{getChipType.AffymetrixCelFile}
 \alias{getChipType,AffymetrixCelFile-method}
-
 
 \title{Gets the chip type for this CEL file}
 
@@ -19,7 +17,9 @@
  Gets the chip type for this CEL file \emph{according} to the \code{\link{AffymetrixCdfFile}} object.
 }
 
-\usage{\method{getChipType}{AffymetrixCelFile}(this, ...)}
+\usage{
+\method{getChipType}{AffymetrixCelFile}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -29,7 +29,7 @@
  Returns a \code{\link[base]{character}} string.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelFile}}.

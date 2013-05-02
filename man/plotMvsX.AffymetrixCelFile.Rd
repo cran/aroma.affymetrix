@@ -9,9 +9,7 @@
 \name{plotMvsX.AffymetrixCelFile}
 \alias{plotMvsX.AffymetrixCelFile}
 \alias{AffymetrixCelFile.plotMvsX}
-\alias{plotMvsX.AffymetrixCelFile}
 \alias{plotMvsX,AffymetrixCelFile-method}
-
 
 \title{Plots log-ratio versus another variable in a scatter plot}
 
@@ -19,7 +17,9 @@
  Plots log-ratio versus another variable in a scatter plot.
 }
 
-\usage{\method{plotMvsX}{AffymetrixCelFile}(this, reference, x, indices=NULL, pch=176, ylim=c(-1, 1) * 2, ylab=NULL, ..., what=c("M", "A"), add=FALSE, annotate=!add)}
+\usage{
+\method{plotMvsX}{AffymetrixCelFile}(this, reference, x, indices=NULL, pch=176, ylim=c(-1, 1) * 2, ylab=NULL, ..., what=c("M", "A"), add=FALSE, annotate=!add)
+}
 
 \arguments{
   \item{reference}{The reference channel, i.e. the denominator in the
@@ -39,7 +39,7 @@
  first two columns, and remaining data in the following columns.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   \code{\link[aroma.affymetrix:plotMvsA.AffymetrixCelFile]{*plotMvsA}()}.

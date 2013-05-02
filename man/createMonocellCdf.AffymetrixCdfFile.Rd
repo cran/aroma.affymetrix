@@ -10,9 +10,7 @@
 \name{createMonocellCdf.AffymetrixCdfFile}
 \alias{createMonocellCdf.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.createMonocellCdf}
-\alias{createMonocellCdf.AffymetrixCdfFile}
 \alias{createMonocellCdf,AffymetrixCdfFile-method}
-
 \alias{AffymetrixCdfFile.createMonoCell}
 \alias{createMonoCell.AffymetrixCdfFile}
 \alias{createMonoCell,AffymetrixCdfFile-method}
@@ -24,7 +22,9 @@
  Creates a mono-cell version of the CDF.
 }
 
-\usage{\method{createMonocellCdf}{AffymetrixCdfFile}(this, chipType=getChipType(this), tags="monocell", path=NULL, nbrOfCellsPerField=1, ..., ram=NULL, verbose=TRUE)}
+\usage{
+\method{createMonocellCdf}{AffymetrixCdfFile}(this, chipType=getChipType(this), tags="monocell", path=NULL, nbrOfCellsPerField=1, ..., ram=NULL, verbose=TRUE)
+}
 
 \arguments{
   \item{chipType}{The chip type of the new CDF.}
@@ -42,7 +42,7 @@
  Returns the monocell CDF as an \code{\link{AffymetrixCdfFile}} object.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

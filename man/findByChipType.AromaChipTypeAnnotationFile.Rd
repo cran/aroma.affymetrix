@@ -9,9 +9,7 @@
 \name{findByChipType.AromaChipTypeAnnotationFile}
 \alias{findByChipType.AromaChipTypeAnnotationFile}
 \alias{AromaChipTypeAnnotationFile.findByChipType}
-\alias{findByChipType.AromaChipTypeAnnotationFile}
 \alias{findByChipType,AromaChipTypeAnnotationFile-method}
-
 
 \title{Locates an annotation file by its chip type}
 
@@ -19,7 +17,9 @@
  Locates an annotation file by its chip type.
 }
 
-\usage{\method{findByChipType}{AromaChipTypeAnnotationFile}(...)}
+\usage{
+\method{findByChipType}{AromaChipTypeAnnotationFile}(...)
+}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
@@ -31,8 +31,6 @@
  Returns the pathname (as a \code{\link[base]{character}} string) to the first annotation
  chip type file found.  If no one was found, \code{\link[base]{NULL}} is returned.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:byChipType.AromaChipTypeAnnotationFile]{*byChipType}()}.
