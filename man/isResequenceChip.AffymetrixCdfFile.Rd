@@ -10,9 +10,7 @@
 \name{isResequenceChip.AffymetrixCdfFile}
 \alias{isResequenceChip.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.isResequenceChip}
-\alias{isResequenceChip.AffymetrixCdfFile}
 \alias{isResequenceChip,AffymetrixCdfFile-method}
-
 
 \title{Static method to check if a CDF is for a resequencing (CustomSeq) chip}
 
@@ -22,7 +20,9 @@
   tests based on their chip type, as we become aware of them.
 }
 
-\usage{\method{isResequenceChip}{AffymetrixCdfFile}(this, ...)}
+\usage{
+\method{isResequenceChip}{AffymetrixCdfFile}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -33,7 +33,7 @@
   otherwise \code{\link[base:logical]{FALSE}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

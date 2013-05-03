@@ -9,9 +9,7 @@
 \name{getResiduals.QualityAssessmentModel}
 \alias{getResiduals.QualityAssessmentModel}
 \alias{QualityAssessmentModel.getResiduals}
-\alias{getResiduals.QualityAssessmentModel}
 \alias{getResiduals,QualityAssessmentModel-method}
-
 
 \title{Calculates the residuals from a probe-level model}
 
@@ -19,7 +17,9 @@
   Calculates the residuals from a probe-level model.
 }
 
-\usage{\method{getResiduals}{QualityAssessmentModel}(this, units=NULL, path=NULL, name="qcData", tags="*", ram=NULL, force=FALSE, verbose=FALSE, ...)}
+\usage{
+\method{getResiduals}{QualityAssessmentModel}(this, units=NULL, path=NULL, name="qcData", tags="*", ram=NULL, force=FALSE, verbose=FALSE, ...)
+}
 
 \arguments{
  \item{...}{Additional arguments passed \code{byPath()} of
@@ -29,8 +29,6 @@
 \value{
   Returns an \code{\link{QualityAssessmentSet}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{QualityAssessmentModel}}.

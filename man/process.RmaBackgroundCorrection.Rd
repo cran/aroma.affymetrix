@@ -9,9 +9,7 @@
 \name{process.RmaBackgroundCorrection}
 \alias{process.RmaBackgroundCorrection}
 \alias{RmaBackgroundCorrection.process}
-\alias{process.RmaBackgroundCorrection}
 \alias{process,RmaBackgroundCorrection-method}
-
 
 \title{Performs background correction}
 
@@ -19,7 +17,9 @@
  Performs background correction.
 }
 
-\usage{\method{process}{RmaBackgroundCorrection}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{RmaBackgroundCorrection}(this, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -30,7 +30,7 @@
  Returns the output data set.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{RmaBackgroundCorrection}}.

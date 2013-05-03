@@ -9,9 +9,7 @@
 \name{getCellIndices.ExonChipEffectFile}
 \alias{getCellIndices.ExonChipEffectFile}
 \alias{ExonChipEffectFile.getCellIndices}
-\alias{getCellIndices.ExonChipEffectFile}
 \alias{getCellIndices,ExonChipEffectFile-method}
-
 
 \title{Retrieves tree list of cell indices for a set of units}
 
@@ -19,7 +17,9 @@
   Retrieves tree list of cell indices for a set of units.
 }
 
-\usage{\method{getCellIndices}{ExonChipEffectFile}(this, ..., unlist=FALSE, force=FALSE, .cache=TRUE, verbose=FALSE)}
+\usage{
+\method{getCellIndices}{ExonChipEffectFile}(this, ..., unlist=FALSE, force=FALSE, .cache=TRUE, verbose=FALSE)
+}
 
 \arguments{
  \item{units}{Unit indices to be retrieved.
@@ -38,7 +38,7 @@
   If argument \code{unlist=TRUE} is passed, an \code{\link[base]{integer}} \code{\link[base]{vector}} is returned.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, James Bullard, Kasper Hansen, Pierre Neuvial, Elizabeth Purdom, Mark Robinson, Ken Simpson}
 
 \seealso{
   For more information see \code{\link{ExonChipEffectFile}}.

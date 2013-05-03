@@ -9,9 +9,7 @@
 \name{getCdf.AffymetrixCelSet}
 \alias{getCdf.AffymetrixCelSet}
 \alias{AffymetrixCelSet.getCdf}
-\alias{getCdf.AffymetrixCelSet}
 \alias{getCdf,AffymetrixCelSet-method}
-
 
 \title{Gets the CDF structure for this CEL set}
 
@@ -19,7 +17,9 @@
  Gets the CDF structure for this CEL set.
 }
 
-\usage{\method{getCdf}{AffymetrixCelSet}(this, ...)}
+\usage{
+\method{getCdf}{AffymetrixCelSet}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -29,7 +29,7 @@
  Returns an \code{\link{AffymetrixCdfFile}} object.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   \code{\link[aroma.affymetrix:setCdf.AffymetrixCelSet]{*setCdf}()}.

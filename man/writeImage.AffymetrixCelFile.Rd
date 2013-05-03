@@ -9,9 +9,7 @@
 \name{writeImage.AffymetrixCelFile}
 \alias{writeImage.AffymetrixCelFile}
 \alias{AffymetrixCelFile.writeImage}
-\alias{writeImage.AffymetrixCelFile}
 \alias{writeImage,AffymetrixCelFile-method}
-
 
 \title{Writes a spatial image of the signals in the CEL file}
 
@@ -19,7 +17,9 @@
  Writes a spatial image of the signals in the CEL file.
 }
 
-\usage{\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=NULL, tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL, field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE)}
+\usage{
+\method{writeImage}{AffymetrixCelFile}(this, filename=NULL, fullname=NULL, tags=c("*", "sqrt", "gray"), imgFormat="png", path=NULL, field=c("intensities", "stdvs", "pixels"), ..., skip=TRUE, verbose=FALSE)
+}
 
 \arguments{
   \item{filename}{A \code{\link[base]{character}} string specifying the filename of
@@ -51,7 +51,7 @@
   writeImage(df, tags="rainbow", palette=rainbow(256), xrange=c(0,200))
 }}
 
-\author{Ken Simpson (ksimpson[at]wehi.edu.au).}
+\author{Ken Simpson, Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCelFile}}.

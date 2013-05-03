@@ -1,20 +1,23 @@
 ###########################################################################/**
-# @set "class=AffymetrixCelSet"
-# @RdocMethod "doFIRMA"
-# @alias doFIRMA.character
-# @alias doFIRMA
+# @RdocDefault doFIRMA
+# @alias doFIRMA.AffymetrixCelSet
 #
 # @title "Finding Isoforms using Robust Multichip Analysis (FIRMA)"
-# 
+#
 # \description{
 #  @get "title" based on [1].
 # }
 #
-# @synopsis
+# \usage{
+#   \method{doFIRMA}{AffymetrixCelSet}(csR, ..., flavor=c("v1b", "v1a"), drop=TRUE, verbose=FALSE)
+#   \method{doFIRMA}{default}(dataSet, ..., verbose=FALSE)
+# }
 #
 # \arguments{
-#  \item{csR}{...}
-#  \item{...}{Additional arguments passed to @see "FirmaModel".}
+#  \item{csR, dataSet}{An @see "AffymetrixCelSet" (or the name of an @see "AffymetrixCelSet").}
+#  \item{...}{Additional arguments passed to @see "FirmaModel",
+#             and to set up @see "AffymetrixCelSet" (when
+#             argument \code{dataSet} is specified).}
 #  \item{flavor}{A @character string specifying the flavor of FIRMA to use.}
 #  \item{drop}{If @TRUE, the FIRMA scores are returned, otherwise
 #   a named @list of all intermediate and final results.}
@@ -28,14 +31,14 @@
 #
 # \section{Using a custom exon-by-transcript CDF}{
 #   It is strongly recommended to use a custom CDF, e.g. "core",
-#   "extended" or "full" [1].  To use a custom CDF, set it before 
+#   "extended" or "full" [1].  To use a custom CDF, set it before
 #   calling this method, i.e. \code{setCdf(csR, cdf)}.
 #   Do not set the standard "non-supported" Affymetrix CDF
 #   (see also Section 'Flavors').
 # }
 #
 # \section{Flavors}{
-#   If \code{flavor == "v1b"} (default), then the standard 
+#   If \code{flavor == "v1b"} (default), then the standard
 #   "non-supported" Affymetrix CDF is used for background correction
 #   and the quantile normalization steps, and the custom CDF
 #   is used for the probe summarization and everything that follows.
@@ -47,19 +50,19 @@
 #   all steps of FIRMA, which means that if one changes the custom CDF
 #   all steps will be redone.
 # }
-# 
+#
 # \references{
 #  [1] E. Purdom, K. Simpson, M. Robinson, J. Conboy, A. Lapuk & T.P. Speed,
 #      \emph{FIRMA: a method for detection of alternative splicing from
 #            exon array data}, Bioinformatics, 2008.\cr
 # }
 #
-# @author
+# @author "HB"
 #*/###########################################################################
 setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v1a"), drop=TRUE, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'csR':
   className <- "AffymetrixCelSet";
   if (!inherits(csR, className)) {
@@ -83,6 +86,17 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   verbose && cat(verbose, "Arguments:");
   verbose && str(verbose, list(...));
 
+  # Backward compatibility
+  ram <- list(...)$ram;
+  if (!is.null(ram)) {
+    ram <- Arguments$getDouble(ram, range=c(0,Inf));
+    verbose && cat(verbose, "ram: ", ram);
+    warning("Argument 'ram' of doFIRMA() is deprecated. Instead use setOption(aromaSettings, \"memory/ram\", ram).");
+    oram <- setOption(aromaSettings, "memory/ram", ram);
+    on.exit({
+      setOption(aromaSettings, "memory/ram", oram);
+    });
+  }
 
   # List of objects to be returned
   res <- list();
@@ -98,9 +112,9 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   customCdfTag <- customCdfTags[1];
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # (0) Use the standard CDF for RMA preprocessing(?)
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdfTag <- customCdfTag;
   if (is.element(flavor, c("v1b"))) {
     verbose && cat(verbose, "Detected flavor: ", flavor);
@@ -124,14 +138,14 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
 
     # Not needed anymore
     rm(chipTypeS);
-  
+
     verbose && exit(verbose);
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # (1) Background correction
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "FIRMA/RMA/Background correction");
   verbose && cat(verbose, "Using CDF: ", getFullName(getCdf(csR)));
 
@@ -151,9 +165,9 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
 
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # (2) Quantile normalization
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "FIRMA/RMA/Rank-based quantile normalization (PM-only)");
   verbose && cat(verbose, "Using CDF: ", getFullName(getCdf(csB)));
 
@@ -175,9 +189,9 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   verbose && exit(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # (3) Quantile normalization
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "FIRMA/RMA/Probe summarization of transcripts (log-additive model)");
 
   if (is.element(flavor, c("v1b"))) {
@@ -214,13 +228,13 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   verbose && exit(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # (4) Alternative splicing analysis
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "FIRMA/Alternative Splicing Analysis");
 
   # Setup FIRMA model
-  firma <- FirmaModel(plm, ...);
+  firma <- FirmaModel(plm, ..., .onUnknownArgs="warning");
   verbose && print(verbose, firma);
 
   units <- fit(firma, verbose=verbose);
@@ -254,7 +268,7 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
 
 
 
-setMethodS3("doFIRMA", "character", function(dataSet, ..., verbose=FALSE) {
+setMethodS3("doFIRMA", "default", function(dataSet, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -287,6 +301,8 @@ setMethodS3("doFIRMA", "character", function(dataSet, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2013-05-02
+# o Removed argument 'ram' in favor of aroma option 'memory/ram'.
 # 2011-11-10
 # o Added Rdoc comments.
 # o Created from doGCRMA.R.

@@ -1,7 +1,80 @@
-setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, ..., plm=c("AvgCnPlm", "RmaCnPlm"), drop=TRUE, ram=NULL, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+###########################################################################/**
+# @RdocDefault doCRMAv2
+# @alias doCRMAv2.AffymetrixCelSet
+# @alias doASCRMAv2
+# @alias doASCRMAv2.default
+#
+# @title "A single-array preprocessing method for estimating full-resolution raw copy numbers from all Affymetrix genotyping arrays (CRMA v2)"
+#
+# \description{
+#  @get "title" based on [1].
+#  The algorithm is processed in bounded memory, meaning virtually
+#  any number of arrays can be analyzed on also very limited computer
+#  systems.
+#
+#  We recommend CRMA v2 for estimating allele-specific as well total
+#  SNP signals from Affymetrix SNP chips.
+# }
+#
+# \usage{
+#   \method{doCRMAv2}{AffymetrixCelSet}(csR, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, plm=c("AvgCnPlm", "RmaCnPlm"), drop=TRUE, verbose=FALSE, ...)
+#   \method{doCRMAv2}{default}(dataSet, ..., verbose=FALSE)
+#   \method{doASCRMAv2}{default}(...)
+# }
+#
+# \arguments{
+#  \item{csR, dataSet}{An @see "AffymetrixCelSet" (or the name of an @see "AffymetrixCelSet").}
+#  \item{combineAlleles}{A @logical specifying whether allele probe pairs
+#   should be summed before modelling or not.}
+#  \item{lengthRange}{An optional @numeric vector of length two passed
+#   to @see "FragmentLengthNormalization".}
+#  \item{arrays}{A @integer @vector specifying the subset of arrays
+#   to run RMA on.  If @NULL, all arrays are considered.}
+#  \item{plm}{A @character string specifying which type of
+#   probe-summarization model to used.}
+#  \item{drop}{If @TRUE, the RMA summaries are returned, otherwise
+#   a named @list of all intermediate and final results.}
+#  \item{verbose}{See @see "Verbose".}
+#  \item{...}{Additional arguments used to set up @see "AffymetrixCelSet" (when argument \code{dataSet} is specified).}
+# }
+#
+# \value{
+#   Returns a named @list, iff \code{drop == FALSE}, otherwise
+#   only @see "ChipEffectSet" object (containing the RMA summaries).
+# }
+#
+# \section{Allele-specific or only total-SNP signals}{
+#   If you wish to obtain allele-specific estimates for SNPs, which
+#   are needed to call genotypes or infer parent-specific copy numbers,
+#   then use argument \code{combineAlleles=FALSE}.  Total copy number
+#   signals are still available.
+#   If you know for certain that you will not use allele-specific
+#   estimates, you will get slightly less noisy signals
+#   (very small difference) if you use \code{combineAlleles=TRUE}.
+#
+#   \code{doASCRMAv2(...)} is a wrapper for
+#   \code{doCRMAv2(..., combineAlleles=FALSE)}.
+# }
+#
+# \references{
+#  [1] H. Bengtsson, P. Wirapati & T.P. Speed.
+#      \emph{A single-array preprocessing method for estimating
+#      full-resolution raw copy numbers from all Affymetrix
+#      genotyping arrays including GenomeWideSNP 5 \& 6},
+#      Bioinformatics, 2009.\cr
+# }
+#
+# \seealso{
+#  For CRMA v1, which is a multi-array methods that precedes CRMA v2,
+#  see @see "doCRMAv1".
+# }
+#
+# @author "HB"
+#*/###########################################################################
+setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, plm=c("AvgCnPlm", "RmaCnPlm"), drop=TRUE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'csR':
   className <- "AffymetrixCelSet";
   if (!inherits(csR, className)) {
@@ -35,8 +108,18 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   arraysTag <- seqToHumanReadable(arrays);
   verbose && cat(verbose, "arrays:");
   verbose && str(verbose, arraysTag);
-  verbose && cat(verbose, "ram: ", ram);
 
+  # Backward compatibility
+  ram <- list(...)$ram;
+  if (!is.null(ram)) {
+    ram <- Arguments$getDouble(ram, range=c(0,Inf));
+    verbose && cat(verbose, "ram: ", ram);
+    warning("Argument 'ram' of doCRMAv2() is deprecated. Instead use setOption(aromaSettings, \"memory/ram\", ram).");
+    oram <- setOption(aromaSettings, "memory/ram", ram);
+    on.exit({
+      setOption(aromaSettings, "memory/ram", oram);
+    });
+  }
 
   # List of objects to be returned
   res <- list();
@@ -45,9 +128,9 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup data set to be processed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Data set");
   verbose && print(verbose, csR);
 
@@ -60,9 +143,9 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check if the final results are already available?
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (drop) {
     verbose && enter(verbose, "Checking whether final results are available or not");
 
@@ -144,9 +227,9 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   } # if (drop)
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # CRMAv2
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "CRMAv2/Allelic crosstalk calibration");
   acc <- AllelicCrosstalkCalibration(csR, model="CRMAv2");
   verbose && print(verbose, acc);
@@ -174,7 +257,7 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   rm(csC, bpn);
   gc <- gc();
   verbose && print(verbose, gc);
-  
+
   verbose && enter(verbose, "CRMAv2/Probe summarization");
   cnPlm <- AvgCnPlm;
   if (plm == "RmaCnPlm") {
@@ -187,10 +270,10 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
     units <- fitCnProbes(plm, verbose=verbose);
     verbose && str(verbose, units);
     # Fit remaining units, i.e. SNPs (~5-10min/array)
-    units <- fit(plm, ram=ram, verbose=verbose);
+    units <- fit(plm, verbose=verbose);
     verbose && str(verbose, units);
     rm(units);
-  }  
+  }
   verbose && print(verbose, gc);
   ces <- getChipEffectSet(plm);
   verbose && print(verbose, ces);
@@ -203,7 +286,7 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   # Clean up
   rm(plm, csN);
   gc <- gc();
-  
+
   verbose && enter(verbose, "CRMAv2/PCR fragment-length normalization");
   fln <- FragmentLengthNormalization(ces, target="zero", lengthRange=lengthRange);
   verbose && print(verbose, fln);
@@ -218,7 +301,7 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   # Clean up
   rm(fln, ces);
   gc <- gc();
-  
+
   verbose && enter(verbose, "CRMAv2/Export to technology-independent data files");
   dsNList <- exportTotalAndFracB(cesN, verbose=verbose);
   verbose && print(verbose, dsNList);
@@ -243,7 +326,7 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
 }) # doCRMAv2()
 
 
-setMethodS3("doCRMAv2", "character", function(dataSet, ..., verbose=FALSE) {
+setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -275,12 +358,14 @@ setMethodS3("doCRMAv2", "character", function(dataSet, ..., verbose=FALSE) {
 
 
 setMethodS3("doASCRMAv2", "default", function(...) {
-  doCRMAv2(..., combineAlleles=FALSE); 
+  doCRMAv2(..., combineAlleles=FALSE);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2013-05-02
+# o Removed argument 'ram' in favor of aroma option 'memory/ram'.
 # 2012-09-15
 # o BUG FIX: doCRMAv2() failed to quickly located already available results
 #   if the chip type of the CDF had tags, e.g. 'GenomeWideSNP_6,Full'.
@@ -290,7 +375,7 @@ setMethodS3("doASCRMAv2", "default", function(...) {
 # 2011-04-07
 # o Added argument 'drop'.
 # 2011-03-14
-# o doCRMAv2() gained argument 'lengthRange', which is passed to 
+# o doCRMAv2() gained argument 'lengthRange', which is passed to
 #   the constructor of FragmentLengthNormalization.
 # 2010-06-21
 # o Added doASCRMAv2() for a convenient allele-specific CRMAv2 wrapper.

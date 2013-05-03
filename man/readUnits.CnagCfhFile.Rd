@@ -9,9 +9,7 @@
 \name{readUnits.CnagCfhFile}
 \alias{readUnits.CnagCfhFile}
 \alias{CnagCfhFile.readUnits}
-\alias{readUnits.CnagCfhFile}
 \alias{readUnits,CnagCfhFile-method}
-
 
 \title{Reads CEL data unit by unit}
 
@@ -19,7 +17,9 @@
  Reads CEL data unit by unit for all or a subset of units (probeset).
 }
 
-\usage{\method{readUnits}{CnagCfhFile}(this, units=NULL, ..., verbose=FALSE)}
+\usage{
+\method{readUnits}{CnagCfhFile}(this, units=NULL, ..., verbose=FALSE)
+}
 
 \arguments{
   \item{units}{The units to be read. If \code{\link[base]{NULL}}, all units are read.}
@@ -37,8 +37,6 @@
 \section{Caching}{
   CEL data is neither cached in memory nor on file by this method.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{CnagCfhFile}}.

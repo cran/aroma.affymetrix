@@ -9,9 +9,7 @@
 \name{convertUnits.AffymetrixCdfFile}
 \alias{convertUnits.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.convertUnits}
-\alias{convertUnits.AffymetrixCdfFile}
 \alias{convertUnits,AffymetrixCdfFile-method}
-
 
 \title{Gets and validates unit indices}
 
@@ -19,7 +17,9 @@
  Gets and validates unit indices either by unit names or by a unit indices (validation).
 }
 
-\usage{\method{convertUnits}{AffymetrixCdfFile}(this, units=NULL, keepNULL=FALSE, ...)}
+\usage{
+\method{convertUnits}{AffymetrixCdfFile}(this, units=NULL, keepNULL=FALSE, ...)
+}
 
 \arguments{
   \item{units}{Either a \code{\link[base]{character}} \code{\link[base]{vector}} with unit names, or an \code{\link[base]{integer}}
@@ -33,8 +33,6 @@
  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} with unit indices.
  If some units are non existing, an error is thrown.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

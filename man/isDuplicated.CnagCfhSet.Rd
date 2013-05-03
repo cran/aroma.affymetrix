@@ -9,9 +9,7 @@
 \name{isDuplicated.CnagCfhSet}
 \alias{isDuplicated.CnagCfhSet}
 \alias{CnagCfhSet.isDuplicated}
-\alias{isDuplicated.CnagCfhSet}
 \alias{isDuplicated,CnagCfhSet-method}
-
 
 \title{Identifies duplicated CFH files}
 
@@ -19,7 +17,9 @@
   Identifies duplicated CFH files by comparing the timestamps in the CFH headers.
 }
 
-\usage{\method{isDuplicated}{CnagCfhSet}(this, ...)}
+\usage{
+\method{isDuplicated}{CnagCfhSet}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -31,8 +31,6 @@
   An element with value \code{\link[base:logical]{TRUE}} indicates that the corresponding CFH file
   has the same time stamp as another preceeding CFH file.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   Internally \code{\link[base]{duplicated}}() is used to compare timestamps.

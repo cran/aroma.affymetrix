@@ -10,9 +10,7 @@
 \name{nbrOfGroupsPerUnit.AffymetrixCdfFile}
 \alias{nbrOfGroupsPerUnit.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.nbrOfGroupsPerUnit}
-\alias{nbrOfGroupsPerUnit.AffymetrixCdfFile}
 \alias{nbrOfGroupsPerUnit,AffymetrixCdfFile-method}
-
 \alias{AffymetrixCdfFile.getUnitSizes}
 \alias{getUnitSizes.AffymetrixCdfFile}
 \alias{getUnitSizes,AffymetrixCdfFile-method}
@@ -24,7 +22,9 @@
  Gets the number of groups in each unit.
 }
 
-\usage{\method{nbrOfGroupsPerUnit}{AffymetrixCdfFile}(this, units=NULL, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{nbrOfGroupsPerUnit}{AffymetrixCdfFile}(this, units=NULL, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{units}{The units of interest. If \code{\link[base]{NULL}}, all units are considered.}
@@ -41,7 +41,7 @@
   The cache can be cleared by calling \code{gc(cdf)}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

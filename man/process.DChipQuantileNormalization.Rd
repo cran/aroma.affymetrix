@@ -9,9 +9,7 @@
 \name{process.DChipQuantileNormalization}
 \alias{process.DChipQuantileNormalization}
 \alias{DChipQuantileNormalization.process}
-\alias{process.DChipQuantileNormalization}
 \alias{process,DChipQuantileNormalization-method}
-
 
 \title{Normalizes the data set}
 
@@ -19,7 +17,9 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{DChipQuantileNormalization}(this, ..., force=FALSE, skip=TRUE, verbose=FALSE)}
+\usage{
+\method{process}{DChipQuantileNormalization}(this, ..., force=FALSE, skip=TRUE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Arguments passed to
@@ -32,8 +32,6 @@
 \value{
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{DChipQuantileNormalization}}.

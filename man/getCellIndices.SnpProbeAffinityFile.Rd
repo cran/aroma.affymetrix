@@ -9,9 +9,7 @@
 \name{getCellIndices.SnpProbeAffinityFile}
 \alias{getCellIndices.SnpProbeAffinityFile}
 \alias{SnpProbeAffinityFile.getCellIndices}
-\alias{getCellIndices.SnpProbeAffinityFile}
 \alias{getCellIndices,SnpProbeAffinityFile-method}
-
 
 \title{Retrieves tree list of cell indices for a set of units}
 
@@ -19,7 +17,9 @@
   Retrieves tree list of cell indices for a set of units from the associated CDF.
 }
 
-\usage{\method{getCellIndices}{SnpProbeAffinityFile}(this, ..., unlist=FALSE)}
+\usage{
+\method{getCellIndices}{SnpProbeAffinityFile}(this, ..., unlist=FALSE)
+}
 
 \arguments{
  \item{...}{Additional arguments passed to \code{getCellIndices()}
@@ -31,8 +31,6 @@
   Returns a \code{\link[base]{list}} structure, where each element corresponds to a unit.
   If argument \code{unlist=TRUE} is passed, an \code{\link[base]{integer}} \code{\link[base]{vector}} is returned.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{SnpProbeAffinityFile}}.

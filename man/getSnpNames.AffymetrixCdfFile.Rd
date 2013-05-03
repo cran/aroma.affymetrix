@@ -9,9 +9,7 @@
 \name{getSnpNames.AffymetrixCdfFile}
 \alias{getSnpNames.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.getSnpNames}
-\alias{getSnpNames.AffymetrixCdfFile}
 \alias{getSnpNames,AffymetrixCdfFile-method}
-
 
 \title{Gets the names of the SNP units}
 
@@ -19,7 +17,9 @@
   Gets the names of the SNP units.
 }
 
-\usage{\method{getSnpNames}{AffymetrixCdfFile}(this, ...)}
+\usage{
+\method{getSnpNames}{AffymetrixCdfFile}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -29,7 +29,7 @@
   Returns a \code{\link[base]{character}} \code{\link[base]{vector}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 \seealso{
   \code{\link[aroma.affymetrix:getCnNames.AffymetrixCdfFile]{*getCnNames}()}.

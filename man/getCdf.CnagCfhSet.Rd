@@ -9,9 +9,7 @@
 \name{getCdf.CnagCfhSet}
 \alias{getCdf.CnagCfhSet}
 \alias{CnagCfhSet.getCdf}
-\alias{getCdf.CnagCfhSet}
 \alias{getCdf,CnagCfhSet-method}
-
 
 \title{Gets the CDF structure for this CFH set}
 
@@ -19,7 +17,9 @@
  Gets the CDF structure for this CFH set.
 }
 
-\usage{\method{getCdf}{CnagCfhSet}(this, ...)}
+\usage{
+\method{getCdf}{CnagCfhSet}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns an \code{\link{AffymetrixCdfFile}} object.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   \code{\link[aroma.affymetrix:setCdf.CnagCfhSet]{*setCdf}()}.

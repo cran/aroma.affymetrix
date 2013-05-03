@@ -9,9 +9,7 @@
 \name{getOutputDataSet.TransformReport}
 \alias{getOutputDataSet.TransformReport}
 \alias{TransformReport.getOutputDataSet}
-\alias{getOutputDataSet.TransformReport}
 \alias{getOutputDataSet,TransformReport-method}
-
 
 \title{Gets the transformed data set}
 
@@ -19,7 +17,9 @@
  Gets the transformed data set, if processed.
 }
 
-\usage{\method{getOutputDataSet}{TransformReport}(this, ...)}
+\usage{
+\method{getOutputDataSet}{TransformReport}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns an \code{\link{AffymetrixCelSet}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{TransformReport}}.

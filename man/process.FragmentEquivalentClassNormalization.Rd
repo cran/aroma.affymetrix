@@ -9,9 +9,7 @@
 \name{process.FragmentEquivalentClassNormalization}
 \alias{process.FragmentEquivalentClassNormalization}
 \alias{FragmentEquivalentClassNormalization.process}
-\alias{process.FragmentEquivalentClassNormalization}
 \alias{process,FragmentEquivalentClassNormalization-method}
-
 
 \title{Normalizes the data set}
 
@@ -19,7 +17,9 @@
  Normalizes the data set.
 }
 
-\usage{\method{process}{FragmentEquivalentClassNormalization}(this, ..., force=FALSE, verbose=FALSE)}
+\usage{
+\method{process}{FragmentEquivalentClassNormalization}(this, ..., force=FALSE, verbose=FALSE)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -31,8 +31,6 @@
 \value{
  Returns a \code{\link[base]{double}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{FragmentEquivalentClassNormalization}}.

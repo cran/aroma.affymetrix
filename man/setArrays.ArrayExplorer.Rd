@@ -9,9 +9,7 @@
 \name{setArrays.ArrayExplorer}
 \alias{setArrays.ArrayExplorer}
 \alias{ArrayExplorer.setArrays}
-\alias{setArrays.ArrayExplorer}
 \alias{setArrays,ArrayExplorer-method}
-
 
 \title{Sets the arrays}
 
@@ -19,7 +17,9 @@
  Sets the arrays to be processed by the explorer.
 }
 
-\usage{\method{setArrays}{ArrayExplorer}(this, ...)}
+\usage{
+\method{setArrays}{ArrayExplorer}(this, ...)
+}
 
 \arguments{
   \item{arrays}{A \code{\link[base]{character}} (or \code{\link[base]{integer}}) \code{\link[base]{vector}} of arrays to be
@@ -30,8 +30,6 @@
 \value{
  Returns a \code{\link[base]{character}} \code{\link[base]{vector}}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{ArrayExplorer}}.

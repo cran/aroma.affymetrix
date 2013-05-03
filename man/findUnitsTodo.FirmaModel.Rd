@@ -9,9 +9,7 @@
 \name{findUnitsTodo.FirmaModel}
 \alias{findUnitsTodo.FirmaModel}
 \alias{FirmaModel.findUnitsTodo}
-\alias{findUnitsTodo.FirmaModel}
 \alias{findUnitsTodo,FirmaModel-method}
-
 
 \title{Identifies non-fitted units}
 
@@ -19,7 +17,9 @@
  Identifies non-fitted units.
 }
 
-\usage{\method{findUnitsTodo}{FirmaModel}(this, ...)}
+\usage{
+\method{findUnitsTodo}{FirmaModel}(this, ...)
+}
 
 \arguments{
   \item{...}{Not used.}
@@ -28,8 +28,6 @@
 \value{
  Returns an \code{\link[base]{integer}} \code{\link[base]{vector}} of unit indices.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   Internally this methods calls the same method for the

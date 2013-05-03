@@ -1,7 +1,77 @@
-setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, ..., drop=TRUE, ram=NULL, verbose=FALSE) {
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+###########################################################################/**
+# @RdocDefault doCRMAv1
+# @alias doCRMAv1.AffymetrixCelSet
+# @alias doASCRMAv1
+# @alias doASCRMAv1.default
+#
+# @title "Estimation and assessment of raw copy numbers at the single locus level (CRMA v1)"
+#
+# \description{
+#  @get "title" based on [1].
+#  The algorithm is processed in bounded memory, meaning virtually
+#  any number of arrays can be analyzed on also very limited computer
+#  systems.
+# }
+#
+# \usage{
+#   \method{doCRMAv1}{AffymetrixCelSet}(csR, shift=+300, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, drop=TRUE, verbose=FALSE, ...)
+#   \method{doCRMAv1}{default}(dataSet, ..., verbose=FALSE)
+#   \method{doASCRMAv1}{default}(...)
+# }
+#
+# \arguments{
+#  \item{csR, dataSet}{An @see "AffymetrixCelSet" (or the name of an @see "AffymetrixCelSet").}
+#  \item{shift}{An tuning parameter specifying how much to shift the
+#   probe signals before probe summarization.}
+#  \item{combineAlleles}{A @logical specifying whether allele probe pairs
+#   should be summed before modelling or not.}
+#  \item{lengthRange}{An optional @numeric vector of length two passed
+#   to @see "FragmentLengthNormalization".}
+#  \item{arrays}{A @integer @vector specifying the subset of arrays
+#   to run RMA on.  If @NULL, all arrays are considered.}
+#  \item{drop}{If @TRUE, the RMA summaries are returned, otherwise
+#   a named @list of all intermediate and final results.}
+#  \item{verbose}{See @see "Verbose".}
+#  \item{...}{Additional arguments used to set up @see "AffymetrixCelSet" (when argument \code{dataSet} is specified).}
+# }
+#
+# \value{
+#   Returns a named @list, iff \code{drop == FALSE}, otherwise
+#   only @see "ChipEffectSet" object (containing the RMA summaries).
+# }
+#
+#
+# \section{Allele-specific or only total-SNP signals}{
+#   If you wish to obtain allele-specific estimates for SNPs, which
+#   are needed to call genotypes or infer parent-specific copy numbers,
+#   then use argument \code{combineAlleles=FALSE}.  Total copy number
+#   signals are still available.
+#   If you know for certain that you will not use allele-specific
+#   estimates, you will get slightly less noisy signals
+#   (very small difference) if you use \code{combineAlleles=TRUE}.
+#
+#   \code{doASCRMAv1(...)} is a wrapper for
+#   \code{doCRMAv1(..., combineAlleles=FALSE)}.
+# }
+#
+# \references{
+#  [1] H. Bengtsson, R. Irizarry, B. Carvalho & T.P. Speed.
+#      \emph{Estimation and assessment of raw copy numbers at the
+#      single locus level},
+#      Bioinformatics, 2008.\cr
+# }
+#
+# \seealso{
+#  For CRMA v2 (recommended by authors), which is a single-array
+#  improvement over CRMA v1, see @see "doCRMAv2".
+# }
+#
+# @author "HB"
+#*/###########################################################################
+setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, drop=TRUE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'csR':
   className <- "AffymetrixCelSet";
   if (!inherits(csR, className)) {
@@ -33,8 +103,18 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   arraysTag <- seqToHumanReadable(arrays);
   verbose && cat(verbose, "arrays:");
   verbose && str(verbose, arraysTag);
-  verbose && cat(verbose, "ram: ", ram);
 
+  # Backward compatibility
+  ram <- list(...)$ram;
+  if (!is.null(ram)) {
+    ram <- Arguments$getDouble(ram, range=c(0,Inf));
+    verbose && cat(verbose, "ram: ", ram);
+    warning("Argument 'ram' of doCRMAv1() is deprecated. Instead use setOption(aromaSettings, \"memory/ram\", ram).");
+    oram <- setOption(aromaSettings, "memory/ram", ram);
+    on.exit({
+      setOption(aromaSettings, "memory/ram", oram);
+    });
+  }
 
   # List of objects to be returned
   res <- list();
@@ -43,9 +123,9 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup data set to be processed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && cat(verbose, "Data set");
   verbose && print(verbose, csR);
 
@@ -58,9 +138,9 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   }
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # CRMAv1
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "CRMAv1/Allelic crosstalk calibration");
   acc <- AllelicCrosstalkCalibration(csR, model="CRMA", tags="*,v1");
   verbose && print(verbose, acc);
@@ -78,7 +158,7 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   verbose && print(verbose, gc);
 
   verbose && enter(verbose, "CRMAv1/Probe summarization");
-  plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=combineAlleles, 
+  plm <- RmaCnPlm(csC, mergeStrands=TRUE, combineAlleles=combineAlleles,
                                                             shift=shift);
   verbose && print(verbose, plm);
   if (length(findUnitsTodo(plm)) > 0) {
@@ -86,10 +166,10 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
     units <- fitCnProbes(plm, verbose=verbose);
     verbose && str(verbose, units);
     # Fit remaining units, i.e. SNPs (~5-10min/array)
-    units <- fit(plm, ram=ram, verbose=verbose);
+    units <- fit(plm, verbose=verbose);
     verbose && str(verbose, units);
     rm(units);
-  }  
+  }
   verbose && print(verbose, gc);
   ces <- getChipEffectSet(plm);
   verbose && print(verbose, ces);
@@ -102,7 +182,7 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   # Clean up
   rm(plm, csC);
   gc <- gc();
-  
+
   verbose && enter(verbose, "CRMAv1/PCR fragment-length normalization");
   fln <- FragmentLengthNormalization(ces, target="zero", lengthRange=lengthRange);
   verbose && print(verbose, fln);
@@ -117,7 +197,7 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
   # Clean up
   rm(fln, ces);
   gc <- gc();
-  
+
   verbose && enter(verbose, "CRMAv1/Export to technology-independent data files");
   dsNList <- exportTotalAndFracB(cesN, verbose=verbose);
   verbose && print(verbose, dsNList);
@@ -142,7 +222,7 @@ setMethodS3("doCRMAv1", "AffymetrixCelSet", function(csR, shift=+300, combineAll
 }) # doCRMAv1()
 
 
-setMethodS3("doCRMAv1", "character", function(dataSet, ..., verbose=FALSE) {
+setMethodS3("doCRMAv1", "default", function(dataSet, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -174,29 +254,31 @@ setMethodS3("doCRMAv1", "character", function(dataSet, ..., verbose=FALSE) {
 
 
 setMethodS3("doASCRMAv1", "default", function(...) {
-  doCRMAv1(..., combineAlleles=FALSE); 
+  doCRMAv1(..., combineAlleles=FALSE);
 })
 
 
 ############################################################################
 # HISTORY:
+# 2013-05-02
+# o Removed argument 'ram' in favor of aroma option 'memory/ram'.
 # 2012-09-05
 # o ROBUSTNESS: Now doCRMAv1() adds also tag "v1" to the allele-specific
-#   calibration step.  The reason for this is to differentiate it from 
+#   calibration step.  The reason for this is to differentiate it from
 #   the output of doCRMAv2().  NOTE: This update means that any old CRMAv1
-#   analyses will not be detected by doCRMAv1(); to have doCRMAv1() detect 
+#   analyses will not be detected by doCRMAv1(); to have doCRMAv1() detect
 #   those add tag "v1" in that calibration step, e.g. "ACC,-XY,v1".
 # 2011-04-07
 # o Added argument 'drop'.
 # 2011-03-14
-# o doCRMAv1() gained argument 'lengthRange', which is passed to 
+# o doCRMAv1() gained argument 'lengthRange', which is passed to
 #   the constructor of FragmentLengthNormalization.
 # 2010-06-21
 # o Added doASCRMAv1() for a convenient allele-specific CRMAv1 wrapper.
 # 2010-06-07
 # o Added argument shift=+300 to doCRMAv1().
 # 2010-05-17
-# o CORRECTION: doCRMAv1() forgot to shift +300 the signals before 
+# o CORRECTION: doCRMAv1() forgot to shift +300 the signals before
 #   doing the probe-level summarization.
 # 2010-04-21
 # o BUG FIX: doCRMAv1() for AffymetrixCelSet used undefined 'csN' internally

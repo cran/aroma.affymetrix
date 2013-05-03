@@ -9,9 +9,7 @@
 \name{getUnitNames.AffymetrixCdfFile}
 \alias{getUnitNames.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.getUnitNames}
-\alias{getUnitNames.AffymetrixCdfFile}
 \alias{getUnitNames,AffymetrixCdfFile-method}
-
 
 \title{Gets the names of each unit}
 
@@ -19,7 +17,9 @@
  Gets the names of each unit.
 }
 
-\usage{\method{getUnitNames}{AffymetrixCdfFile}(this, units=NULL, ...)}
+\usage{
+\method{getUnitNames}{AffymetrixCdfFile}(this, units=NULL, ...)
+}
 
 \arguments{
   \item{units}{The units of interest. If \code{\link[base]{NULL}}, all units are considered.}
@@ -34,8 +34,6 @@
   Once read from file, this information is cached in memory for efficiency.
   The cache can be cleared by calling \code{gc(cdf)}.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.

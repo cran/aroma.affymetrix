@@ -9,9 +9,7 @@
 \name{getPath.Model}
 \alias{getPath.Model}
 \alias{Model.getPath}
-\alias{getPath.Model}
 \alias{getPath,Model-method}
-
 
 \title{Gets the path of this model}
 
@@ -20,7 +18,9 @@
  The directory is created, if missing.
 }
 
-\usage{\method{getPath}{Model}(this, ...)}
+\usage{
+\method{getPath}{Model}(this, ...)
+}
 
 \arguments{
  \item{...}{Not used.}
@@ -33,8 +33,6 @@
 \details{
  If the path does not exist, it is created.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{Model}}.

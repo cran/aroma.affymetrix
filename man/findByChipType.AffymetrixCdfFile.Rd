@@ -6,12 +6,11 @@
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\name{findByChipType.AffymetrixCdfFile}
+\name{AffymetrixCdfFile$findByChipType}
+\alias{AffymetrixCdfFile$findByChipType}
 \alias{findByChipType.AffymetrixCdfFile}
 \alias{AffymetrixCdfFile.findByChipType}
-\alias{findByChipType.AffymetrixCdfFile}
 \alias{findByChipType,AffymetrixCdfFile-method}
-
 
 \title{Locates a CDF file from its chip type}
 
@@ -19,8 +18,13 @@
  Locates a CDF file from its chip type.
 }
 
-\synopsis{findByChipType.AffymetrixCdfFile(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)}
-\usage{AffymetrixCdfFile$findByChipType(chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)}
+\usage{
+## Static method (use this):
+## AffymetrixCdfFile$findByChipType(chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)
+
+## Don't use the below:
+\method{findByChipType}{AffymetrixCdfFile}(static, chipType, tags=NULL, pattern=NULL, ..., .useAffxparser=TRUE)
+}
 
 \arguments{
  \item{chipType}{A \code{\link[base]{character}} string.}
@@ -35,8 +39,6 @@
  Returns a pathname as a \code{\link[base]{character}} string to the first CDF file found.
  If non CDF with requested chip type was found, \code{\link[base]{NULL}} is returned.
 }
-
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
 
 \seealso{
   For more information see \code{\link{AffymetrixCdfFile}}.
