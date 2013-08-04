@@ -23,7 +23,8 @@
 }
 
 \usage{
-  \method{doRMA}{AffymetrixCelSet}(csR, arrays=NULL, uniquePlm=FALSE, drop=TRUE, verbose=FALSE, ...)
+  \method{doRMA}{AffymetrixCelSet}(csR, arrays=NULL, flavor=c("affyPLM", "oligo"), uniquePlm=FALSE, drop=TRUE,
+  verbose=FALSE, ...)
   \method{doRMA}{default}(dataSet, ..., verbose=FALSE)
 }
 
@@ -31,6 +32,7 @@
  \item{csR, dataSet}{An \code{\link{AffymetrixCelSet}} (or the name of an \code{\link{AffymetrixCelSet}}).}
  \item{arrays}{A \code{\link[base]{integer}} \code{\link[base]{vector}} specifying the subset of arrays
   to run RMA on.  If \code{\link[base]{NULL}}, all arrays are considered.}
+ \item{flavor}{A character string specifying what model fitting algorithm to be used, cf. \code{\link{RmaPlm}}.}
  \item{uniquePlm}{If \code{\link[base:logical]{TRUE}}, the log-additive probe-summarization model
   is done on probeset with \emph{unique} sets of probes.
   If \code{\link[base:logical]{FALSE}}, the summarization is done on "as-is" probesets as

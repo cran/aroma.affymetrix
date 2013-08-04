@@ -248,7 +248,8 @@ setMethodS3("getCellsToInternal", "ProbeLevelTransform3", function(this, units, 
     } else {
       cells <- intersect(cells, possibleCells);
     }
-    rm(possibleCells);
+    # Not needed anymore
+    possibleCells <- NULL;
 
     verbose && cat(verbose, "Cells: ");
     verbose && str(verbose, cells);
@@ -381,12 +382,19 @@ setMethodS3("writeSignals", "ProbeLevelTransform3", function(this, pathname, cel
 
   # Create CEL file to store results, if missing
   verbose && enter(verbose, "Creating CEL file for results, if missing");
-  createFrom(templateFile, filename=pathname, path=NULL, verbose=verbose);
+
+  # Write to a temporary file
+  pathnameT <- pushTemporaryFile(pathname, isFile=FALSE, verbose=verbose);
+
+  createFrom(templateFile, filename=pathnameT, path=NULL, verbose=verbose);
   verbose && exit(verbose);
 
   verbose && enter(verbose, "Storing normalized signals");
-  updateCel(pathname, indices=cells, ...);
+  updateCel(pathnameT, indices=cells, ...);
   verbose && exit(verbose);
+
+  # Rename temporary file
+  pathname <- popTemporaryFile(pathnameT, verbose=verbose);
 
   verbose && exit(verbose);
 

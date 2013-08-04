@@ -17,9 +17,9 @@
 # }
 #
 # \usage{
-#   \method{doCRMAv2}{AffymetrixCelSet}(csR, combineAlleles=TRUE, lengthRange=NULL, arrays=NULL, plm=c("AvgCnPlm", "RmaCnPlm"), drop=TRUE, verbose=FALSE, ...)
-#   \method{doCRMAv2}{default}(dataSet, ..., verbose=FALSE)
-#   \method{doASCRMAv2}{default}(...)
+#   @usage doCRMAv2,AffymetrixCelSet
+#   @usage doCRMAv2,default
+#   @usage doASCRMAv2,default
 # }
 #
 # \arguments{
@@ -172,7 +172,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
       types <- getUnitTypes(cdf);
       # 5 == Copy Number
       hasCns <- is.element(5, types);
-      rm(types);
+      # Not needed anymore
+      types <- NULL;
       if (hasCns) {
         rescaleBy <- "all";
       } else {
@@ -242,7 +243,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
   # Clean up
-  rm(csR, acc);
+  # Not needed anymore
+  csR <- acc <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -254,7 +256,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   verbose && exit(verbose);
 
   # Clean up
-  rm(csC, bpn);
+  # Not needed anymore
+  csC <- bpn <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -272,7 +275,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
     # Fit remaining units, i.e. SNPs (~5-10min/array)
     units <- fit(plm, verbose=verbose);
     verbose && str(verbose, units);
-    rm(units);
+    # Not needed anymore
+    units <- NULL;
   }
   verbose && print(verbose, gc);
   ces <- getChipEffectSet(plm);
@@ -284,7 +288,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
   # Clean up
-  rm(plm, csN);
+  # Not needed anymore
+  plm <- csN <- NULL;
   gc <- gc();
 
   verbose && enter(verbose, "CRMAv2/PCR fragment-length normalization");
@@ -299,7 +304,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
   # Clean up
-  rm(fln, ces);
+  # Not needed anymore
+  fln <- ces <- NULL;
   gc <- gc();
 
   verbose && enter(verbose, "CRMAv2/Export to technology-independent data files");
@@ -312,7 +318,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   }
 
   # Clean up
-  rm(cesN);
+  # Not needed anymore
+  cesN <- NULL;
   gc <- gc();
 
   verbose && exit(verbose);
@@ -327,6 +334,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
 
 
 setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
+  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -348,7 +357,8 @@ setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
   dsNList <- doCRMAv2(csR, ..., verbose=verbose);
 
   # Clean up
-  rm(csR);
+  # Not needed anymore
+  csR <- NULL;
   gc <- gc();
 
   verbose && exit(verbose);
@@ -358,6 +368,8 @@ setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
 
 
 setMethodS3("doASCRMAv2", "default", function(...) {
+  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+
   doCRMAv2(..., combineAlleles=FALSE);
 })
 

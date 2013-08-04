@@ -1,4 +1,6 @@
 library("aroma.affymetrix");
+## setParallelEngine(aromaSettings, "BatchJobs");
+
 verbose <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 dataSet <- "GSE9890";
@@ -39,6 +41,7 @@ print(all.equal(Y3, Y1));
 cor <- diag(cor(Y3,Y1));
 print(cor);
 stopifnot(all(cor > 0.9999));
+
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -5,8 +5,23 @@
   # None at the moment.
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Customize affxparser
+  # Bioconductor packages aroma.light and affxparser
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # require("aroma.light") - install if missing
+  aroma.core:::.requireBiocPackage("aroma.light", neededBy=getName(pkg));
+
+  # require("affxparser") - install if missing
+  aroma.core:::.requireBiocPackage("affxparser", neededBy=getName(pkg));
+
+  # Make sure 'affxparser' is after 'aroma.affymetrix' on the search path
+  from <- "package:affxparser";
+  to <- "package:aroma.affymetrix";
+  fromIdx <- match(from, search());
+  toIdx <- match(to, search());
+  if (all(is.finite(c(fromIdx, toIdx))) && fromIdx < toIdx) {
+    moveInSearchPath(from=from, to=to, where="after");
+  }
+
   # Add custom findCdf() function to affxparser.  This is need to be
   # able to locate CDFs in annotationData/chipTypes/<chipType>/.
   setCustomFindCdf(function(...) {
@@ -26,6 +41,7 @@
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   patchPackage("aroma.affymetrix");
 
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Fix the search path every time a package is loaded
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -33,22 +49,37 @@
     # Fix the search path
     pkgs <- fixSearchPath(aroma.affymetrix);
     if (length(pkgs) > 0) {
-      warning("Packages reordered in search path: ", 
+      warning("Packages reordered in search path: ",
                                             paste(pkgs, collapse=", "));
     }
   }, action="append");
 } # .setupAromaAffymetrix()
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# affxparser related
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Instead of asking users to write affxparser::writeCdf() when
+# aroma.affymetrix is loaded...
+writeCdf.default <- function(...) {
+  ns <- loadNamespace("affxparser");
+  `affxparser::writeCdf` <- get("writeCdf", envir=ns, mode="function");
+  `affxparser::writeCdf`(...)
+}
+
+
 
 ############################################################################
 # HISTORY:
+# 2013-08-03
+# o Added writeCdf.default() which loads namespace 'affxparser' and calls
+#   writeCdf() of affxparser, i.e. effectively affxparser::writeCdf().
 # 2009-02-22
 # o Removed code checking for package updates. Was never called.
 # 2009-02-21
 # o Added setting memory$ram=1.
 # 2008-02-14
-# o Renamed existing threshold hold to 'timestampsThreshold', 
+# o Renamed existing threshold hold to 'timestampsThreshold',
 #   'medianPolishThreshold', and 'skipThreshold'.
 # 2008-02-12
 # o Added default values for settings 'models$RmaPlm$...'.
@@ -60,7 +91,7 @@
 # o Added settings for 'checkForPatches' and 'checkInterval'.
 # o Now the settings are set according to a tempate, if missing.
 # 2007-08-30
-# o Added "patch" to make sure that there is rowMedians() supporting 
+# o Added "patch" to make sure that there is rowMedians() supporting
 #   missing values.
 # 2007-07-04
 # o Removed the patch for digest(); digest v0.3.0 solved the problem.

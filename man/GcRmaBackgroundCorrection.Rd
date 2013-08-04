@@ -44,7 +44,9 @@ extends \emph{\link[aroma.affymetrix]{BackgroundCorrection}}\cr
 }
 
 \usage{
-GcRmaBackgroundCorrection(..., indicesNegativeControl=NULL, affinities=NULL, type=c("fullmodel", "affinities"), opticalAdjust=TRUE, gsbAdjust=TRUE, gsbParameters=NULL)
+GcRmaBackgroundCorrection(..., indicesNegativeControl=NULL, affinities=NULL,
+  type=c("fullmodel", "affinities"), opticalAdjust=TRUE, gsbAdjust=TRUE,
+  gsbParameters=NULL)
 }
 
 \arguments{
@@ -85,7 +87,7 @@ getRootPath
 getOutputDataSet, getOutputFiles
 
  \bold{Methods inherited from AromaTransform}:\cr
-as.character, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
+as.character, findFilesTodo, getAsteriskTags, getExpectedOutputFiles, getExpectedOutputFullnames, getFullName, getInputDataSet, getName, getOutputDataSet, getOutputDataSet0, getOutputFiles, getPath, getRootPath, getTags, isDone, process, setTags
 
  \bold{Methods inherited from ParametersInterface}:\cr
 getParameterSets, getParameters, getParametersAsString

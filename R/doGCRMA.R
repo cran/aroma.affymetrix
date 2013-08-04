@@ -14,8 +14,8 @@
 # }
 #
 # \usage{
-#   \method{doGCRMA}{AffymetrixCelSet}(csR, arrays=NULL, type=c("fullmodel", "affinities"), uniquePlm=FALSE, drop=TRUE, verbose=FALSE, ...)
-#   \method{doGCRMA}{default}(dataSet, ..., verbose=FALSE)
+#   @usage doGCRMA,AffymetrixCelSet
+#   @usage doGCRMA,default
 # }
 #
 # \arguments{
@@ -192,7 +192,8 @@ setMethodS3("doGCRMA", "AffymetrixCelSet", function(csR, arrays=NULL, type=c("fu
   }
 
   # Clean up
-  rm(csR, bc);
+  # Not needed anymore
+  csR <- bc <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -208,7 +209,8 @@ setMethodS3("doGCRMA", "AffymetrixCelSet", function(csR, arrays=NULL, type=c("fu
   }
 
   # Clean up
-  rm(csB, qn);
+  # Not needed anymore
+  csB <- qn <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -242,7 +244,8 @@ setMethodS3("doGCRMA", "AffymetrixCelSet", function(csR, arrays=NULL, type=c("fu
   if (length(findUnitsTodo(plm)) > 0) {
     units <- fit(plm, verbose=verbose);
     verbose && str(verbose, units);
-    rm(units);
+    # Not needed anymore
+    units <- NULL;
   }
   verbose && print(verbose, gc);
   ces <- getChipEffectSet(plm);
@@ -254,7 +257,8 @@ setMethodS3("doGCRMA", "AffymetrixCelSet", function(csR, arrays=NULL, type=c("fu
   }
 
   # Clean up
-  rm(plm, csN);
+  # Not needed anymore
+  plm <- csN <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -270,6 +274,8 @@ setMethodS3("doGCRMA", "AffymetrixCelSet", function(csR, arrays=NULL, type=c("fu
 
 
 setMethodS3("doGCRMA", "default", function(dataSet, ..., verbose=FALSE) {
+  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -291,7 +297,8 @@ setMethodS3("doGCRMA", "default", function(dataSet, ..., verbose=FALSE) {
   res <- doGCRMA(csR, ..., verbose=verbose);
 
   # Clean up
-  rm(csR);
+  # Not needed anymore
+  csR <- NULL;
   gc <- gc();
 
   verbose && exit(verbose);

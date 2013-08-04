@@ -9,8 +9,8 @@
 # }
 #
 # \usage{
-#   \method{doFIRMA}{AffymetrixCelSet}(csR, ..., flavor=c("v1b", "v1a"), drop=TRUE, verbose=FALSE)
-#   \method{doFIRMA}{default}(dataSet, ..., verbose=FALSE)
+#   @usage doFIRMA,AffymetrixCelSet
+#   @usage doFIRMA,default
 # }
 #
 # \arguments{
@@ -137,7 +137,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
     }
 
     # Not needed anymore
-    rm(chipTypeS);
+    # Not needed anymore
+    chipTypeS <- NULL;
 
     verbose && exit(verbose);
   }
@@ -158,8 +159,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
     res <- c(res, list(bc=bc, csB=csB));
   }
 
-  # Clean up
-  rm(csR, bc);
+  # Not needed anymore
+  bc <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -182,7 +183,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   }
 
   # Clean up
-  rm(csB, qn);
+  # Not needed anymore
+  csB <- qn <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -200,7 +202,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
       setCdf(csN, cdf);
     }
     # Not needed anymore
-    rm(cdfS);
+    # Not needed anymore
+    cdfS <- NULL;
   }
   verbose && cat(verbose, "Using CDF: ", getFullName(getCdf(csN)));
 
@@ -221,7 +224,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   }
 
   # Clean up
-  rm(cdfTag, plmTags, units);
+  # Not needed anymore
+  cdfTag <- plmTags <- units <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -255,7 +259,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
   }
 
   # Clean up
-  rm(firma, fs);
+  # Not needed anymore
+  firma <- fs <- NULL;
   gc <- gc();
   verbose && print(verbose, gc);
 
@@ -269,6 +274,8 @@ setMethodS3("doFIRMA", "AffymetrixCelSet", function(csR, ..., flavor=c("v1b", "v
 
 
 setMethodS3("doFIRMA", "default", function(dataSet, ..., verbose=FALSE) {
+  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -290,7 +297,8 @@ setMethodS3("doFIRMA", "default", function(dataSet, ..., verbose=FALSE) {
   res <- doFIRMA(csR, ..., verbose=verbose);
 
   # Clean up
-  rm(csR);
+  # Not needed anymore
+  csR <- NULL;
   gc <- gc();
 
   verbose && exit(verbose);
@@ -301,6 +309,10 @@ setMethodS3("doFIRMA", "default", function(dataSet, ..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2013-06-02
+# o BUG FIX: doFIRMA() would give <simpleError in UseMethod("setCdf"):
+#   no applicable method for 'setCdf' applied to an object of class
+#   "NULL"> - a bug introduced in v2.9.3.
 # 2013-05-02
 # o Removed argument 'ram' in favor of aroma option 'memory/ram'.
 # 2011-11-10
