@@ -37,7 +37,7 @@ setMethodS3("byPath", "FirmaSet", function(static, ..., pattern=",FIRMAscores[.]
     fileClass <- gsub("Set$", "File", class(static)[1]);
 
   NextMethod("byPath", pattern=pattern, fileClass=fileClass);
-}, protected=TRUE, static=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 setMethodS3("fromDataSet", "FirmaSet", function(static, dataSet, path, name=getName(dataSet), cdf=NULL, ..., verbose=FALSE) {
@@ -145,7 +145,8 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
     arrays <- arrays[o];
     verbose && str(verbose, arrays);
     verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
-    rm(fullnames, o);
+    # Not needed anymore
+    fullnames <- o <- NULL;
     verbose && exit(verbose);
   }
 
@@ -171,7 +172,8 @@ setMethodS3("updateUnits", "FirmaSet", function(this, units=NULL, cdf=NULL, data
 
     verbose && enter(verbose, "Updating file");  # 6-7s ~98% in encode()
     updateUnits(ff, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
-    rm(dataOne, ff);
+    # Not needed anymore
+    dataOne <- ff <- NULL;
     verbose && exit(verbose);
     verbose <- more(verbose, 50);
 

@@ -86,8 +86,17 @@ setMethodS3("byPath", "ChipEffectSet", function(static, path="plmData/", pattern
     fileClass <- gsub("Set$", "File", class(static)[1]);
   }
 
-
-  NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, cdf=cdf, checkChipType=checkChipType);
+  ## Don't explicitly pass the first argument after 'static', otherwise
+  ## it (here argument 'path') will be part of '...' as well. /HB 2013-07-28
+  ## Example: ChipEffectSet$byPath(path, private=TRUE) gave "## Error in
+  ## list.files(path = path, pattern = pattern, full.names = TRUE,  :
+  ## invalid 'recursive' argument", because 'recursive' was also assigned
+  ## the value of 'path' due to a bug(?) in how NextMethod() handles
+  ## '...', cf. R-devel thread "Do *not* pass '...' to NextMethod() - it'll
+  ## do it for you; missing documentation, a bug or just me?" on 2012-10-16
+  ## [https://stat.ethz.ch/pipermail/r-devel/2012-October/065016.html]
+  ## NB: This is actually the same fix as done in AffymetrixCnChpSet$byPath().
+  NextMethod("byPath", pattern=pattern, fileClass=fileClass, cdf=cdf, checkChipType=checkChipType);
 }, static=TRUE, protected=TRUE)
 
 
@@ -208,7 +217,8 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
     arrays <- arrays[o];
     verbose && str(verbose, arrays);
     verbose && cat(verbose, "Last array: ", fullnames[arrays[nbrOfArrays]]);
-    rm(fullnames, o);
+    # Not needed anymore
+    fullnames <- o <- NULL;
     verbose && exit(verbose);
   }
 
@@ -243,7 +253,8 @@ setMethodS3("updateUnits", "ChipEffectSet", function(this, units=NULL, cdf=NULL,
 #    verbose && printf(verbose, "class(ce)[1]: %s\n", class(ce)[1]);
 #    updateUnits(ce, cdf=cdf, data=dataOne, verbose=less(verbose, 50));
     updateUnits(ce, cdf=cdf, data=dataOne, verbose=verbose);
-    rm(dataOne, ce);
+    # Not needed anymore
+    dataOne <- ce <- NULL;
     verbose && exit(verbose);
 
     verbose <- more(verbose, 50);
@@ -317,7 +328,8 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta
 
     # Log ratios of chip effects
     data <- data - dataR;
-    rm(dataR, avg);
+    # Not needed anymore
+    dataR <- avg <- NULL;
 
     verbose && exit(verbose);
   } else if (toupper(field) == "NUSE") {
@@ -336,7 +348,8 @@ setMethodS3("extractMatrix", "ChipEffectSet", function(this, ..., field=c("theta
 
     # Log ratios of standard errors
     data <- data / dataR;
-    rm(dataR, avg);
+    # Not needed anymore
+    dataR <- avg <- NULL;
 
     verbose && exit(verbose);
   } else {

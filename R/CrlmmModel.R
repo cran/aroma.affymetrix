@@ -32,7 +32,7 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
   balance <- Arguments$getDouble(balance, range=c(0.00001, 1e6));
 
   # Argument 'minLLRforCalls':
-  minLLRforCalls <- Arguments$getDoubles(minLLRforCalls, length=3, 
+  minLLRforCalls <- Arguments$getDoubles(minLLRforCalls, length=3,
                                                          range=c(0, 1e6));
 
   # Argument 'recalibrate':
@@ -43,7 +43,7 @@ setConstructorS3("CrlmmModel", function(dataSet=NULL, balance=1.5, minLLRforCall
 
 
   extend(Model(dataSet=dataSet, ...), "CrlmmModel",
-    balance = balance, 
+    balance = balance,
     minLLRforCalls = minLLRforCalls,
     recalibrate = recalibrate,
     flavor = flavor,
@@ -57,7 +57,7 @@ setMethodS3("getRootPath", "CrlmmModel", function(this, ...) {
 }, protected=TRUE)
 
 
-setMethodS3("getAsteriskTags", "CrlmmModel", function(this, collapse=NULL, ...) { 
+setMethodS3("getAsteriskTags", "CrlmmModel", function(this, collapse=NULL, ...) {
   tags <- "CRLMM";
   if (!is.null(collapse)) {
     tags <- paste(tags, collapse=collapse);
@@ -74,7 +74,7 @@ setMethodS3("getParameters", "CrlmmModel", function(this, ...) {
   params$recalibrate <- this$recalibrate;
   params$flavor <- this$flavor;
   params;
-}, protected=TRUE) 
+}, protected=TRUE)
 
 
 
@@ -285,7 +285,7 @@ setMethodS3("findUnitsTodo", "CrlmmModel", function(this, units=NULL, safe=TRUE,
   if (safe) {
     unitsTodo <- unitsToFit;
   } else {
-    # Find all units with missing-value (NA) calls 
+    # Find all units with missing-value (NA) calls
     callSet <- getCallSet(this);
     unitsWithNAs <- findUnitsTodo(callSet, ...);
     unitsTodo <- intersect(unitsToFit, unitsWithNAs);
@@ -319,7 +319,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     extractLogRatios <- function(eSet, ...) {
       ad <- assayData(eSet);
       M <- ad$senseAlleleA - ad$senseAlleleB;
-      rm(ad);
+      # Not needed anymore
+      ad <- NULL;
       M;
     } # extractLogRatios()
   } else {
@@ -339,7 +340,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       M;
     } # extractLogRatios()
   }
-  
+
 
   maleIndex <- c();
 
@@ -348,7 +349,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cdf <- getCdf(this);
 
-  # Argument 'units':  
+  # Argument 'units':
   doRemaining <- FALSE;
   if (is.null(units)) {
   } else if (is.numeric(units)) {
@@ -356,7 +357,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   } else if (identical(units, "remaining")) {
     doRemaining <- TRUE;
   } else {
-    throw("Unknown mode of argument 'units': ", mode(units)); 
+    throw("Unknown mode of argument 'units': ", mode(units));
   }
 
   # Argument 'ram':
@@ -395,20 +396,22 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   if (is.null(units)) {
     unitsToFit <- getUnitsToFit(this, verbose=less(verbose,1));
     units <- unitsToFit;
-    rm(unitsToFit);
+    # Not needed anymore
+    unitsToFit <- NULL;
   } else if (doRemaining) {
     verbose && enter(verbose, "Identifying non-estimated units")
     units <- findUnitsTodo(this, safe=FALSE, verbose=less(verbose));
     verbose && str(verbose, units);
-    verbose && exit(verbose); 
+    verbose && exit(verbose);
   } else {
     unitsToFit <- getUnitsToFit(this, verbose=less(verbose,1));
     units <- intersect(units, unitsToFit);
-    rm(unitsToFit);
+    # Not needed anymore
+    unitsToFit <- NULL;
     # Fit only unique units
-    units <- unique(units); 
+    units <- unique(units);
   }
-  nbrOfUnits <- length(units); 
+  nbrOfUnits <- length(units);
   verbose && str(verbose, units);
   verbose && printf(verbose, "Getting model fit for %d units.\n", nbrOfUnits);
 
@@ -421,7 +424,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       nbrOfUnits <- length(units);
       verbose && printf(verbose, "Out of these, %d units need to be fitted.\n", nbrOfUnits);
     }
-  } 
+  }
   verbose && exit(verbose);
 
   # Nothing to do?
@@ -488,7 +491,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     unitList <- unitList[-1];
 
     verbose && enter(verbose, "Extracting data");
-    eSet <- extractESet(ces, units=unitsChunk, sortUnits=FALSE, 
+    eSet <- extractESet(ces, units=unitsChunk, sortUnits=FALSE,
                              hasQuartets=hasQuartets, verbose=verbose);
     phenoData(eSet) <- phenoData;
     verbose && exit(verbose);
@@ -511,7 +514,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       params$scales <- params$scales[idxs,,drop=FALSE];
     }
     params$N <- params$N[idxs,,drop=FALSE];
-    rm(idxs);
+    # Not needed anymore
+    idxs <- NULL;
     verbose && cat(verbose, "CRLMM prior parameters (estimated from HapMap):");
     verbose && str(verbose, params);
     verbose && exit(verbose);
@@ -579,7 +583,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       dist[,,-2] <- balance*dist[,,-2];
       verbose && exit(verbose);
     }
-    rm(params, index);
+    # Not needed anymore
+    params <- index <- NULL;
 
     indexX <- which(is.element(unitNames, names(snpsOnChrX)));
     # NOTE: Do not specify sqsClass=class(eSet). Instead it should
@@ -587,21 +592,23 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     # See oligo:::justCRLMMv3() of oligo v1.12.0. /HB 2010-05-06
     calls <- oligo:::getAffySnpCalls(dist, indexX, maleIndex, verbose=as.logical(verbose));
     llr <- oligo:::getAffySnpConfidence(dist, calls, indexX, maleIndex, verbose=as.logical(verbose));
-    
+
     if (recalibrate) {
       verbose && enter(verbose, "Recalibrating");
       naValue <- as.integer(NA);
       for (gg in 1:3) {
         calls[calls == gg & llr < minLLRforCalls[gg]] <- naValue;
       }
-      rm(llr);
+      # Not needed anymore
+      llr <- NULL;
       # 'correction$snr' is a I vector, where I=#arrays.
       # Note that is has a dim() attribute making it look like a matrix.
       # Why exactly 3.675?!? /HB 2009-01-12
       calls[,(correction$snr < 3.675)] <- naValue;
 
       rparams <- oligo:::getAffySnpGenotypeRegionParams(eSet, calls, correction$fs, verbose=as.logical(verbose));
-      rm(calls);
+      # Not needed anymore
+      calls <- NULL;
 
       rparams <- oligo:::updateAffySnpParams(rparams, priors, oneStrand);
       dist <- oligo:::getAffySnpDistance(eSet, rparams, correction$fs, verbose=as.logical(verbose));
@@ -610,7 +617,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       } else {
         dist[,,-2] <- balance*dist[,,-2];
       }
-      rm(oneStrand);
+      # Not needed anymore
+      oneStrand <- NULL;
       calls <- oligo:::getAffySnpCalls(dist, indexX, maleIndex, verbose=as.logical(verbose));
       llr <- oligo:::getAffySnpConfidence(dist, calls, indexX, maleIndex, verbose=as.logical(verbose));
       verbose && exit(verbose);
@@ -621,7 +629,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     verbose && str(verbose, exp(snrPerArray/nbrOfChunks));
 
     # Clean up
-    rm(eSet, indexX,  correction, rparams, priors);
+    # Not needed anymore
+    eSet <- indexX <- correction <- rparams <- priors <- NULL;
 
     verbose && enter(verbose, "Estimated genotype parameters");
     verbose && cat(verbose, "calls:");
@@ -655,7 +664,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       for (cc in 1:ncol(distKK)) {
         atb[unitsChunk,cc+1] <- distKK[,cc];
       }
-      rm(distKK, atb);
+      # Not needed anymore
+      distKK <- atb <- NULL;
       verbose && exit(verbose); # "CRLMM specific parameter estimates"
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -670,16 +680,19 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
       callsT[(callsKK == 1)] <- "AA";
       callsT[(callsKK == 2)] <- "AB";
       callsT[(callsKK == 3)] <- "BB";
-      rm(callsKK);
+      # Not needed anymore
+      callsKK <- NULL;
       verbose && exit(verbose); # "Tranlating oligo calls to {NC,AA,AB,BB}"
 
       updateGenotypes(agc, units=unitsChunk, calls=callsT,
                                               verbose=less(verbose,5));
-      rm(callsT);
+      # Not needed anymore
+      callsT <- NULL;
 
       verbose && cat(verbose, "Genotypes stored (as on file):");
       verbose && str(verbose, extractGenotypes(agc, units=unitsChunk));
-      rm(agc);
+      # Not needed anymore
+      agc <- NULL;
 
       verbose && exit(verbose); # "Genotype calls"
 
@@ -692,10 +705,12 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     # Next chunk
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     chunk <- chunk + 1;
-    rm(unitsChunk, calls, llr, dist);
+    # Not needed anymore
+    unitsChunk <- calls <- llr <- dist <- NULL;
     verbose && exit(verbose);  # "Chunk #%d of %d"
   } # while(length(unitsList) > 0)
-  rm(callSet);
+  # Not needed anymore
+  callSet <- NULL;
 
   verbose && enter(verbose, "Storing average SNR per arrays");
 
@@ -783,7 +798,8 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
   snrs2 <- coef[1] + coef[2]*truncSnrs;
   verbose && cat(verbose, "Transformed SNRs:");
   verbose && str(verbose, snrs2);
-  rm(coef);
+  # Not needed anymore
+  coef <- NULL;
   verbose && exit(verbose); # "Calculating transformed SNRs using prior lm fit"
 
   # Allocate results
@@ -795,7 +811,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
       coefs = splineParams$lm1$coef,
       k2 = splineParams$HmzK2,
       k3 = splineParams$HmzK3
-    ), 
+    ),
     heterozygotes=list(
       coefs = splineParams$lm2$coef,
       k2 = splineParams$HtzK2,
@@ -805,7 +821,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
   verbose && str(verbose, "Prior parameters:");
   verbose && str(verbose, params);
 
-  # If you call the genotype by chance, the probability that 
+  # If you call the genotype by chance, the probability that
   # you are correct is 1/3. Since CRLMM always call the genotype
   # and picks the one with greatest confidence, the smallest
   # possible confidence score is 1/3. /HB 2009-01-12
@@ -822,7 +838,7 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
     # Identifying heterozygote units
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Identifying heterozygote units");
-    isHet <- isHeterozygote(cf, drop=TRUE, verbose=less(verbose, 25));
+    isHet <- isHeterozygous(cf, drop=TRUE, verbose=less(verbose, 25));
     verbose && exit(verbose); # "Identifying heterozygote units"
 
     # Identified units called by CRLMM.  This will for instance also
@@ -830,13 +846,13 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
     unitsKK <- which(!is.na(isHet));
     isHet <- isHet[unitsKK];
     nbrOfCalled <- length(unitsKK);
-    verbose && printf(verbose, "Number of called units: %d (%.2f%%)\n", 
+    verbose && printf(verbose, "Number of called units: %d (%.2f%%)\n",
                                       nbrOfCalled, 100*nbrOfCalled/nbrOfUnits);
     verbose && str(verbose, unitsKK);
 
     # Sanity check
     if (nbrOfCalled == 0) {
-      throw("Cannot calculate confidence scores. Genotypes are not called: ", 
+      throw("Cannot calculate confidence scores. Genotypes are not called: ",
                                                               getPathname(cf));
     }
 
@@ -852,7 +868,8 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
       idxs <- which(is.na(conf));
       unitsKK <- unitsKK[idxs];
       conf <- conf[idxs];
-      rm(idxs);
+      # Not needed anymore
+      idxs <- NULL;
       verbose && str(verbose, unitsKK);
       verbose && exit(verbose); # "Identifying subset of units not yet calculated units"
     }
@@ -874,66 +891,69 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
       llr <- sqrt(pf[unitsKK,1,drop=TRUE]);
       verbose && str(verbose, llr);
       verbose && exit(verbose); # "Retrieving LLRs"
-  
-  
+
+
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # Calculating confidence scores stratified by homozygotes & heterozygotes
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       verbose && enter(verbose, "Calculating confidence scores stratified by homozygotes and heterozygotes");
       for (what in names(params)) {
         verbose && enter(verbose, sprintf("Stratify by '%s'", what));
-  
+
         paramsT <- params[[what]];
         verbose && cat(verbose, "Parameters:");
         verbose && str(verbose, paramsT);
-  
+
         if (what == "homozygotes") {
           idxs <- which(!isHet);
         } else {
           idxs <- which(isHet);
         }
-  
+
         verbose && cat(verbose, "Number of ", what, ": ", length(idxs));
         if (length(idxs) > 0) {
           coefs <- paramsT$coefs;
           k2 <- paramsT$k2;
           k3 <- paramsT$k3;
-  
+
           llrT <- pmin(llr[idxs], k3);
           confT <- coefs[1] + coefs[2]*llrT;
-  
+
           delta <- llrT - k2;
           idxsT <- which(delta > 0);
           if (length(idxsT) > 0) {
             confT[idxsT] <- confT[idxsT] + coefs[3]*delta[idxsT];
           }
-  
+
           conf[idxs] <- confT;
-          rm(idxsT, delta, llrT, confT);
+          # Not needed anymore
+          idxsT <- delta <- llrT <- confT <- NULL;
         }
-        rm(idxs);
-  
+        # Not needed anymore
+        idxs <- NULL;
+
         verbose && exit(verbose); # "Stratify by '%s'"
       } # for (what ...)
       verbose && exit(verbose); # "Calculating confidence scores stratified by homozygotes and heterozygotes"
-  
+
       # Clean up
-      rm(isHet, llr);
-  
+      # Not needed anymore
+      isHet <- llr <- NULL;
+
       verbose && cat(verbose, "Confidence \"scores\":");
       verbose && str(verbose, conf);
       verbose && summary(verbose, conf);
-  
+
       verbose && cat(verbose, "Corrected confidence \"scores\":");
       conf <- conf + snrs2[kk];
       verbose && summary(verbose, conf);
-  
+
       verbose && cat(verbose, "Final confidence scores:");
       conf <- 1/(1+exp(-conf));
 
       conf[(conf < minConf)] <- minConf;
     } # if (snrs[kk] <= 3)
-    
+
     verbose && cat(verbose, "Final confidence scores:");
     verbose && str(verbose, conf);
     verbose && summary(verbose, conf);
@@ -960,21 +980,23 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
         nbrOfArrays = length(callSet),
         filename = getFilename(srcFile),
         filesize = getFileSize(srcFile),
-        checksum = getChecksum(srcFile) 
+        checksum = getChecksum(srcFile)
       );
       data[[name]] <- attr;
     }
     footer[[key]] <- data;
     writeFooter(sf, footer);
-    rm(footer, srcFiles, srcFile, attr, data, key);
+    # Not needed anymore
+    footer <- srcFiles <- srcFile <- attr <- data <- key <- NULL;
     verbose && exit(verbose); # "Storing confidence scores"
 
-    rm(conf, unitsKK);
+    # Not needed anymore
+    conf <- unitsKK <- NULL;
 
     # Next array
     verbose && exit(verbose); "Array #%d ('%s') of %d"
   } # for (kk ...)
-  
+
   verbose && exit(verbose); # "Calculating confidence scores for each call"
 
   invisible(confSet);
@@ -984,8 +1006,11 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
 
 ############################################################################
 # HISTORY:
+# 2013-06-02
+# o BUG FIX: calculateConfidenceScores() for CrlmmModel used defunct
+#   method isHeterozygote() instead of isHeterozygous().
 # 2012-09-05
-# o ROBUSTNESS: Now the CrlmmModel constructor asserts that the chip 
+# o ROBUSTNESS: Now the CrlmmModel constructor asserts that the chip
 #   effects were estimated without merging the strands (mergeStrands=FALSE).
 #   If not, an informative exception is thrown.
 # 2011-11-05
@@ -995,15 +1020,15 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
 # o Clarified the error message that CRLMM is not supported for GWS6.
 # 2010-05-06
 # o Now CrlmmModel(..., recalibrate=TRUE) is the default.
-# o BUG FIX: fit() of CrlmmModel would not work with oligo v1.12.0 
+# o BUG FIX: fit() of CrlmmModel would not work with oligo v1.12.0
 #   and newer.
 # o BUG FIX: getCallSet() and getCrlmmParametersSet() of CrlmmModel used
 #   non-existing verbose object 'log' instead of 'verbose'.
 # 2010-01-06
 # o CLEAN UP: No need for assign NAs when allocating new files; this is now
-#   always the default way (in aroma.core v1.4.1). 
+#   always the default way (in aroma.core v1.4.1).
 # 2009-05-17
-# o BUG FIX: fit() for CrlmmModel was calling oligo::getM(), but that 
+# o BUG FIX: fit() for CrlmmModel was calling oligo::getM(), but that
 #   method was later moved to oligoClasses.  Now we just do getM().
 # 2009-01-12
 # o Added calculateConfidenceScores().

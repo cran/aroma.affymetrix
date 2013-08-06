@@ -137,7 +137,7 @@ setMethodS3("getCellIndices", "CnChipEffectFile", function(this, units=NULL, ...
       key <- getCacheKey(cdf, method="getCellIndices", class=class(this)[1L], chipType=chipType, params=params, units=units, unlist=unlist, ...);
     }
     dirs <- c("aroma.affymetrix", chipType);
-    id <- digest2(key);
+    id <- getChecksum(key);
   }
 
   if (!force) {
@@ -267,7 +267,7 @@ setMethodS3("readUnits", "CnChipEffectFile", function(this, ..., force=FALSE, ca
   key <- list(method="readUnits", class=class(this)[1],
               pathname=getPathname(this),
               combineAlleles=this$combineAlleles, ...);
-  id <- digest2(key);
+  id <- getChecksum(key);
   res <- this$.readUnitsCache[[id]];
   if (!force && !is.null(res)) {
     verbose && cat(verbose, "readUnits.CnChipEffectFile(): Returning cached data");
@@ -321,11 +321,12 @@ setMethodS3("getNumberOfFilesAveraged", "CnChipEffectFile", function(this, ..., 
 
   # Keep only first group (in case mergeStrands or combineAlleles is FALSE)
   # To please R CMD check
-  group <- NULL; rm(group);
+  group <- NULL; rm(list="group");
   ugcMap <- subset(ugcMap, group == 1);
 
   cells <- ugcMap[,"cell", drop=TRUE];
-  rm(ugcMap);
+  # Not needed anymore
+  ugcMap <- NULL;
 
   verbose && cat(verbose, "Cell indices:");
   verbose && str(verbose, cells);
@@ -336,7 +337,8 @@ setMethodS3("getNumberOfFilesAveraged", "CnChipEffectFile", function(this, ..., 
   verbose && exit(verbose);
 
   ns <- data$pixels;
-  rm(data);
+  # Not needed anymore
+  data <- NULL;
 
   verbose && exit(verbose);
 

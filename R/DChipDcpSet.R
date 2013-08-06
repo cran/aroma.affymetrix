@@ -143,7 +143,9 @@ setMethodS3("byPath", "DChipDcpSet", function(static, path="rawData/", pattern="
 
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  this <- NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, verbose=less(verbose));
+  ## Don't explicitly pass the first argument after 'static', otherwise
+  ## it (here argument 'path') may be part of '...' as well. /HB 2013-07-28
+  this <- NextMethod("byPath", pattern=pattern, fileClass=fileClass, verbose=less(verbose));
 
   verbose && cat(verbose, "Retrieved files: ", length(this));
 
@@ -162,7 +164,7 @@ setMethodS3("byPath", "DChipDcpSet", function(static, path="rawData/", pattern="
   verbose && exit(verbose);
 
   this;
-}, protected=TRUE)
+}, static=TRUE, protected=TRUE)
 
 
 
@@ -269,7 +271,8 @@ setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=
       data <- array(naValue, dim=dim, dimnames=dimnames);
     }
     data[,,kk] <- dataKK;
-    rm(dataKK);
+    # Not needed anymore
+    dataKK <- NULL;
 
     # Garbage collect?
     gcCount <- gcCount + 1;
@@ -295,6 +298,8 @@ setMethodS3("extractTheta", "DChipDcpSet", function(this, units=NULL, ..., drop=
 
 ############################################################################
 # HISTORY:
+# 2013-07-28
+# o ROBUSTNESS: byPath() for DChipDcpSet was not decleared static.
 # 2011-02-24
 # o Expanded the searched root paths to be rawData(|,.*)/ and
 #   probeData(|,.*)/.

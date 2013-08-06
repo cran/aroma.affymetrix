@@ -165,6 +165,7 @@ setMethodS3("byPath", "AffymetrixCnChpSet", function(static, path, pattern="[.](
   # try byPath(AffymetrixCelSet(), "path/to/").  This seems to be related
   # to R-devel thread 'Do *not* pass '...' to NextMethod() - it'll do it
   # for you; missing documentation, a bug or just me?' on Oct 16, 2012.
+  # [https://stat.ethz.ch/pipermail/r-devel/2012-October/065016.html]
   ##  set <- NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, verbose=less(verbose));
   set <- NextMethod("byPath", pattern=pattern, fileClass=fileClass, verbose=less(verbose));
 
@@ -330,7 +331,8 @@ setMethodS3("extractLogRatios", "AffymetrixCnChpSet", function(this, units=NULL,
       data <- array(naValue, dim=dim, dimnames=dimnames);
     }
     data[,kk] <- dataKK;
-    rm(dataKK);
+    # Not needed anymore
+    dataKK <- NULL;
 
     # Garbage collect?
     gcCount <- gcCount + 1;

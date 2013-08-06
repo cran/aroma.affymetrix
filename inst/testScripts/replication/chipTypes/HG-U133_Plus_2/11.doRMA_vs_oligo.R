@@ -2,17 +2,19 @@
 # Replication test
 #
 # Description:
-# This test verifies that aroma.affymetrix can reproduce the gcRMA
-# chip-effect estimates as estimated by gcrma.
+# This test verifies that aroma.affymetrix can reproduce the RMA
+# chip-effect estimates as estimated by oligo.
+# The setup is the same as in affyPLM,fitPLM.R.
 #
-# Author: Mark Robinson and Henrik Bengtsson
-# Created: 2009-05-17
-# Last modified: 2012-09-01
+# Author: Henrik Bengtsson
+# Created: 2008-12-04 (from affyPLM,fitPLM.R)
+# Last modified: 2013-07-03
 ###########################################################################
-library("aroma.affymetrix");
-library("gcrma");  # gcrma()
-verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 
+library("aroma.affymetrix");
+library("oligo");
+
+verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 
 # ----------------------------------
 # Dataset
@@ -28,9 +30,9 @@ print(csR);
 # ----------------------------------
 # RMA estimates by aroma.affymetrix
 # ----------------------------------
-verbose && enter(verbose, "gcRMA by aroma.affymetrix");
+verbose && enter(verbose, "RMA by aroma.affymetrix");
 
-res <- doGCRMA(csR, drop=FALSE, verbose=verbose);
+res <- doRMA(csR, flavor="oligo", drop=FALSE, verbose=verbose);
 print(res);
 
 # Extract chip effects on the log2 scale
@@ -42,19 +44,18 @@ theta <- log2(theta);
 verbose && exit(verbose);
 
 
-# ------------------------
-# gcRMA estimates by gcrma
-# ------------------------
-verbose && enter(verbose, "gcRMA by gcrma");
+# ----------------------
+# RMA estimates by oligo
+# ----------------------
+verbose && enter(verbose, "RMA by oligo");
 verbose && print(verbose, sessionInfo());
 
-raw <- ReadAffy(filenames=getPathnames(csR));
-verbose && print(verbose, raw);
+library("pd.hg.u133.plus.2");
 
-es <- gcrma(raw, verbose=TRUE);
-verbose && print(verbose, es);
+raw <- read.celfiles(filenames=getPathnames(csR));
+eSet <- rma(raw);
+theta0 <- exprs(eSet);
 
-theta0 <- exprs(es);
 verbose && exit(verbose);
 
 
@@ -73,12 +74,12 @@ e <- (theta - theta0);
 print(summary(e));
 
 # (a) Visual comparison
-toPNG(getFullName(csR), tags=c("doGCRMA_vs_gcrma"), width=800, {
+toPNG(getFullName(csR), tags=c("doRMA_vs_oligo"), width=800, {
   par(mar=c(5,5,4,2)+0.1, cex.main=2, cex.lab=2, cex.axis=1.5);
 
   layout(matrix(1:16, ncol=4, byrow=TRUE));
 
-  xlab <- expression(log[2](theta[gcrma]));
+  xlab <- expression(log[2](theta[oligo]));
   ylab <- expression(log[2](theta[aroma.affymetrix]));
   for (kk in seq_len(ncol(theta))) {
     main <- colnames(theta)[kk];
@@ -87,30 +88,34 @@ toPNG(getFullName(csR), tags=c("doGCRMA_vs_gcrma"), width=800, {
     stext(side=3, pos=0, line=-1.1, cex=1.2, substitute(rho==x, list(x=rho[kk])));
   }
 
-  xlab <- expression(log[2](theta[aroma.affymetrix]/theta[gcrma]));
+  xlab <- expression(log[2](theta[aroma.affymetrix]/theta[oligo]));
   plotDensity(e, xlab=xlab);
 });
 
 # (b) Assert correlations
+print(rho);
+print(range(rho));
 stopifnot(all(rho > 0.99995));
 
+cors <- sapply(1:ncol(theta), FUN=function(cc) cor(theta[,cc], theta0[,cc]));
+print(cors);
+print(range(cors));
+stopifnot(all(cors > 0.99995));
+
 # (c) Assert differences
-stopifnot(mean(as.vector(e^2)) < 0.001);
-stopifnot(sd(as.vector(e^2)) < 0.003);
-stopifnot(quantile(abs(e), 0.99) < 0.10);
-stopifnot(max(abs(e)) < 0.30);
+stopifnot(mean(as.vector(e^2)) < 1e-3);
+stopifnot(sd(as.vector(e^2)) < 1e-3);
+stopifnot(quantile(abs(e), 0.99) < 0.05);
+stopifnot(max(abs(e)) < 0.085);
 
 
 verbose && print(verbose, sessionInfo());
 
+
 ###########################################################################
 # HISTORY:
-# 2012-09-01 [HB]
-# o Updated to use a GEO data set.
-# 2012-08-30 [HB]
-# o Updated to utilize toPNG().
-# 2010-02-05 [HB]
-# o Harmonized with the corresponding RMA test script.
-# 2009-05-17 [HB]
-# o Adopted from Mark Robinson's test script.
+# 2013-07-03 [HB]
+# o Harmonized with 11.doRMA_vs_affyPLM.R.
+# 2008-12-04 [HB]
+# o Created, but not tested because I miss package 'pd.hg.u133.plus.2'.
 ###########################################################################

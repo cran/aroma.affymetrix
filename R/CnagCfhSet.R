@@ -197,7 +197,7 @@ setMethodS3("getIdentifier", "CnagCfhSet", function(this, ..., force=FALSE) {
     identifier <- NextMethod("getIdentifier");
     if (is.null(identifier)) {
       identifiers <- lapply(this, FUN=getIdentifier);
-      identifier <- digest2(identifiers);
+      identifier <- getChecksum(identifiers);
     }
     this$.identifier <- identifier;
   }
@@ -341,7 +341,9 @@ setMethodS3("byPath", "CnagCfhSet", function(static, path="rawData/", pattern="[
 
   verbose && enter(verbose, "Defining ", class(static)[1], " from files");
 
-  this <- NextMethod("byPath", path=path, pattern=pattern, fileClass=fileClass, verbose=less(verbose));
+  ## Don't explicitly pass the first argument after 'static', otherwise
+  ## it (here argument 'path') may be part of '...' as well. /HB 2013-07-28
+  this <- NextMethod("byPath", pattern=pattern, fileClass=fileClass, verbose=less(verbose));
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Handle duplicates
@@ -596,7 +598,8 @@ setMethodS3("getData", "CnagCfhSet", function(this, indices=NULL, fields=c("x", 
       res[[field]][,kk] <- value[[field]];
       value[[field]] <- NULL;
     }
-    rm(value); gc();
+    # Not needed anymore
+    value <- NULL; gc();
     verbose && exit(verbose);
   }
   verbose && exit(verbose);
@@ -632,7 +635,7 @@ setMethodS3("readUnits", "CnagCfhSet", function(this, units=NULL, ..., force=FAL
   } else {
     key <- c(key, units=units, ...);
   }
-  id <- digest2(key);
+  id <- getChecksum(key);
   verbose && exit(verbose);
   if (!force) {
     verbose && enter(verbose, "Trying to obtain cached data");
@@ -789,7 +792,7 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
         environment(x) <- emptyenv();
       x;
     })
-    id <- digest2(key);
+    id <- getChecksum(key);
     name <- sprintf("%s-%s-%s-%s,%s", prefix, field, meanName, sdName, id);
   }
 
@@ -904,7 +907,8 @@ setMethodS3("getAverageFile", "CnagCfhSet", function(this, name=NULL, prefix="av
     pixels <- readCel(pathname, readIntensities=FALSE, readStdvs=FALSE,
                       readPixels=TRUE)$pixels;
     indices <- which(pixels == 0);
-    rm(pixels); # Not needed anymore.
+    # Not needed anymore
+    pixels <- NULL; # Not needed anymore.
   }
 
   nbrOfIndices <- length(indices);

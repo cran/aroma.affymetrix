@@ -107,7 +107,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
       cells <- unlist(cdfUnits, use.names=FALSE);
 
-      rm(cdfUnits);
+      # Not needed anymore
+      cdfUnits <- NULL;
       # Garbage collect
       gc <- gc();
 
@@ -116,7 +117,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
       ceCells <- unlist(cdfUnits, use.names=FALSE);
       verbose && exit(verbose);
 
-      rm(cdfUnits); # Not needed anymore
+      # Not needed anymore
+      cdfUnits <- NULL; # Not needed anymore
 
       # Store
       cdfData$unitGroupSizes <- c(cdfData$unitGroupSizes, unitGroupSizes);
@@ -125,7 +127,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
       verbose && str(verbose, cdfData);
 
-      rm(unitGroupSizes, cells, ceCells);
+      # Not needed anymore
+      unitGroupSizes <- cells <- ceCells <- NULL;
 
       # Garbage collect
       gc <- gc();
@@ -139,7 +142,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     verbose && print(verbose, gc);
 
     units <- units0;
-    rm(units0);
+    # Not needed anymore
+    units0 <- NULL;
 
     verbose && enter(verbose, "Saving to file cache");
     saveCache(cdfData, key=key, dirs=dirs);
@@ -160,7 +164,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   ceCells <- cdfData$ceCells;
   verbose && cat(verbose, "ceCells:");
   verbose && str(verbose, ceCells);
-  rm(cdfData);
+  # Not needed anymore
+  cdfData <- NULL;
   # Garbage collect
   gc <- gc();
   verbose && print(verbose, gc);
@@ -256,7 +261,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     }
 
     verbose && exit(verbose);
-    rm(y, yhat, theta);
+    # Not needed anymore
+    y <- yhat <- theta <- NULL;
 
     # Memory optimization: One less copy of 'eps'.
     eps <- eps[o];
@@ -265,32 +271,44 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
     verbose && print(verbose, gc);
 
     verbose && enter(verbose, "Storing residuals");
+
+    # Write to a temporary file (allow rename of existing one if forced)
+    isFile <- (force && isFile(pathname));
+    pathnameT <- pushTemporaryFile(pathname, isFile=isFile, verbose=verbose);
+
     tryCatch({
       # Create CEL file to store results, if missing
       verbose && enter(verbose, "Creating empty CEL file for results, if missing");
-      createFrom(df, filename=pathname, path=NULL,
+      createFrom(df, filename=pathnameT, path=NULL,
                      methods="create", clear=TRUE, verbose=less(verbose));
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Writing residuals");
-      updateCel(pathname, indices=cells, intensities=eps);
+      updateCel(pathnameT, indices=cells, intensities=eps);
+
       verbose && exit(verbose);
     }, interrupt = function(intr) {
       verbose && print(verbose, intr);
-      file.remove(pathname);
+      file.remove(pathnameT);
     }, error = function(ex) {
       verbose && print(verbose, ex);
-      file.remove(pathname);
+      file.remove(pathnameT);
     })
+
+    # Rename temporary file
+    pathname <- popTemporaryFile(pathnameT, verbose=verbose);
+
     verbose && exit(verbose);
 
 #    verbose && enter(verbose, "Verifying");
 #    eps2 <- getData(rf, indices=cells, fields="intensities")$intensities[oinv];
 #    stopifnot(all.equal(eps, eps2, tolerance=.Machine$double.eps^0.25));
 #    verbose && exit(verbose);
-#    rm(eps2);
+#    # Not needed anymore
+#    eps2 <- NULL;
 
-    rm(eps);
+    # Not needed anymore
+    eps <- NULL;
 
     # Garbage collect
     gc <- gc();
@@ -298,7 +316,8 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
 
     verbose && exit(verbose);
   } # for (kk ...)
-  rm(cells, phi, unitGroupSizes);
+  # Not needed anymore
+  cells <- phi <- unitGroupSizes <- NULL;
 
   # Garbage collect
   gc <- gc();
