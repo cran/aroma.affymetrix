@@ -1,13 +1,35 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.11.1 [2013-10-17]
+o DOCUMENTATION: Minor tweaks to the help for the doNNN() methods.
+
+
+Version: 2.11.0 [2013-10-17]
+o Updated package dependences.
+o Package now requires R (>= 2.15.0) [and Bioc (>= 2.10.0)].
+
+
+Version: 2.10.3 [2013-10-07]
+o CLEANUP: No longer need to attach R.utils for backward compatibility.
+o CLEANUP: Package no longer apply downloaded package patches.
+o CLEANUP: Deprecated patch() for AromaAffymetrix.
+o CLEANUP: Now explicitly importing only what is needed in NAMESPACE.
+o CLEANUP: No longer uses ':::' for accessing 'oligo' functions.
+o Updated package dependences.
+
+
+Version: 2.10.2 [2013-09-28]
+o Now the 'aroma.affymetrix' Package object is also available when the
+  package is only loaded (but not attached).
+o Updated package dependences.
+
+
+Version: 2.10.1 [2013-08-21]
+o Now explicitly importing R.filesets and aroma.core in NAMESPACE.
+
+
 Version: 2.10.0 [2013-08-04]
-o Updated the default chromosome annotation data file for the Human genome.
-  The new data gives slightly longer chromosomes.  This was done since for
-  some chip types there were data points outside of the visible genome range,
-  e.g. in ChromosomeExplorer plots.  It is possible to override this default
-  by adding your own to your own to annotationData/genomes/Human/.
-  Thanks to Keith Ching at ConsultChing for reporting on this.
 o CLEANUP: The formal package dependancy on Bioconductor packages
   'aroma.light' and 'affxparser' has been relaxed so the package
   can be installed without them.
