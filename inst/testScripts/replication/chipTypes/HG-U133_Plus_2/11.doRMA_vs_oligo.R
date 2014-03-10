@@ -95,17 +95,24 @@ toPNG(getFullName(csR), tags=c("doRMA_vs_oligo"), width=800, {
 # (b) Assert correlations
 print(rho);
 print(range(rho));
-stopifnot(all(rho > 0.99995));
+stopifnot(all(rho > 0.99985));
 
 cors <- sapply(1:ncol(theta), FUN=function(cc) cor(theta[,cc], theta0[,cc]));
 print(cors);
 print(range(cors));
-stopifnot(all(cors > 0.99995));
+stopifnot(all(cors > 0.99985));
 
 # (c) Assert differences
-stopifnot(mean(as.vector(e^2)) < 1e-3);
-stopifnot(sd(as.vector(e^2)) < 1e-3);
+print(mean(as.vector(e^2)));
+stopifnot(mean(as.vector(e^2)) < 0.0015);
+
+print(sd(as.vector(e^2)));
+stopifnot(sd(as.vector(e^2)) < 0.001);
+
+print(quantile(abs(e), 0.99));
 stopifnot(quantile(abs(e), 0.99) < 0.05);
+
+print(max(abs(e)));
 stopifnot(max(abs(e)) < 0.085);
 
 
