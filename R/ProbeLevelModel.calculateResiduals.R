@@ -94,7 +94,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
       gc <- gc();
       verbose && exit(verbose);
       verbose && enter(verbose, "Calculate group sizes");
-      unitGroupSizes <- applyCdfGroups(cdfUnits, base::lapply, FUN=function(group) {
+      unitGroupSizes <- .applyCdfGroups(cdfUnits, lapply, FUN=function(group) {
         length(.subset2(group, 1));
       });
       unitGroupSizes <- unlist(unitGroupSizes, use.names=FALSE);
@@ -194,10 +194,10 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
   phi <- NULL;
   for (kk in seq_along(ds)) {
     # Get probe-level signals
-    df <- getFile(ds, kk);
+    df <- ds[[kk]];
 
     # Get chip effect estimates
-    cef <- getFile(ces, kk);
+    cef <- ces[[kk]];
 
     verbose && enter(verbose, sprintf("Array #%d ('%s')", kk, getName(df)));
 
@@ -284,7 +284,7 @@ setMethodS3("calculateResidualSet", "ProbeLevelModel", function(this, units=NULL
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Writing residuals");
-      updateCel(pathnameT, indices=cells, intensities=eps);
+      .updateCel(pathnameT, indices=cells, intensities=eps);
 
       verbose && exit(verbose);
     }, interrupt = function(intr) {

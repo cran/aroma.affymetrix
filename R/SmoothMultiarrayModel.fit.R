@@ -91,11 +91,11 @@ setMethodS3("getPositionChipTypeUnit", "CopyNumberSegmentationModel", function(t
   unfList <- getListOfUnitNamesFiles(this, verbose=less(verbose, 10));
 
   # Get the genome information files
-  ugpList <- base::lapply(unfList, FUN=getAromaUgpFile, verbose=less(verbose, 10));
+  ugpList <- lapply(unfList, FUN=getAromaUgpFile, verbose=less(verbose, 10));
   verbose && print(verbose, ugpList);
 
   # Get the units on the chromosome of interest
-  unitsList <- base::lapply(ugpList, FUN=function(ugp) {
+  unitsList <- lapply(ugpList, FUN=function(ugp) {
     getUnitsOnChromosome(ugp, chromosome=chromosome, ...);
   });
   verbose && str(verbose, unitsList);
@@ -219,7 +219,7 @@ setMethodS3("createOutputTuple", "SmoothMultiarrayModel", function(this, ..., fo
     verbose && cat(verbose, "Path: ", path);
     nbrOfArrays <- length(inSet);
     for (jj in seq_len(nbrOfArrays)) {
-      inFile <- getFile(inSet, jj);
+      inFile <- inSet[[jj]];
       outFile <- createFrom(inFile, filename=getFilename(inFile), path=path, methods=c("create", "copy"), clear=TRUE, verbose=less(verbose, 10));
     }
 
@@ -388,7 +388,7 @@ setMethodS3("fitOneChromosome", "SmoothMultiarrayModel", function(this, chromoso
     for (aa in seq_len(ncol(theta))) {
       verbose && enter(verbose, "Array #", aa, " of ", ncol(theta));
 
-      outFile <- getFile(outSet, aa);
+      outFile <- outSet[[aa]];
       verbose && cat(verbose, "Output data file:");
       verbose && str(verbose, outFile);
 

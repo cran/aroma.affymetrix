@@ -115,7 +115,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       }
 
       # 1. Create a temporary file
-      res <- copyTo(this, filename=pathnameT, path=NULL,
+      res <- copyTo(this, filename=pathnameT, path=NULL, copy.mode=FALSE,
                                              verbose=less(verbose));
 #      verbose && cat(verbose, "Temporary file:");
 #      verbose && print(verbose, res);
@@ -148,7 +148,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       # Setting up CEL header
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       fullname <- getFullName(this);
-      celHeader <- cdfHeaderToCelHeader(getHeader(cdf), sampleName=fullname);
+      celHeader <- .cdfHeaderToCelHeader(getHeader(cdf), sampleName=fullname);
 
       # Add some extra information about what the CEL file is for
       params <- c(Descripion=sprintf("This CEL file contains data saved by the aroma.affymetrix v%s package.", getVersion(aroma.affymetrix)));
@@ -168,7 +168,7 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       # 1. Create a temporary file
       verbose && enter(verbose, "Creating an empty temporary CEL file");
-      createCel(pathnameT, header=celHeader, overwrite=overwrite, ...,
+      .createCel(pathnameT, header=celHeader, overwrite=overwrite, ...,
                                                         verbose=less(verbose));
       # Not needed anymore
       celHeader <- NULL;
@@ -188,14 +188,14 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
         cells <- seq_len(nbrOfCells(this));
         lapplyInChunks(cells, function(cells) {
           verbose && enter(verbose, "Reading subset of data from source CEL file");
-          data <- readCel(getPathname(this), indices=cells, readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
+          data <- .readCel(getPathname(this), indices=cells, readIntensities=TRUE, readStdvs=TRUE, readPixels=TRUE);
           verbose && str(verbose, data, level=-50);
           verbose && printf(verbose, "RAM: %.2fMB\n", object.size(data)/1024^2, level=-40);
           verbose && exit(verbose);
           gc <- gc();
 
           verbose && enter(verbose, "Writing data to new CEL file");
-          updateCel(pathnameT, indices=cells, intensities=data);
+          .updateCel(pathnameT, indices=cells, intensities=data);
           verbose && exit(verbose);
 
           # Not needed anymore
@@ -244,6 +244,11 @@ setMethodS3("createFrom", "AffymetrixCelFile", function(this, filename, path=NUL
 
 ############################################################################
 # HISTORY:
+# 2014-09-04
+# o ROBUSTNESS/BUG FIX: createFrom(..., mode="copy") for AffymetrixCelFile
+#   would give an error on "No permission to modify existing file: ..."
+#   iff the source file had read-only permission.  This bug was introduced
+#   by changes to base::file.copy() in R (>= 2.13.0) [April 2011].
 # 2010-03-26
 # o Added argument 'defValue' to createFrom() for AffymetrixCelFile
 #   so that one can specify the default value for cleared elements.

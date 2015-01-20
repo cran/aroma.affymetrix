@@ -209,9 +209,10 @@ setMethodS3("process", "LimmaBackgroundCorrection", function(this, ..., force=FA
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Try to load the require package
+  # Try to load the required packaged
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  require("limma") || throw("Package not loaded: limma");
+  requireNamespace("limma") || throw("Package not loaded: limma")
+  backgroundCorrect <- limma::backgroundCorrect
 
 
   # Generate random jitter?
@@ -228,7 +229,7 @@ setMethodS3("process", "LimmaBackgroundCorrection", function(this, ..., force=FA
   dataFiles <- list();
   for (kk in seq_along(ds)) {
     verbose && enter(verbose, sprintf("Array #%d of %d", kk, nbrOfArrays));
-    df <- getFile(ds, kk);
+    df <- ds[[kk]];
     verbose && print(verbose, df);
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -297,7 +298,7 @@ setMethodS3("process", "LimmaBackgroundCorrection", function(this, ..., force=FA
 
     # Write calibrated data to file
     verbose2 <- -as.integer(verbose)-2;
-    updateCel(pathnameT, indices=cells, intensities=y, verbose=verbose2);
+    .updateCel(pathnameT, indices=cells, intensities=y, verbose=verbose2);
     # Not needed anymore
     y <- verbose2 <- NULL;
 

@@ -255,6 +255,10 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
   verbose && print(verbose, csN);
   verbose && exit(verbose);
 
+  if (!drop) {
+    res <- c(res, list(bpn=bpn, csN=csN));
+  }
+
   # Clean up
   # Not needed anymore
   csC <- bpn <- NULL;
@@ -334,7 +338,8 @@ setMethodS3("doCRMAv2", "AffymetrixCelSet", function(csR, combineAlleles=TRUE, l
 
 
 setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
-  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+  .require <- require
+  .require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix")
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -368,7 +373,8 @@ setMethodS3("doCRMAv2", "default", function(dataSet, ..., verbose=FALSE) {
 
 
 setMethodS3("doASCRMAv2", "default", function(...) {
-  require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix");
+  .require <- require
+  .require("aroma.affymetrix") || throw("Package not loaded: aroma.affymetrix")
 
   doCRMAv2(..., combineAlleles=FALSE);
 })
@@ -376,6 +382,10 @@ setMethodS3("doASCRMAv2", "default", function(...) {
 
 ############################################################################
 # HISTORY:
+# 2014-04-27
+# o doCRMAv2(..., drop=FALSE) and hence doASCRMAv2(..., drop=FALSE), did
+#   not *return* the base-position normalization step, although it was
+#   done and its outcome was part of all downstream steps.
 # 2013-05-02
 # o Removed argument 'ram' in favor of aroma option 'memory/ram'.
 # 2012-09-15

@@ -498,7 +498,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
 
     verbose && enter(verbose, "Calculating cross product X'y for each array");
     for (ii in seq_len(nbrOfArrays)) {
-      df <- getFile(ds, ii);
+      df <- ds[[ii]];
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d",
                                           ii, getName(df), nbrOfArrays));
 
@@ -540,7 +540,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
   # Save model fits
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   for (ii in seq_len(nbrOfArrays)) {
-    df <- getFile(ds, ii);
+    df <- ds[[ii]];
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d",
                                               ii, getName(df), nbrOfArrays));
 
@@ -615,7 +615,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
 
     verbose && enter(verbose, "Processing ", nbrOfArrays, " arrays");
     for (ii in seq_len(nbrOfArrays)) {
-      df <- getFile(ds, ii);
+      df <- ds[[ii]];
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d",
                                               ii, getName(df), nbrOfArrays));
 
@@ -637,7 +637,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
       verbose && exit(verbose);
 
       verbose2 <- as.logical(verbose);
-      updateCel(pathnameT, indices=cellsChunk, intensities=2^mu, verbose=verbose2);
+      .updateCel(pathnameT, indices=cellsChunk, intensities=2^mu, verbose=verbose2);
 
       # Rename temporary file
       pathname <- popTemporaryFile(pathnameT, verbose=verbose);
@@ -678,7 +678,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
 
   for (ii in seq_len(nbrOfArrays)) {
     verbose && enter(verbose, "Binning predicted values, calculating and scaling residuals");
-    df <- getFile(ds, ii);
+    df <- ds[[ii]];
 
     y <- extractMatrix(df, cells=cellsToFit, verbose=verbose);
     y <- log2(y);
@@ -687,7 +687,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
     filename <- sprintf("%s.CEL", fullname);
     pathname <- Arguments$getWritablePathname(filename, path=outputPath, ...);
 
-    mu <- readCel(pathname, indices=cellsToFit, readOutliers=FALSE, readHeader=FALSE, readMasked=FALSE, verbose=less(verbose,10))$intensities;
+    mu <- .readCel(pathname, indices=cellsToFit, readOutliers=FALSE, readHeader=FALSE, readMasked=FALSE, verbose=less(verbose,10))$intensities;
     mu <- log2(mu);
     r <- y - mu;
 
@@ -711,7 +711,7 @@ setMethodS3("process", "MatNormalization", function(this, ..., ram=NULL, force=F
     verbose && exit(verbose);
 
     verbose2 <- as.logical(verbose);
-    updateCel(pathnameT, indices=cellsToFit, intensities=2^r, verbose=verbose2);
+    .updateCel(pathnameT, indices=cellsToFit, intensities=2^r, verbose=verbose2);
 
     # Not needed anymore
     q <- ss <- ssvar <- v <- r <- y <- NULL;

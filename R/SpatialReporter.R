@@ -118,7 +118,7 @@ setMethodS3("addColorMap", "SpatialReporter", function(this, colorMap, ...) {
   if (length(transforms) == 0) {
     transforms <- list(sqrt);
   } else {
-    transforms <- base::lapply(transforms, FUN=function(transform) {
+    transforms <- lapply(transforms, FUN=function(transform) {
       # Check transform
       if (!exists(transform, mode="function")) {
         throw("Argument 'colorMap' specifies an unknown transform function ('",
@@ -236,7 +236,7 @@ setMethodS3("writeImages", "SpatialReporter", function(this, arrays=NULL, aliase
 
   # For each array...
   for (kk in seq_along(arrays)) {
-    df <- getFile(cs, arrays[kk]);
+    df <- cs[[arrays[kk]]];
 
     # Aliases are deprecated
     if (!is.null(aliases)) {
@@ -313,7 +313,7 @@ setMethodS3("process", "SpatialReporter", function(this, ..., verbose=FALSE) {
 
 setMethodS3("readRawDataRectangle", "SpatialReporter", function(this, array, ..., field="intensities", transforms=list(), verbose=FALSE) {
   ds <- getDataSet(this);
-  df <- getFile(ds, array);
+  df <- ds[[array]];
 
   y <- readRawDataRectangle(df, fields=field, ..., drop=TRUE, verbose=less(verbose, 5));
 ##    verbose && str(verbose, y);
@@ -369,7 +369,7 @@ setMethodS3("plotMargins", "SpatialReporter", function(this, array, margins=c("r
 
   # Get the array file
   ds <- getDataSet(this);
-  df <- getFile(ds, array);
+  df <- ds[[array]];
 
   yMargins <- calculateMargins(this, array=array, ..., verbose=verbose);
   keep <- is.element(c("rows", "columns"), margins);
@@ -404,8 +404,8 @@ setMethodS3("plotMargins", "SpatialReporter", function(this, array, margins=c("r
     }
 
     fit <- list();
-    fit[[1]] <- robustSmoothSpline(x, y, spar=0.3);
-    fit[[2]] <- robustSmoothSpline(x, y, spar=0.9);
+    fit[[1]] <- .robustSmoothSpline(x, y, spar=0.3);
+    fit[[2]] <- .robustSmoothSpline(x, y, spar=0.9);
 
     if (rotate == 0) {
       plot(x, y, pch=pch, cex=cex, ylim=ylim, xlab=xlab, ylab=ylab);

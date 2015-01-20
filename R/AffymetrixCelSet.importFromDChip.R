@@ -106,7 +106,7 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
     y <- (nrow-1):0;
     x <- rep(1:ncol, each=nrow);
     writeMap <- as.vector(y*ncol + x);
-    readMap <- invertMap(writeMap);
+    readMap <- .invertMap(writeMap);
     # Not needed anymore
     x <- y <- h <- nrow <- ncol <- writeMap <- NULL;
   } else {
@@ -144,7 +144,7 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
   # Import each CEL file
   for (kk in seq_along(cs)) {
     verbose && enter(verbose, "Converting ASCII CEL file to binary CEL file");
-    df <- getFile(cs, kk);
+    df <- cs[[kk]];
 
     src <- getPathname(df);
     dest <- file.path(destPath, basename(src));
@@ -153,7 +153,7 @@ setMethodS3("importFromDChip", "AffymetrixCelSet", function(static, path, name=N
 
     if (!skip || !isFile(dest)) {
       # Convert ASCII CEL file to binary CEL with possible rotation
-      convertCel(src, dest, readMap=readMap);
+      .convertCel(src, dest, readMap=readMap);
 
       # Garbage collect
       gc <- gc();

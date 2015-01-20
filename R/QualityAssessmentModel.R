@@ -196,7 +196,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
     thetaL <- .subset2(chipEffectList, kk);
     phiL <- .subset2(probeAffinityList, kk);
     nbrOfGroups <- length(yL);
-    res <- base::lapply(seq_len(nbrOfGroups), FUN=function(gg) {
+    res <- lapply(seq_len(nbrOfGroups), FUN=function(gg) {
       y <- .subset2(.subset2(yL, gg), "intensities");
       theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
       phi <- .subset2(.subset2(phiL, gg), "phi");
@@ -342,7 +342,7 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
       # Back-transform data to intensity scale and encode as CEL structure
       verbose && enter(verbose, "Encode as CEL structure");
       data <- lapply(residualsList, FUN=function(groups) {
-        base::lapply(groups, FUN=function(group) {
+        lapply(groups, FUN=function(group) {
           eps <- .subset2(group, "eps")[,kk];
           ones <- rep(1, length=length(eps));
           list(intensities=eps, stdvs=ones, pixels=ones);
@@ -353,13 +353,13 @@ setMethodS3("getResiduals", "QualityAssessmentModel", function(this, units=NULL,
 
       pathname <- pathnames[kk];
       if (!isFile(pathname)) {
-        df <- getFile(ds, kk);
-        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=getName(df));
-        createCel(pathname, header=celHeader, verbose=less(verbose));
+        df <- ds[[kk]];
+        celHeader <- .cdfHeaderToCelHeader(cdfHeader, sampleName=getName(df));
+        .createCel(pathname, header=celHeader, verbose=less(verbose));
       }
 
       verbose && enter(verbose, "updating file #", kk);
-      updateCelUnits(pathname, cdf=cdfList, data=data);
+      .updateCelUnits(pathname, cdf=cdfList, data=data);
       verbose && exit(verbose);
     } # for (kk ...)
 
@@ -411,12 +411,15 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Local functions
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Lookup MASS::psi.huber() once; '::' is expensive
+  MASS_psi.huber <- MASS::psi.huber;
+
   resFcn <- function(kk) {
     yL <- .subset2(rawDataList, kk);
     thetaL <- .subset2(chipEffectList, kk);
     phiL <- .subset2(probeAffinityList, kk);
     nbrOfGroups <- length(yL);
-    res <- base::lapply(nbrOfGroups, FUN=function(gg) {
+    res <- lapply(nbrOfGroups, FUN=function(gg) {
       y <- .subset2(.subset2(yL, gg), "intensities");
       theta <- .subset2(.subset2(thetaL, gg), "theta")[1,];
       phi <- .subset2(.subset2(phiL, gg), "phi");
@@ -424,7 +427,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
       eps <- (y - yhat);
 #      mad <- 1.4826 * median(abs(yhat));
       mad <- 1.4826 * median(abs(eps));
-      matrix(MASS::psi.huber(eps/mad), ncol=ncol(y));
+      matrix(MASS_psi.huber(eps/mad), ncol=ncol(y));
     })
     res;
   } # resFcn()
@@ -531,10 +534,10 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
       # Create CEL file?
       if (!isFile(pathname[kk])) {
         cdfHeader <- getHeader(cdf);
-        dfKK <- getFile(ds, kk);
+        dfKK <- ds[[kk]];
         sampleName <- getName(dfKK);
-        celHeader <- cdfHeaderToCelHeader(cdfHeader, sampleName=sampleName);
-        createCel(pathname[kk], header=celHeader, verbose=less(verbose));
+        celHeader <- .cdfHeaderToCelHeader(cdfHeader, sampleName=sampleName);
+        .createCel(pathname[kk], header=celHeader, verbose=less(verbose));
       }
 
       data <- lapply(weightsList, FUN=function(x){
@@ -546,7 +549,7 @@ setMethodS3("getWeights", "QualityAssessmentModel", function(this, path=NULL, na
         ))
       });
 
-      updateCelUnits(pathname[kk], cdf=cdfList, data=data);
+      .updateCelUnits(pathname[kk], cdf=cdfList, data=data);
     } # for (kk ...)
 
     unitsToDo <- unitsToDo[-head];

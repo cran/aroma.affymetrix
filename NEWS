@@ -1,6 +1,79 @@
 Package: aroma.affymetrix
 =========================
 
+Version: 2.13.0 [2015-01-17]
+o Bumped version for CRAN submission.
+o Updated package dependencies.
+o Package passes all redundancy tests.
+
+
+Version: 2.12.10 [2015-01-06]
+o CLEANUP: Major cleanup of namespace imports from suggested packages
+  such as affxparser and aroma.light.
+
+
+Version: 2.12.9 [2014-11-17]
+o Updated redundancy tests under testScripts/ to find rowMedians() of
+  the matrixStats package.  The matrixStats package used to be attached
+  whenever aroma.light (< 2.1.1) was attached, but no longer.
+
+
+Version: 2.12.8 [2014-09-04]
+o ROBUSTNESS/BUG FIX: createFrom(..., mode="copy") for AffymetrixCelFile
+  would give an error on "No permission to modify existing file: ..."
+  iff the source file had read-only permission.  This bug was introduced
+  by changes to base::file.copy() in R (>= 2.13.0) [April 2011].
+  Thanks to Taylor Raborn at Indiana University for reporting on this.
+
+
+Version: 2.12.7 [2014-08-27]
+o ROBUSTNESS: Added forgotten NAMESPACE imports.
+
+
+Version: 2.12.6 [2014-06-29]
+o BUG FIX: getAromaCellSequenceFile() for AffymetrixCdfFile used
+  undefined variable 'nbrOfCells'.
+
+
+Version: 2.12.5 [2014-06-24]
+o Added package system tests utilizing example data of Bioconductor
+  package AffymetrixDataTestFiles, iff installed.
+
+
+Version: 2.12.4 [2014-06-09]
+o Package now requires R (>= 3.0.0) and BioC (>= 2.13), which were
+  released April 2013 and are in fact old and it's recommended to
+  use a more recent version of R.
+o Added 'SuggestsNote' field to DESCRIPTION with list of packages
+  that are recommended for the most common use cases.
+o Bumped package dependencies.
+
+
+Version: 2.12.3 [2014-05-02]
+o CLEANUP: Now using ds[[idx]] instead of getFile(ds, idx) where possible.
+
+
+Version: 2.12.2 [2014-04-28]
+o Added justRMA() for AffymetrixCelSet, which with good precision
+  reproduces the results of the default setting of justRMA() in the
+  affy package.  It does so by still running with a constant memory
+  profile.  This means that a much larger number of samples can be
+  processed using this implementation.
+o doCRMAv2(..., drop=FALSE) and hence doASCRMAv2(..., drop=FALSE), did
+  not *return* the base-position normalization step, although it was
+  done and its outcome was part of all downstream steps.
+o extractExpressionSet() for ChipEffectSet gained argument 'orderUnitsBy'
+  and returns standard errors as well.
+
+
+Version: 2.12.1 [2014-04-26]
+o SPEEDUP: Minor speedup by replacing repetive <ns>::<fcn>() calls
+  with repetive <fcn>() calls; the '::' operator is fairly expensive.
+  You should expect a small speed improvement when using MatSmoothing(),
+  RmaPlm(..., flavor="oligo") and when calculating weights using
+  ExonRmaPlm and QualityAssessmentModel, to name a few examples.
+
+
 Version: 2.12.0 [2014-03-07]
 o Bumped version for CRAN submission.
 o Updated package dependencies.

@@ -41,7 +41,9 @@
 # }
 #*/###########################################################################
 setMethodS3("plotDensity", "AffymetrixCelFile", function(this, subset=NULL, types=NULL, ..., xlim=c(0,16), xlab=NULL, ylab="density (integrates to one)", log=TRUE, annotate=TRUE, verbose=FALSE) {
-  require("aroma.light") || throw("Package not loaded: aroma.light");
+  ## aroma.light::plotDensity()
+  requireNamespace("aroma.light") || throw("Package aroma.light not loaded.")
+
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
@@ -674,7 +676,7 @@ setMethodS3("plotImage", "AffymetrixCelFile", function(this, ...) {
 #
 # \examples{\dontrun{
 #   yellow.colors <- function(n) { hsv(h=0.15, v=0:(n-1)/(n-1)) }
-#   df <- getFile(ds, 1)
+#   df <- ds[[1]]
 #   writeImage(df, tags="gray", palette=gray.colors(256), xrange=c(0,200))
 #   writeImage(df, tags="yellow", palette=yellow.colors(256), xrange=c(0,200))
 #   writeImage(df, tags="heat", palette=heat.colors(256), xrange=c(0,200))

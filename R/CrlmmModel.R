@@ -302,7 +302,11 @@ setMethodS3("findUnitsTodo", "CrlmmModel", function(this, units=NULL, safe=TRUE,
 
 
 setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, ram=NULL, ..., verbose=FALSE) {
-  require("oligo") || throw("Package not loaded: oligo");
+  # Early error
+  requireNamespace("oligoClasses") || throw("Package not loaded: oligoClasses");
+  .getM <- oligoClasses::getM
+
+  requireNamespace("oligo") || throw("Package not loaded: oligo");
 
   # To please R CMD check
   ns <- loadNamespace("oligo");
@@ -330,7 +334,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     } # extractESet()
 
     extractLogRatios <- function(eSet, ...) {
-      ad <- assayData(eSet);
+      ad <- .assayData(eSet);
       M <- ad$senseAlleleA - ad$senseAlleleB;
       # Not needed anymore
       ad <- NULL;
@@ -511,10 +515,10 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     verbose && enter(verbose, "Extracting data");
     eSet <- extractESet(ces, units=unitsChunk, sortUnits=FALSE,
                              hasQuartets=hasQuartets, verbose=verbose);
-    phenoData(eSet) <- phenoData;
+    .phenoData(eSet) <- phenoData;
     verbose && exit(verbose);
 
-    unitNames <- featureNames(eSet);
+    unitNames <- .featureNames(eSet);
     verbose && cat(verbose, "Unit names:");
     verbose && str(verbose, unitNames);
 
@@ -581,7 +585,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     if (hasQuartets) {
       verbose && enter(verbose, "Updating sense & antisense genotype regions");
       eSet1 <- eSet[,1];
-      M <- getM(eSet1);  # From 'oligoClasses' (formely in 'oligo')
+      M <- .getM(eSet1);  # From 'oligoClasses' (formely in 'oligo')
       dimnames(M) <- NULL;
       M <- M[,1,,drop=TRUE];
       oneStrand <- integer(nrow(M));
@@ -665,8 +669,8 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     verbose && enter(verbose, "Storing CRLMM parameter estimates, confidence scores and genotypes");
     for (kk in seq_along(callSet)) {
-      agc <- getFile(callSet, kk);
-      atb <- getFile(paramSet, kk);
+      agc <- callSet[[kk]];
+      atb <- paramSet[[kk]];
       verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(agc), nbrOfArrays));
 
       # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -738,7 +742,7 @@ setMethodS3("fit", "CrlmmModel", function(this, units="remaining", force=FALSE, 
   verbose && str(verbose, snrPerArray);
 
   for (kk in seq_along(paramSet)) {
-    pf <- getFile(paramSet, kk);
+    pf <- paramSet[[kk]];
     updateParameter(pf, "snr", snrPerArray[kk], verbose=less(verbose, -20));
   }
 
@@ -846,9 +850,9 @@ setMethodS3("calculateConfidenceScores", "CrlmmModel", function(this, ..., force
   minConf <- 1/3;
 
   for (kk in seq_len(nbrOfArrays)) {
-    cf <- getFile(callSet, kk);
-    pf <- getFile(paramSet, kk);
-    sf <- getFile(confSet, kk);
+    cf <- callSet[[kk]];
+    pf <- paramSet[[kk]];
+    sf <- confSet[[kk]];
 
     verbose && enter(verbose, sprintf("Array #%d ('%s') of %d", kk, getName(cf), nbrOfArrays));
 

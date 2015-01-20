@@ -134,7 +134,7 @@ setMethodS3("fromFile", "AffymetrixCdfFile", function(static, filename, path=NUL
                                                               mustExist=TRUE);
 
   # Assert that it is a CDF file
-  header <- readCdfHeader(pathname);
+  header <- .readCdfHeader(pathname);
 
   NextMethod("fromFile", filename=pathname);
 }, static=TRUE, protected=TRUE)
@@ -296,7 +296,7 @@ setMethodS3("findByChipType", "AffymetrixCdfFile", function(static, chipType, ta
 #*/###########################################################################
 setMethodS3("getHeader", "AffymetrixCdfFile", function(this, ...) {
   if (is.null(header <- this$.header))
-    header <- this$.header <- readCdfHeader(getPathname(this));
+    header <- this$.header <- .readCdfHeader(getPathname(this));
   header;
 }, private=TRUE)
 
@@ -382,7 +382,7 @@ setMethodS3("getUnitNames", "AffymetrixCdfFile", function(this, units=NULL, ...)
   names <- this$.unitNames;
 
   if (is.null(names)) {
-    names <- readCdfUnitNames(getPathname(this), ...);
+    names <- .readCdfUnitNames(getPathname(this), ...);
     this$.unitNames <- names;
   }
 
@@ -522,7 +522,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
 ## WORKAROUND: Use readCdf() which return unit type strings.
 ## Requires: affxparser v1.13.5 or newer.
 
-        types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
+        types <- .readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
         types <- unlist(types, use.names=FALSE);
 
         # Sanity check
@@ -548,7 +548,7 @@ setMethodS3("getUnitTypes", "AffymetrixCdfFile", function(this, units=NULL, ...,
     }
   } else {
 ## ISSUE: types <- readCdfUnits(getPathname(this), units=units, readType=TRUE, readDirection=FALSE, readIndices=FALSE, readXY=FALSE, readBases=FALSE, readExpos=FALSE);
-    types <- readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
+    types <- .readCdf(getPathname(this), readXY=FALSE, readBases=FALSE, readIndexpos=FALSE, readAtoms=FALSE, readUnitType=TRUE, readUnitDirection=FALSE, readUnitNumber=FALSE, readUnitAtomNumbers=FALSE, readGroupAtomNumbers=FALSE, readGroupDirection=FALSE, readIndices=FALSE, readIsPm=FALSE);
     types <- unlist(types, use.names=FALSE);
     types <- asUnitTypeIndex(types);
   }
@@ -593,7 +593,7 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
     if (is.null(groupDirections)) {
       verbose && enter(verbose, "Reading directions for *all* unit groups");
       # Have to read some group field in order to get group directions
-      groupDirections <- readCdfUnits(getPathname(this), readExpos=TRUE,
+      groupDirections <- .readCdfUnits(getPathname(this), readExpos=TRUE,
         readBases=FALSE, readXY=FALSE, readType=FALSE, readDirection=TRUE);
 
       gc <- gc();
@@ -602,9 +602,9 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
 
       # Remove all 'expos'
       verbose && enter(verbose, "Removing all 'expos'");
-      groupDirections <- base::lapply(groupDirections, FUN=function(unit) {
+      groupDirections <- lapply(groupDirections, FUN=function(unit) {
         groups <- .subset2(unit, 2);
-        groups <- base::lapply(groups, FUN=.subset, 2);
+        groups <- lapply(groups, FUN=.subset, 2);
         list(groups=groups);
       });
 
@@ -621,7 +621,7 @@ setMethodS3("getGroupDirections", "AffymetrixCdfFile", function(this, units=NULL
       verbose && exit(verbose);
 
       verbose && enter(verbose, "Unlisting each unit");
-      groupDirections <- base::lapply(groupDirections, FUN=unlist,
+      groupDirections <- lapply(groupDirections, FUN=unlist,
                                                           use.names=FALSE);
 
       gc <- gc();
@@ -692,7 +692,7 @@ setMethodS3("getCellIndices", "AffymetrixCdfFile", function(this, units=NULL, ..
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   getCellIndicesChunk <- function(pathname, ..., verbose=FALSE) {
     verbose && enter(verbose, "Querying CDF file");
-    cdfChunk <- readCdfCellIndices(pathname, ...);
+    cdfChunk <- .readCdfCellIndices(pathname, ...);
     verbose && exit(verbose);
 
     # Garbage collect
@@ -954,8 +954,7 @@ setMethodS3("readUnits", "AffymetrixCdfFile", function(this, units=NULL, ..., ve
     on.exit(popState(verbose));
   }
 
-#  cdf <- readCdfUnits(getPathname(this), units=units, ...);
-  cdf <- doCall("readCdfUnits", filename=getPathname(this), units=units, ...);
+  cdf <- .readCdfUnits(filename=getPathname(this), units=units, ...);
 
   # Always call restruct() after a readCdfNnn()!
   restruct(this, cdf, verbose=less(verbose, 5));
@@ -1016,13 +1015,13 @@ setMethodS3("isPm", "AffymetrixCdfFile", function(this, units=NULL, force=FALSE,
   if (force || is.null(isPm)) {
     if (cache) {
       # If caching, read all units
-      cdf <- readCdfIsPm(getPathname(this));
+      cdf <- .readCdfIsPm(getPathname(this));
       # Always call restruct() after a readCdfNnn()!
       cdf <- restruct(this, cdf, verbose=less(verbose, 5));
       isPm <- this$.isPm <- cdf;
     } else {
       # ...otherwise, read only a subset of units
-      cdf <- readCdfIsPm(getPathname(this), units=units);
+      cdf <- .readCdfIsPm(getPathname(this), units=units);
       # Always call restruct() after a readCdfNnn()!
       cdf <- restruct(this, cdf, verbose=less(verbose, 5));
       isPm <- cdf;
@@ -1200,9 +1199,9 @@ setMethodS3("getFirstCellIndices", "AffymetrixCdfFile", function(this, units=NUL
 
     verbose && enter(verbose, "Extracting the first cell in each unit group");
     # For each unit and each group, get the index of the first cell.
-    res <- applyCdfGroups(res, function(groups) {
+    res <- .applyCdfGroups(res, function(groups) {
       # For each group, pull out the first cell.
-      base::lapply(groups, FUN=function(group) {
+      lapply(groups, FUN=function(group) {
         # group$indices[1] == group[[1]][1] == ...
         list(indices=.subset(.subset2(group, 1), 1));
       })
@@ -1257,7 +1256,7 @@ setMethodS3("compare", "AffymetrixCdfFile", function(this, other, ...) {
   if (equals(this, other))
     return(TRUE);
 
-  res <- compareCdfs(getPathname(this), getPathname(other), ...);
+  res <- .compareCdfs(getPathname(this), getPathname(other), ...);
 
   res;
 }, private=TRUE)
@@ -1316,7 +1315,7 @@ setMethodS3("convert", "AffymetrixCdfFile", function(this, chipType=getChipType(
   # Convert CDF
   src <- getPathname(this);
   verbose2 <- -getThreshold(verbose);
-  res <- convertCdf(src, dest, ..., verbose=verbose2);
+  res <- .convertCdf(src, dest, ..., verbose=verbose2);
 
   # Return an AffymetrixCdfFile object for the new CDF
   newInstance(this, dest);

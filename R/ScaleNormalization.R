@@ -374,7 +374,7 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
   verbose && enter(verbose, "Normalizing ", length(ds), " arrays");
   for (kk in seq_along(ds)) {
     verbose && enter(verbose, "Array #", kk);
-    df <- getFile(ds, kk);
+    df <- ds[[kk]];
     verbose && print(verbose, df);
 
     filename <- basename(getPathname(df));
@@ -460,7 +460,7 @@ setMethodS3("process", "ScaleNormalization", function(this, ..., skip=FALSE, for
 #    updateDataFlat(ceN, data=data, verbose=less(verbose));
 #    # Not needed anymore
 #    data <- NULL;
-    updateCel(pathnameT, indices=subsetToUpdate, intensities=x);
+    .updateCel(pathnameT, indices=subsetToUpdate, intensities=x);
     # Not needed anymore
     x <- NULL;
 

@@ -788,7 +788,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
   cellMatrixMap <- NULL;
   nbrOfArrays <- length(ces);
   for (kk in seq_len(nbrOfArrays)) {
-    ce <- getFile(ces, kk);
+    ce <- ces[[kk]];
     verbose && enter(verbose, sprintf("Array #%d of %d ('%s')",
                                             kk, nbrOfArrays, getName(ce)));
 
@@ -893,7 +893,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     verbose && cat(verbose, "Log2 signals:");
     verbose && str(verbose, y);
-    yN <- normalizeFragmentLength(y, fragmentLengths=fl,
+    yN <- .normalizeFragmentLength(y, fragmentLengths=fl,
                     targetFcns=targetFcns, subsetToFit=subset,
                     onMissing=onMissing, ...);
     verbose && cat(verbose, "Normalized log2 signals:");
@@ -960,7 +960,7 @@ setMethodS3("process", "FragmentLengthNormalization", function(this, ..., force=
 
     verbose2 <- -as.integer(verbose) - 5;
     pathnameN <- getPathname(ceN);
-    updateCel(pathnameN, indices=cells, intensities=data, verbose=verbose2);
+    .updateCel(pathnameN, indices=cells, intensities=data, verbose=verbose2);
     # Not needed anymore
     cells <- data <- ceN <- NULL;
     verbose && exit(verbose);

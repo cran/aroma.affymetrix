@@ -79,7 +79,7 @@ setMethodS3("getFirstCellPerUnitIndices", "ExonChipEffectSet", function(this, ..
 
   cdf <- getCdf(this);
   idx <- getFirstCellIndices(cdf, ...);
-  idx <- base::lapply(base::lapply(idx, FUN=.subset2, 1), FUN=.subset2, 1);
+  idx <- lapply(lapply(idx, FUN=.subset2, 1), FUN=.subset2, 1);
   idx <- unlist(idx, use.names=FALSE);
   idx;
 }, protected=TRUE)
@@ -90,7 +90,7 @@ setMethodS3("findUnitsTodo", "ExonChipEffectSet", function(this, ...) {
   # order, becuase that is updated last.
   names <- getFullNames(this);
   idx <- order(names, decreasing=TRUE)[1];
-  df <- getFile(this, idx);
+  df <- this[[idx]];
   findUnitsTodo(df, ...);
 })
 

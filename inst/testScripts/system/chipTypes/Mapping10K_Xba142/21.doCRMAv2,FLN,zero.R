@@ -1,4 +1,5 @@
 library("aroma.affymetrix");
+library("matrixStats"); # rowMedians()
 log <- Arguments$getVerbose(-4, timestamp=TRUE);
 
 
@@ -10,7 +11,7 @@ chipType <- "Mapping10K_Xba142";
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 csR <- AffymetrixCelSet$byName(dataSet, chipType=chipType, verbose=log);
 keep <- 1:6;
-csR <- extract(csR, keep);
+csR <- csR[keep];
 print(csR);
 
 

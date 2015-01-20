@@ -1,4 +1,5 @@
 library("aroma.affymetrix");
+library("matrixStats"); # rowMedians()
 verbose <- Arguments$getVerbose(-3, timestamp=TRUE);
 
 
@@ -18,7 +19,7 @@ csR <- AffymetrixCelSet$byName(dataSet, cdf=cdf);
 # Process only cerebellum and heart
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 types <- c("cerebellum", "heart");
-csR <- extract(csR, indexOf(csR, patterns=types));
+csR <- csR[indexOf(csR, patterns=types)];
 
 setFullName(csR, sprintf("%s,%s", dataSet, paste(types, collapse="+")));
 print(csR);
@@ -75,7 +76,7 @@ for (key in names(cesList)) {
   stats0 <- boxplot.stats(rle0[,1]);
   stats1 <- boxplotStats(ces, type="RLE", arrays=1:2, subset=units);
   stopifnot(all.equal(stats1[[1]], stats0, tolerance=tol));
-  
+
   # Assert correctness of unit-specific NUSE scores
   se <- extractMatrix(ces, field="sdTheta", units=units);
   seR <- 2^rowMedians(log2(se), na.rm=TRUE);
