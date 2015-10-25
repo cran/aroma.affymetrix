@@ -1,12 +1,12 @@
-95be02dd410ae98406529f9fd6c11e25 *DESCRIPTION
-7d82b16d47cba54f69ecf2b6e78edb95 *NAMESPACE
-5c16beb63dd1b18f761335f9214530ae *NEWS
+2ea03c9a38b02bd16ad7ebb507c1e8f8 *DESCRIPTION
+941a97e2d390847ae4a7db6f43ec383e *NAMESPACE
+5a924006be5159933ad75276456e64c2 *NEWS
 4bcbb5139128447d6309d89980703e1c *R/000.R
 b6d1bef5586736c914f5336ef1f08e1a *R/006.fixVarArgs.R
 ee7af24de9e03e26b18ae820ff0c196b *R/009.setup.R
 805a07eddfd4ae30baec1683fd3a1927 *R/021.dynamic_imports.R
-2fa01bc3e3a8559f3f929097f350ffd2 *R/999.AromaAffymetrix.R
-7c4f3615fdddb22863d962fd33b31e5e *R/999.DEPRECATED.R
+6ad90c6d9ec62a231044e22f540dfee0 *R/999.AromaAffymetrix.R
+a1093ceb35597410ac495f8f97431a16 *R/999.DEPRECATED.R
 ae5c7a6c9cd6ac16c5192b8acb930e5d *R/999.NonDocumentedObjects.R
 b28f6061a61060fd492c3718a752adf1 *R/999.package.R
 c499bbe1c8e3e38fd1b3f1cd90b1e50c *R/ASCRMAv2.R
@@ -15,9 +15,9 @@ c499bbe1c8e3e38fd1b3f1cd90b1e50c *R/ASCRMAv2.R
 662fecb270ac1a63af7dca52e7a963c2 *R/AffineCnPlm.R
 5b5a363b1bfeb16d1db14b287a86258e *R/AffinePlm.R
 302bb9c345b292b058453e84a51afe21 *R/AffineSnpPlm.R
-becd7b25f29cf83a7bab4337516b8eaf *R/AffyGenePDInfo.writeCdf.R
+cf3e9831019685c5c50bfdbd75ff4b23 *R/AffyGenePDInfo.writeCdf.R
 9d3b3364031b8a044ccf1fe07d3d1142 *R/AffymetrixAptSummaryFile.R
-1eb87c9122c230b3464857ef9be3a21a *R/AffymetrixCdfFile.COUNTS.R
+251a5b4a05b7855b7d0ebb5aefa8ac60 *R/AffymetrixCdfFile.COUNTS.R
 02e336718ea78d66314480635da74509 *R/AffymetrixCdfFile.MONOCELL.R
 eb0d862f92be07f3a63df33217a3af6a *R/AffymetrixCdfFile.PLOT.R
 7ed85be9bfde77e5fc71f21c22f8e029 *R/AffymetrixCdfFile.R
@@ -49,7 +49,7 @@ f13452b0e74ac615b290e96880ae12b3 *R/AffymetrixCelFile.R
 e170cce0ef8f34b7c092759fddc28177 *R/AffymetrixCelSet.BG.R
 d7acbad8e179f41ac6fa5ae6ad3ea681 *R/AffymetrixCelSet.NORM.R
 836190e5c9852b10494f449c1f9ae199 *R/AffymetrixCelSet.PLOT.R
-bf09a16418643a7774edee1b8171a96d *R/AffymetrixCelSet.R
+9446c6d8b008fb3e229e482405f7a797 *R/AffymetrixCelSet.R
 6af8b032f16f93bd1aafd9ac24856555 *R/AffymetrixCelSet.convertToUnique.R
 2a5b592ebd4cc236a0fc5d77a6c4f704 *R/AffymetrixCelSet.extractAffyBatch.R
 008d86ddfd3f64ce1006c63f43941ce9 *R/AffymetrixCelSet.extractFeatureSet.R
@@ -97,7 +97,7 @@ f73b0d2cbcf27a46a55bb78e72e1bc28 *R/AromaUnitTabularBinaryFile.AFFX.PLOT.R
 9904dd336758511cabca9ede4c3e56f9 *R/AromaUnitTabularBinaryFile.AFFX.R
 094d863be46737cd5d27001c7011236e *R/ArrayExplorer.R
 d964ed7bb0f0a0ba7b978361e1a719be *R/AvgCnPlm.R
-14e49fde2416040a39646790de398818 *R/AvgPlm.R
+e7619d3e67f282d7af6b6e3ca7135d3b *R/AvgPlm.R
 2db2a0e0b972fc77abda390e3cea585e *R/AvgSnpPlm.R
 cf80b9ffcb7b246c57537741dc13d4bb *R/BackgroundCorrection.R
 8724235090dbe56880e7173d4191f85a *R/BaseCountNormalization.R
@@ -147,9 +147,9 @@ cfead916596b46853955079909b4f238 *R/CrlmmModel.R
 6141cf179d0a31f97cafa94785d3b7f3 *R/DChipDcpFile.R
 e37abe947845555dd34893dc8df3851f *R/DChipDcpSet.R
 8c5b2679723549cf9014697f7a8b702a *R/DChipDcpSet.extras.R
-e7a3143dd56d5bcfba04af41ec046014 *R/DChipGenomeInformation.R
+692ea57f3ff84487986ada64747e85e6 *R/DChipGenomeInformation.R
 7c9ca6804e5f3f13cfe78817690791cf *R/DChipQuantileNormalization.R
-73a80f0f5c7e5911202c7b4ccf565446 *R/DChipSnpInformation.R
+003025cd54c4795a81ae5cc437b78b89 *R/DChipSnpInformation.R
 3e81635a31779faacde1bdd3211f33fb *R/ExonChipEffectFile.R
 8da6db9f361cfeb767b3cc8bf8278f34 *R/ExonChipEffectSet.R
 266b92452ab3531f18a057e8186b35bf *R/ExonProbeAffinityFile.R
@@ -220,7 +220,7 @@ d2d3b7586e857c9eed5f873089d4ace7 *R/SnpChipEffectFile.extractTotalAndFracB.R
 4b293ddf9d932ba346084863ba10f2a8 *R/SnpChipEffectNnn.writeCNT.R
 2108b634b9f6122ffc054a4dffe16033 *R/SnpChipEffectSet.R
 2fa0f94930f659ba79055d251c1b1e4b *R/SnpChipEffectSet.exportTotalAndFracB.R
-0ca79b849d7dd82210a62104a4610191 *R/SnpChipEffectSet.extractAlleleSet.R
+1444e32f16ffb502fc977f0e3e585f30 *R/SnpChipEffectSet.extractAlleleSet.R
 d759c15129055b07d1b8eb491b4b4570 *R/SnpChipEffectSet.extractSnpCnvQSet.R
 2dcba4bbb33cba21a21c3bc72f2e9a18 *R/SnpChipEffectSet.extractSnpQSet.R
 96051d1307cffc2ebed2e01ba820f1a4 *R/SnpChipEffectSet.extractTotalAndFreqB.R
@@ -236,7 +236,7 @@ cac6947c5a251c3730170f51095a9947 *R/TransformReport.R
 dee8e1f1478cde2fd6a6bdee240505ff *R/UflSnpInformation.R
 493450212e39eb374f38f07d5ecddd2c *R/UgpGenomeInformation.R
 03079a9c0f419d7e86cf43c5493bb495 *R/UnitModel.R
-3231f9f2fcfcc905d6d2a2374243cea5 *R/UnitModel.fitCnProbes.R
+142d29021131e8160257225cde67c4b6 *R/UnitModel.fitCnProbes.R
 3c1d07a50a72a7e80e3a97b33eb7ca13 *R/UnitTypeScaleNormalization.R
 4fd56e715609e6794166edcae4c3f668 *R/WeightsFile.R
 b831aa1fc4afb5f972664117cff05697 *R/WeightsSet.R
@@ -277,7 +277,7 @@ beaf84ab9679cdfd715eea16551371e9 *inst/buildScripts/chipTypes/CytoScanHD_Array/n
 011d35e05d7ad1fd031ec6ef6a9eaf23 *inst/buildScripts/chipTypes/Cytogenetics_Array/Cytogenetics_Array,ACS.R
 0faddcde99f4c0c08a0d91c7072e6c5f *inst/buildScripts/chipTypes/Cytogenetics_Array/na28/Cytogenetics_Array,UGP,na28.R
 be52c0d61fb461f7c7fbea5257dabbc3 *inst/buildScripts/chipTypes/DogSty06m520431/DogSty06m520431,ACS.R
-fda8ee2f56e3e0d1f841a7ea372ae56d *inst/buildScripts/chipTypes/GenomeWideSNP_5/na25/GenomeWideSNP_5,UFL,na25,GWS6.R
+21ba1f91b4d885702c8c1b3dcae8b5a3 *inst/buildScripts/chipTypes/GenomeWideSNP_5/na25/GenomeWideSNP_5,UFL,na25,GWS6.R
 9b1d57ce6f7fe1bc8944bfcea7ad3f77 *inst/buildScripts/chipTypes/GenomeWideSNP_5/na26/GWS5,default,UGP+UFL,na26.R
 417252c37e5d900e8a82bb80c1dd2a44 *inst/buildScripts/chipTypes/GenomeWideSNP_5/na26/GenomeWideSNP_5,UFL,na26,GWS6.R
 79e22673c097673c89b0610e4e173ee3 *inst/buildScripts/chipTypes/GenomeWideSNP_5/na26/GenomeWideSNP_5,UFL,na26.R
@@ -486,7 +486,7 @@ bf649950cb469c510685d34bae636d4e *inst/testScripts/system/chipTypes/HG-U133_Plus
 b156ee47f8d0b72632e17280604123fe *inst/testScripts/system/chipTypes/HG-U133_Plus_2/12.doGCRMA.R
 ed7712a24c68a57b4bcf5f82f1f6e4df *inst/testScripts/system/chipTypes/HG-U133_Plus_2/21.BackgroundCorrections.R
 a7e48b998479054abcfdb5bd1856ae9f *inst/testScripts/system/chipTypes/HG-U133_Plus_2/81.doRMA,extractAffyBatch.R
-864a6a0fd816af5ed8423e9da27bf90a *inst/testScripts/system/chipTypes/HG-U133_Plus_2/81.doRMA,extractExpressionSet.R
+692389d667535eb595248c2d4054efb9 *inst/testScripts/system/chipTypes/HG-U133_Plus_2/81.doRMA,extractExpressionSet.R
 a888a750157a51c3aa0b81686a31837e *inst/testScripts/system/chipTypes/Hs_PromPR_v02/01a.downloadAnnotationData.R
 77f70332eda2728dbaa674ae86e059ef *inst/testScripts/system/chipTypes/Hs_PromPR_v02/01b.downloadRawData.R
 5595feab29d3ecb2fc46e5ee2303519f *inst/testScripts/system/chipTypes/Hs_PromPR_v02/01c.installPackages.R
@@ -615,7 +615,7 @@ dd990e43d8ca73e601975cbb567e8150 *man/AffymetrixProbeTabFile.Rd
 056e90ba2289f504ad32bd443d630df8 *man/AlleleSummation.Rd
 f5df8b5e321ab3d838f48ccf4f77ea9c *man/AllelicCrosstalkCalibration.Rd
 24039012e4e2c67d2a6220f76dba0cd9 *man/AromaChipTypeAnnotationFile.Rd
-fb57970c85bfe22d997ea9c258b764e6 *man/ArrayExplorer.Rd
+3e4fbec42709095c9d879969744a8bbb *man/ArrayExplorer.Rd
 6ec3ed014c0dbd6d45ff6f740f1f29e9 *man/AvgCnPlm.Rd
 e0a968b0646cdc2e752f8b4e12d22955 *man/AvgPlm.Rd
 18cabd0a1e0bad8df14670712ffc9139 *man/AvgSnpPlm.Rd
@@ -637,9 +637,9 @@ f3f5c55bd54ca606f054846ba801b3e7 *man/CrlmmParametersSet.Rd
 b247af1ab78accd8f44d1af04c0dd227 *man/DChipCdfBinFile.Rd
 b43c415f2ac09b04e0b34048b9704623 *man/DChipDcpFile.Rd
 8a1faaf49da5f8042c0ef943952dc03b *man/DChipDcpSet.Rd
-ab20beb484ce94121c8027142497e5b1 *man/DChipGenomeInformation.Rd
+93adb99e53bc23cc3c9fcbbdc6d0adae *man/DChipGenomeInformation.Rd
 eb9338537230ba87645550006a528caa *man/DChipQuantileNormalization.Rd
-6fe49d217e4c8e25f3d3cad9014b5281 *man/DChipSnpInformation.Rd
+4edff420be9f4d68436eb4998c0cef8c *man/DChipSnpInformation.Rd
 b0236e68729e9a57feabdf544158bad5 *man/ExonChipEffectFile.Rd
 bd38e55b58c30ece1fd6c2949a95f833 *man/ExonChipEffectSet.Rd
 493329d88706270251659aae1c952649 *man/ExonProbeAffinityFile.Rd
@@ -666,7 +666,7 @@ c20185d18a828d21c5267c4c39288960 *man/GcContentNormalization2.Rd
 3c40b0e53ac2c42082d421647c095c8d *man/MbeiSnpPlm.Rd
 9750fc103ea75851945001926aeaeb81 *man/Model.Rd
 15873d5e9bb6b0dd54a391776af16c86 *man/MultiArrayUnitModel.Rd
-272e3b71acb09b7ffef7b86edf4cd32f *man/Non-documented_objects.Rd
+445cac4f051ab52c5d1aa0524950378e *man/Non-documented_objects.Rd
 6d0efd78de7667b51e6d464485b08693 *man/NormExpBackgroundCorrection.Rd
 0834c039c08dd11ac4bc8736bdd63376 *man/OpticalBackgroundCorrection.Rd
 041165aaecf32db908d4ceafdb6af340 *man/ParameterCelFile.Rd
@@ -874,7 +874,7 @@ b40714e7ef2c6a0948e2a7d7dffce652 *man/isResequenceChip.AffymetrixCdfFile.Rd
 ae574ba1b15668f64c9c0de05a1aa824 *man/nbrOfArrays.AffymetrixCnChpSet.Rd
 9af999fe0f793de1c9d4b092767a5fdf *man/nbrOfArrays.CnagCfhSet.Rd
 42332ab706de6f7dc3257042f9d150be *man/nbrOfArrays.DChipDcpSet.Rd
-7c91e81784ab912953c91663bc9915eb *man/nbrOfGroupsPerUnit.AffymetrixCdfFile.Rd
+7841e4eb15e2e75fddb71e6353d7f95d *man/nbrOfGroupsPerUnit.AffymetrixCdfFile.Rd
 9f62939fea701aff5dce1dcbdbd9fa63 *man/nbrOfSnps.AffymetrixCdfFile.Rd
 bfe88ab5cc98da7ef10b095140525c94 *man/normalizeQuantile.AffymetrixCelFile.Rd
 519079247c34bfa89051eb259aa3f29f *man/normalizeQuantile.AffymetrixCelSet.Rd
