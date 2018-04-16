@@ -1,9 +1,9 @@
 Package: aroma.affymetrix
-Version: 3.1.0
-Depends: R (>= 3.1.2), R.utils (>= 2.5.0), aroma.core (>= 3.1.0)
+Version: 3.1.1
+Depends: R (>= 3.2.0), R.utils (>= 2.6.0), aroma.core (>= 3.1.1)
 Imports: methods, R.methodsS3 (>= 1.7.1), R.oo (>= 1.21.0), R.cache (>=
-        0.12.0), R.devices (>= 2.15.1), R.filesets (>= 2.11.0),
-        aroma.apd (>= 0.6.0), MASS, splines, matrixStats (>= 0.51.0),
+        0.13.0), R.devices (>= 2.15.1), R.filesets (>= 2.11.0),
+        aroma.apd (>= 0.6.0), MASS, splines, matrixStats (>= 0.52.2),
         listenv, future
 Suggests: DBI (>= 0.5-1), gsmoothr (>= 0.1.7), RColorBrewer (>= 1.1-2),
         Biobase (>= 2.28.0), BiocGenerics (>= 0.14.0), affxparser (>=
@@ -14,7 +14,7 @@ Suggests: DBI (>= 0.5-1), gsmoothr (>= 0.1.7), RColorBrewer (>= 1.1-2),
         (>= 0.1.1)
 SuggestsNote: BioC (>= 3.0), Recommended: preprocessCore, affyPLM,
         aroma.light, affxparser, DNAcopy
-Date: 2017-03-23
+Date: 2018-04-05
 Title: Analysis of Large Affymetrix Microarray Data Sets
 Authors@R: c(
   person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
@@ -38,7 +38,7 @@ biocViews: Infrastructure, ProprietaryPlatforms, ExonArray, Microarray,
         SNP, Transcription
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-03-23 22:10:54 UTC; hb
+Packaged: 2018-04-16 17:56:20 UTC; hb
 Author: Henrik Bengtsson [aut, cre, cph],
   James Bullard [ctb],
   Kasper Hansen [ctb],
@@ -48,4 +48,4 @@ Author: Henrik Bengtsson [aut, cre, cph],
   Ken Simpson [ctb]
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Repository: CRAN
-Date/Publication: 2017-03-24 05:36:49 UTC
+Date/Publication: 2018-04-16 18:53:05 UTC
