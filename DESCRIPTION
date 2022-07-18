@@ -1,9 +1,9 @@
 Package: aroma.affymetrix
-Version: 3.2.0
+Version: 3.2.1
 Depends: R (>= 3.2.0), R.utils (>= 2.9.0), aroma.core (>= 3.2.0)
-Imports: methods, R.methodsS3 (>= 1.7.1), R.oo (>= 1.21.0), R.cache (>=
-        0.13.0), R.devices (>= 2.16.0), R.filesets (>= 2.13.0),
-        aroma.apd (>= 0.6.0), MASS, splines, matrixStats (>= 0.54.0),
+Imports: methods, R.methodsS3 (>= 1.7.1), R.oo (>= 1.23.0), R.cache (>=
+        0.14.0), R.devices (>= 2.16.1), R.filesets (>= 2.13.0),
+        aroma.apd (>= 0.6.0), MASS, splines, matrixStats (>= 0.55.0),
         listenv, future
 Suggests: DBI (>= 1.0.0), gsmoothr (>= 0.1.7), RColorBrewer (>= 1.1-2),
         Biobase (>= 2.28.0), BiocGenerics (>= 0.14.0), affxparser (>=
@@ -36,7 +36,7 @@ biocViews: Infrastructure, ProprietaryPlatforms, ExonArray, Microarray,
         CopyNumberVariants, DifferentialExpression, GeneExpression,
         SNP, Transcription
 NeedsCompilation: no
-Packaged: 2019-06-22 17:14:03 UTC; hb
+Packaged: 2022-07-18 09:48:52 UTC; hb
 Author: Henrik Bengtsson [aut, cre, cph],
   James Bullard [ctb],
   Kasper Hansen [ctb],
@@ -46,4 +46,4 @@ Author: Henrik Bengtsson [aut, cre, cph],
   Ken Simpson [ctb]
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Repository: CRAN
-Date/Publication: 2019-06-23 06:00:14 UTC
+Date/Publication: 2022-07-18 10:50:02 UTC
